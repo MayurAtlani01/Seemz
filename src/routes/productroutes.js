@@ -3,11 +3,18 @@ const { createProduct, getProducts, getProductById, updateProduct, deleteProduct
 
 const router = express.Router();
 
-router.post("/create", createProduct);
+const protect = require("../middleware/authmiddleware");
+const adminProtect = require("../middleware/admin_protection_middleware");
+
+router.post("/create", protect, adminProtect, createProduct);
+
 router.get("/get", getProducts);
+
 router.get("/:id", getProductById);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+
+router.put("/:id", protect, adminProtect, updateProduct);
+
+router.delete("/:id", protect, adminProtect, deleteProduct);
 
 
 module.exports = router;
