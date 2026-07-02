@@ -1,16 +1,103 @@
-# React + Vite
+# SEEMZ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A modern full-stack fashion e-commerce platform built with the MERN Stack.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Overview
 
-## React Compiler
+Seemz is a scalable fashion e-commerce application developed using the MERN Stack. The project is focused on implementing industry-standard backend architecture while building a modern and responsive frontend.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The objective of this project is to gain practical experience in full-stack development by developing a production-inspired application from scratch.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+### Frontend
+
+- React
+- React Router
+- Axios
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+- bcrypt
+- Nodemailer
+
+---
+
+## Current Development Status
+
+### Backend
+
+- Authentication
+- User Profile
+- Product Management
+- Cart
+- Wishlist
+- Address Management
+- Order Management (Cash on Delivery)
+- Admin Protection
+
+### Frontend
+
+Currently under development.
+
+The frontend is being rebuilt from scratch after completing the backend to ensure a scalable component architecture and maintainable codebase.
+
+---
+
+## Project Structure
+
+```text
+SEEMZ
+
+├── Backend
+│   ├── Config
+│   ├── Controllers
+│   ├── Middleware
+│   ├── Models
+│   ├── Routes
+│   └── Utils
+│
+└── Frontend
+    ├── Assets
+    ├── Components
+    ├── Context
+    ├── Hooks
+    ├── Pages
+    ├── Services
+    └── Utils
+```
+
+---
+
+## Upcoming Features
+
+- Premium UI
+- Product Search
+- Product Filters
+- Payment Gateway
+- Product Reviews
+- Admin Dashboard
+- Order Tracking
+- Deployment
+
+---
+
+## Author
+
+Mayuresh Atlani
+
+B.E. Artificial Intelligence & Data Science
+
+Thadomal Shahani Engineering College (TSEC)
+
+GitHub:
+https://github.com/MayurAtlani01
