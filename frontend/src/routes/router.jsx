@@ -14,6 +14,12 @@ import Orders from "../pages/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
 
 const router = createBrowserRouter([
+  {path:"/Login",
+    element: <Login/>
+  },
+  {path:"/register",
+    element: <Register/>
+  },
   {
     path: "/",
     element: <MainLayout />,
@@ -21,14 +27,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
       },
       {
         path: "about",
