@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../../services/authservices";
 import { useNavigate, Link } from "react-router-dom";
-import fashionImage from "../../assets/fashion.jpg";
+import fashionImage from "../../assets/fashion4.jpg";
 import "./Register.css";
 
 function Register() {
@@ -59,10 +59,9 @@ function Register() {
 
     <div className="hero-content">
 
-        <h2 className="hero-title">
-            ESSENCE
-            <br />
-            OF STYLE
+  <h2 className="hero-title">
+    ESSENCE
+    <span>OF STYLE</span>
         </h2>
 
         <div className="hero-footer">

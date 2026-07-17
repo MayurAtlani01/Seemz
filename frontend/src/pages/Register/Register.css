@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap");
+
+/* =========================
+   RESET
+========================= */
+
 *{
     margin:0;
     padding:0;
@@ -7,29 +13,59 @@
 html,
 body,
 #root{
-
     width:100%;
     height:100%;
 }
 
-.register-page{
-
-    display:grid;
-
-    grid-template-columns:65% 35%;
-
-    width:100%;
-
-    min-height:100vh;
-
+body{
     background:#0A0A0A;
+    font-family:"Inter",sans-serif;
+    overflow:hidden;
 }
+
+/* =========================
+   COLORS
+========================= */
+
+:root{
+
+    --bg:#0A0A0A;
+
+    --white:#F8F8F8;
+
+    --grey:#9B9B9B;
+
+    --line:#2B2B2B;
+
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.register-page{
+    width:100%;
+    min-height:100vh;
+    height:100vh;
+    display:grid;
+    grid-template-columns:68% 32%;
+    grid-template-rows:1fr;
+    background:var(--bg);
+    overflow:hidden;
+}
+
+/* =========================
+   IMAGE SECTION
+========================= */
+
 .image-section{
 
     position:relative;
 
     overflow:hidden;
+
 }
+
 .image-section img{
 
     width:100%;
@@ -37,297 +73,291 @@ body,
     height:100%;
 
     object-fit:cover;
+
+    object-position:40% 20%;   /* moved focal point up so the model's face isn't cropped */
+
+    filter:
+    grayscale(100%)
+    brightness(.78)
+    contrast(1.08);
+
+    transition:.8s;
+
 }
-.overlay{
+
+.image-overlay{
 
     position:absolute;
 
     inset:0;
 
-    background:rgba(0,0,0,.25);
+    background:
+    linear-gradient(
+        90deg,
+        rgba(0,0,0,.05),
+        rgba(0,0,0,.28)
+    );
+
 }
+
+/* =========================
+   HERO
+========================= */
+
+.hero-content{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:flex-end;   /* push the text block toward the bottom */
+    flex-direction:column;
+    padding:0 70px 90px;        /* extra bottom padding, no top padding needed now */
+    z-index:2;
+}
+
+.hero-title{
+    color:var(--white);
+    font-family:"Cormorant Garamond",serif;   /* premium serif instead of the generic sans */
+    font-style:italic;
+    font-size:96px;
+    font-weight:500;
+    line-height:.95;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    text-shadow:0 2px 30px rgba(0,0,0,.35);
+}
+
+.hero-title span{
+    display:block;
+    margin-left:90px;
+    font-weight:600;
+}
+
+/* =========================
+   FORM SECTION
+========================= */
+
 .form-section{
-    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#0A0A0A;
+    padding:50px;
 }
-.form-section{
 
-display:flex;
-
-justify-content:center;
-
-align-items:flex-start;
-
-padding-top:120px;
-
-padding-left:70px;
-
-padding-right:70px;
-
-background:#0c0c0c;
-
-}
 .form-container{
-
     width:100%;
-
     max-width:340px;
 }
-.image-section img{
 
-object-fit:cover;
-
-object-position:center;
-object-position:35% center;
-
-}
-.form-container{
-
-    width:100%;
-
-    max-width:340px;
-
-}
+/* =========================
+   BRAND
+========================= */
 
 .brand-tag{
 
-    color:#777;
+    color:#6E6E6E;
 
     text-transform:uppercase;
 
-    letter-spacing:6px;
+    letter-spacing:8px;
 
-    font-size:11px;
+    font-size:10px;
 
-    margin-bottom:18px;
+    font-weight:500;
 
-    font-family:Inter;
+    margin-bottom:26px;
+
 }
 
 .logo{
-
-font-size:58px;
-
-letter-spacing:10px;
-
+    font-family:"Cormorant Garamond",serif;
+    color:#F5F5F5;
+    font-size:58px;
+    font-weight:600;
+    letter-spacing:10px;
+    margin-bottom:28px;
 }
+
 .title{
-
-font-size:12px;
-
-letter-spacing:6px;
-
-text-transform:uppercase;
-
-font-family:Inter;
-
-font-weight:500;
-
-margin-top:20px;
-
-}
-.subtitle{
-
-font-style:normal;
-
-font-size:14px;
-
-color:#888;
-
-line-height:1.8;
-
-margin-top:14px;
-
-margin-bottom:60px;
-
-}
-.hero-content{
-
-    position:absolute;
-
-    inset:0;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-
-    padding:60px;
-
-    z-index:2;
-
-}
-.hero-title{
-
-    margin-top:40px;
-
-    font-family:"Inter",sans-serif;
-
-    font-size:110px;
-
-    line-height:.9;
-
-    font-weight:300;
-
-    letter-spacing:-4px;
 
     color:white;
 
     text-transform:uppercase;
 
-}
-.hero-footer{
+    font-size:13px;
 
-    display:flex;
+    letter-spacing:6px;
 
-    align-items:flex-start;
+    font-weight:500;
 
-    gap:18px;
-
-    margin-bottom:30px;
+    margin-bottom:18px;
 
 }
-.line{
 
-    width:42px;
+.subtitle{
 
-    height:1px;
-
-    background:white;
-
-    margin-top:9px;
-
-}
-.hero-footer h3{
-
-    color:white;
-
-    font-size:28px;
-
-    font-family:"Inter";
-
-    font-weight:400;
-
-    margin-bottom:10px;
-
-}
-.hero-footer p{
-
-    width:260px;
-
-    color:#d0d0d0;
-
-    line-height:1.8;
+    color:#888;
 
     font-size:15px;
 
-}
-.image-overlay{
+    line-height:1.8;
 
-position:absolute;
-
-inset:0;
-
-background:
-
-linear-gradient(
-
-90deg,
-
-rgba(0,0,0,.10),
-
-rgba(0,0,0,.30)
-
-);
+    margin-bottom:40px;
 
 }
+
+/* =========================
+   FORM
+========================= */
+
+.form-error{
+
+    color:#d88585;
+
+    margin-bottom:30px;
+
+    font-size:13px;
+
+}
+
 .input-group{
 
-margin-bottom:34px;
+    margin-bottom:26px;
 
 }
 
 .input-group label{
 
-display:block;
+    display:block;
 
-margin-bottom:14px;
+    margin-bottom:15px;
 
-font-size:11px;
+    color:#6F6F6F;
 
-letter-spacing:4px;
+    text-transform:uppercase;
 
-color:#888;
+    font-size:11px;
 
-text-transform:uppercase;
+    letter-spacing:5px;
+
+    font-weight:500;
 
 }
 
 .input-group input{
-
-width:100%;
-
-background:none;
-
-border:none;
-
-border-bottom:1px solid #333;
-
-padding-bottom:12px;
-
-color:white;
-
-font-size:15px;
-
+    width:100%;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid #2D2D2D;
+    color:#F5F5F5;
+    padding:14px 0;
+    font-size:15px;
+    font-family:"Inter",sans-serif;
+    transition:border-color .3s ease;
 }
 
 .input-group input:focus{
-
-outline:none;
-
-border-bottom:1px solid white;
-
-}
-button{
-
-padding:18px;
-
-background:none;
-
-border:1px solid white;
-
-letter-spacing:4px;
-
-transition:.4s;
-
+    outline:none;
+    border-bottom-color:#ffffff;
 }
 
-button:hover{
-
-background:white;
-
-color:black;
-
+.input-group input::placeholder{
+    color:#555;
 }
-.form-container{
 
-max-width:340px;
+/* =========================
+   CREATE ACCOUNT BUTTON
+   (targets the real markup: <form> > <button type="submit">)
+========================= */
 
-display:flex;
-
-flex-direction:column;
-
-gap:30px;
-
+.form-container form button[type="submit"]{
+    width:100%;
+    background:var(--white);
+    color:#0A0A0A;
+    border:none;
+    padding:17px 0;
+    margin-top:14px;
+    margin-bottom:24px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .3s ease;
 }
-.form-container{
 
-max-width:340px;
+.form-container form button[type="submit"]:hover:not(:disabled){
+    background:transparent;
+    color:var(--white);
+    box-shadow:inset 0 0 0 1px var(--white);
+}
 
-display:flex;
+.form-container form button[type="submit"]:active:not(:disabled){
+    transform:scale(.98);
+}
 
-flex-direction:column;
+.form-container form button[type="submit"]:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
 
-gap:30px;
+/* =========================
+   SIGN IN LINE
+========================= */
 
+.login-text{
+    color:#777;
+    font-size:13px;
+    letter-spacing:.3px;
+    display:flex;
+    gap:6px;
+    justify-content:center;
+}
+
+.login-text a{
+    color:var(--white);
+    text-decoration:none;
+    border-bottom:1px solid rgba(245,245,245,.4);
+    padding-bottom:1px;
+    transition:border-color .2s ease;
+}
+
+.login-text a:hover{
+    border-bottom-color:var(--white);
+}
+
+/* =========================
+   HERO FOOTER
+   (the block below the "ESSENCE OF STYLE" title)
+========================= */
+
+.hero-footer{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    margin-top:34px;
+}
+
+.hero-footer .line{
+    width:60px;
+    height:1px;
+    background:rgba(245,245,245,.5);
+    flex-shrink:0;
+}
+
+.hero-footer h3{
+    color:var(--white);
+    font-size:13px;
+    letter-spacing:3px;
+    font-weight:500;
+    text-transform:uppercase;
+    margin-bottom:6px;
+}
+
+.hero-footer p{
+    color:#B5B5B5;
+    font-size:13px;
+    font-weight:300;
+    line-height:1.5;
+    max-width:280px;
 }
