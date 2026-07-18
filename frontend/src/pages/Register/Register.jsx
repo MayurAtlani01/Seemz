@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../../services/authservices";
 import { useNavigate, Link } from "react-router-dom";
-import fashionImage from "../../assets/fashion4.jpg";
+import fashionImage from "../../assets/fashion.jpg";
 import "./Register.css";
 
 function Register() {
@@ -92,7 +92,7 @@ function Register() {
         <div className="form-container">
 
           <p className="brand-tag">
-            MAISON DE MODE
+            SEEMZ STUDIO
           </p>
 
           <h1 className="logo">

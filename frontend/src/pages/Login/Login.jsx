@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { loginUser } from "../../services/authservices";
 import { useNavigate } from "react-router-dom";
+import "./Login.css";
+import { Link } from "react-router-dom";
+import fashionImg from "../../assets/fashion.jpg";
 
 
 function Login() {
@@ -31,41 +34,100 @@ async function handleSubmit(e) {
     alert("Login Failed");
   }
 }
-  return(
-    <div>
-      <h1>Login</h1>
+   return (
+    <div className="register-page">
+      {/* LEFT */}
+      <div className="register-left">
+       <img
+  src={fashionImg}
+  alt="Fashion"
+  className="hero-image"
+/>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <div className="overlay"></div>
+
+        <div className="hero-content">
+          <h1>
+            WELCOME
+            <br />
+            BACK
+          </h1>
+
+          <div className="hero-description">
+            <div className="line"></div>
+
+            <div>
+              <h4>WELCOME BACK</h4>
+
+              <p>
+                Continue your journey with timeless fashion.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <br />
+      {/* RIGHT */}
 
-        <div>
-          <label>Password</label>
-          <br />
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+      <div className="register-right">
 
-        <br />
+        <span className="brand-tag">
+          EST. 2026
+        </span>
 
-        <button type="submit">Login</button>
-      </form>
+        <h1 className="logo">
+          SEEMZ
+        </h1>
+
+        <h2>Welcome Back</h2>
+
+        <p className="subtitle">
+          Sign in to continue your luxury journey.
+        </p>
+<form onSubmit={handleSubmit}>
+
+  <div className="input-group">
+    <label>Email Address</label>
+    <input
+      type="email"
+      placeholder="Enter your email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+    />
+  </div>
+
+  <div className="input-group">
+    <label>Password</label>
+    <input
+      type="password"
+      placeholder="Enter your password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+  </div>
+
+  <div className="forgot">
+    <Link to="/forgot-password">
+      Forgot Password?
+    </Link>
+  </div>
+
+  <button type="submit">
+    SIGN IN
+  </button>
+
+  <p className="bottom-text">
+    Don't have an account?{" "}
+    <Link to="/register">
+      Create Account
+    </Link>
+  </p>
+
+</form>
+
+      </div>
     </div>
   );
-}
+};
 
 export default Login;

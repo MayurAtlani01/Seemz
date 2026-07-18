@@ -12,6 +12,7 @@ import Cart from "../pages/Cart/Cart";
 import Wishlist from "../pages/Wishlist/Wishlist";
 import Orders from "../pages/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 
 const router = createBrowserRouter([
   {path:"/Login",
@@ -19,6 +20,9 @@ const router = createBrowserRouter([
   },
   {path:"/register",
     element: <Register/>
+  },
+  {path:"/forgot-password",
+    element: <ForgotPassword/>
   },
   {
     path: "/",
