@@ -10,5 +10,19 @@ const loginUser = async (userData) => {
   return response.data;
 };
 
+const forgotPassword = async (emailData) => {
+  const response = await API.post("/auth/forgot-password", emailData);
+  return response.data;
+};
 
-export {loginUser, registerUser}
+const resetPassword = async (resetData) => {
+  const response = await API.post("/auth/reset-password", resetData);
+  return response.data;
+};
+
+export {
+  registerUser,
+  loginUser,
+  forgotPassword,
+  resetPassword,
+};

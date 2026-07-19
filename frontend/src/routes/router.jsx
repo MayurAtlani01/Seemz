@@ -13,6 +13,7 @@ import Wishlist from "../pages/Wishlist/Wishlist";
 import Orders from "../pages/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword/ResetPassword";
 
 const router = createBrowserRouter([
   {path:"/Login",
@@ -24,6 +25,11 @@ const router = createBrowserRouter([
   {path:"/forgot-password",
     element: <ForgotPassword/>
   },
+    {path:"/reset-password",
+    element: <ResetPassword/>
+  },
+  
+
   {
     path: "/",
     element: <MainLayout />,
