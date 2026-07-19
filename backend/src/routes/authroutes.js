@@ -6,6 +6,6 @@ const { registerUser,loginUser,logoutUser,forgotPassword,resetPassword} = requir
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
-router.post("/forgotpassword", forgotPassword);
-router.post("/resetpassword",resetPassword);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password",resetPassword);
 module.exports = router;
