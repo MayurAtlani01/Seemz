@@ -1,45 +1,84 @@
+import "./Navbar.css";
 import { NavLink } from "react-router-dom";
+import { Search, Heart, User, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
-function Navbar() {
+const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav>
-      <h2>SEEMZ</h2>
+    <>
+      <header className="header">
 
-      <ul>
-        <li>
-          <NavLink to="/">Home</NavLink>
-        </li>
+        <div className="announcement-bar">
+          <p>NEW COLLECTION • FREE SHIPPING ABOVE ₹2999</p>
+        </div>
 
-        <li>
-          <NavLink to="/products">Products</NavLink>
-        </li>
+        <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
 
-        <li>
-          <NavLink to="/wishlist">Wishlist</NavLink>
-        </li>
+          <div className="logo">
+            <NavLink to="/">SEEMZ</NavLink>
+          </div>
 
-        <li>
-          <NavLink to="/cart">Cart</NavLink>
-        </li>
+          <ul className="nav-links">
+            <li><NavLink to="/">HOME</NavLink></li>
+            <li><NavLink to="/men">MEN</NavLink></li>
+            <li><NavLink to="/women">WOMEN</NavLink></li>
+            <li><NavLink to="/new-arrivals">NEW ARRIVALS</NavLink></li>
+            <li><NavLink to="/about">ABOUT</NavLink></li>
+          </ul>
 
-        <li>
-          <NavLink to="/orders">Orders</NavLink>
-        </li>
+          <div className="nav-icons">
 
-        <li>
-          <NavLink to="/profile">Profile</NavLink>
-        </li>
+            <button>
+              <Search size={20} strokeWidth={1.7}/>
+            </button>
 
-        <li>
-          <NavLink to="/login">Login</NavLink>
-        </li>
+            <button>
+              <Heart size={20} strokeWidth={1.7}/>
+            </button>
 
-        <li>
-          <NavLink to="/register">Register</NavLink>
-        </li>
-      </ul>
-    </nav>
+            <button>
+              <User size={20} strokeWidth={1.7}/>
+            </button>
+
+            <button
+              className="menu-btn"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? (
+                <X size={24} strokeWidth={1.7}/>
+              ) : (
+                <Menu size={24} strokeWidth={1.7}/>
+              )}
+            </button>
+
+          </div>
+
+        </nav>
+
+      </header>
+
+      <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
+        <NavLink to="/" onClick={() => setMenuOpen(false)}>HOME</NavLink>
+        <NavLink to="/men" onClick={() => setMenuOpen(false)}>MEN</NavLink>
+        <NavLink to="/women" onClick={() => setMenuOpen(false)}>WOMEN</NavLink>
+        <NavLink to="/new-arrivals" onClick={() => setMenuOpen(false)}>NEW ARRIVALS</NavLink>
+        <NavLink to="/about" onClick={() => setMenuOpen(false)}>ABOUT</NavLink>
+      </div>
+    </>
   );
-}
+};
 
 export default Navbar;
