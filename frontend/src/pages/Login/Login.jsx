@@ -35,9 +35,9 @@ async function handleSubmit(e) {
   }
 }
    return (
-    <div className="register-page">
+    <div className="login-page">
       {/* LEFT */}
-      <div className="register-left">
+      <div className="login-left">
        <img
   src={fashionImg}
   alt="Fashion"
@@ -69,7 +69,7 @@ async function handleSubmit(e) {
 
       {/* RIGHT */}
 
-      <div className="register-right">
+      <div className="login-right">
 
         <span className="brand-tag">
           EST. 2026

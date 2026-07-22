@@ -1,0 +1,180 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap");
+
+.footer{
+    background:#050505;
+    color:#fff;
+
+    padding:90px 80px 30px;
+
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.footer-top{
+
+    display:grid;
+    grid-template-columns:1.2fr 2fr;
+
+    gap:80px;
+
+    align-items:start;
+}
+
+/* ==========================
+   BRAND
+========================== */
+
+.footer-brand h1{
+
+    font-family:"Cormorant Garamond",serif;
+    font-size:58px;
+    font-weight:500;
+    letter-spacing:5px;
+
+    margin-bottom:18px;
+}
+
+.footer-brand p{
+
+    color:rgba(255,255,255,.6);
+
+    max-width:320px;
+
+    line-height:1.8;
+
+    font-size:15px;
+}
+
+/* ==========================
+   LINKS
+========================== */
+
+.footer-links{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:60px;
+}
+
+.footer-column{
+
+    display:flex;
+    flex-direction:column;
+}
+
+.footer-column h4{
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+    margin-bottom:24px;
+
+    color:#fff;
+}
+
+.footer-column a{
+
+    text-decoration:none;
+
+    color:rgba(255,255,255,.6);
+
+    margin-bottom:16px;
+
+    font-size:14px;
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+}
+
+.footer-column a:hover{
+
+    color:#fff;
+
+    transform:translateX(4px);
+}
+
+/* ==========================
+   BOTTOM
+========================== */
+
+.footer-bottom{
+
+    margin-top:70px;
+
+    padding-top:25px;
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    text-align:center;
+}
+
+.footer-bottom p{
+
+    color:rgba(255,255,255,.45);
+
+    font-size:13px;
+
+    letter-spacing:1px;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+    .footer{
+
+        padding:70px 35px 25px;
+    }
+
+    .footer-top{
+
+        grid-template-columns:1fr;
+
+        gap:60px;
+    }
+
+    .footer-links{
+
+        grid-template-columns:repeat(2,1fr);
+
+        gap:40px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .footer{
+
+        padding:60px 22px 25px;
+    }
+
+    .footer-brand h1{
+
+        font-size:46px;
+    }
+
+    .footer-links{
+
+        grid-template-columns:1fr;
+    }
+
+    .footer-column{
+
+        margin-bottom:20px;
+    }
+
+    .footer-bottom{
+
+        margin-top:40px;
+    }
+
+}
