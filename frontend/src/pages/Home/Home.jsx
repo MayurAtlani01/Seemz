@@ -5,31 +5,36 @@ import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import heroVideo from "../../assets/videos/Home2.mp4";
 import MenVideo from "../../assets/videos/Men.mp4";
 import WomenVideo from "../../assets/videos/Women.mp4";
+import Acc from "../../assets/videos/Acc.mp4";
+import product1 from "../../assets/images/product1.jpg"
+import product2 from "../../assets/images/product2.jpg"
+import product3 from "../../assets/images/product3.jpg"
+import product4 from "../../assets/images/product4.jpg"
 
 const newArrivals = [
   {
     id: 1,
     name: "Oversized Wool Coat",
     price: "₹8,999",
-    image: "/images/product1.jpg",
+    image: product1,
   },
   {
     id: 2,
     name: "Classic Black Blazer",
     price: "₹6,499",
-    image: "/images/product2.jpg",
+    image:product2,
   },
   {
     id: 3,
     name: "Minimal Shirt",
     price: "₹2,999",
-    image: "/images/product3.jpg",
+    image:product3,
   },
   {
     id: 4,
     name: "Premium Denim",
     price: "₹4,299",
-    image: "/images/product4.jpg",
+    image: product4,
   },
 ];
 
@@ -44,7 +49,7 @@ const categories = [
   },
   {
     title: "Accessories",
-    video: MenVideo,
+    video: Acc,
   },
 ];
 

@@ -41,7 +41,7 @@ body{
 /* ================= NAVBAR ================= */
 
 .navbar{
-    height:72px;
+    height: 85px;
     background:#050505;
 
     display:grid;
@@ -54,8 +54,8 @@ body{
 }
 
 .navbar.scrolled{
-    background:rgba(5,5,5,.95);
-    backdrop-filter:blur(12px);
+    background:rgba(13, 12, 12, 0.95);
+    backdrop-filter:blur(2px);
 }
 
 /* ================= LOGO ================= */
