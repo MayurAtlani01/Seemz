@@ -10,6 +10,7 @@ import product1 from "../../assets/images/product1.jpg"
 import product2 from "../../assets/images/product2.jpg"
 import product3 from "../../assets/images/product3.jpg"
 import product4 from "../../assets/images/product4.jpg"
+import Trendy from "../../assets/images/Autumn collection.jpg"
 
 const newArrivals = [
   {
@@ -159,7 +160,7 @@ function Home() {
         <div className="editorial-left">
 
           <img
-            src="/images/editorial.jpg"
+            src={Trendy}
             alt="Editorial Collection"
           />
 

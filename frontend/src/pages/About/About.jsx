@@ -1,6 +1,12 @@
 import "./About.css";
+import AboutImage from "../../assets/images/AboutImage.jpg"
+import { useNavigate } from "react-router-dom";
+
+
 
 const About = () => {
+  
+const navigate = useNavigate();
   return (
     <main className="about">
 
@@ -27,7 +33,7 @@ const About = () => {
 
       <section className="about-image">
         <img
-          src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80"
+          src={AboutImage}
           alt="Editorial Fashion"
         />
       </section>
@@ -116,9 +122,9 @@ const About = () => {
           Explore timeless essentials crafted for the modern wardrobe.
         </p>
 
-        <button>
-          SHOP NOW
-        </button>
+    <button onClick={() => navigate("/")}>
+  SHOP NOW
+</button>
 
       </section>
 
