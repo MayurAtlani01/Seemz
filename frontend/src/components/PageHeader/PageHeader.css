@@ -1,0 +1,31 @@
+.page-header{
+
+    text-align:center;
+
+    padding:160px 20px 80px;
+
+}
+
+.page-header p{
+
+    color:#9A9A9A;
+
+    text-transform:uppercase;
+
+    letter-spacing:4px;
+
+    margin-bottom:15px;
+
+}
+
+.page-header h1{
+
+    color:white;
+
+    font-size:72px;
+
+    font-family:"Cormorant Garamond",serif;
+
+    font-weight:500;
+
+}

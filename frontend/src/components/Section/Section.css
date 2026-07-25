@@ -1,0 +1,11 @@
+.section{
+    padding:120px 0;
+}
+
+.dark{
+    background:#0d0d0d;
+}
+
+.light{
+    background:#fff;
+}

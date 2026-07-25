@@ -1,5 +1,5 @@
 import "./Home.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 
 import heroVideo from "../../assets/videos/Home2.mp4";
@@ -55,6 +55,8 @@ const categories = [
 ];
 
 function Home() {
+
+  const navigate=useNavigate();
   return (
     <main className="home">
 
@@ -91,7 +93,7 @@ function Home() {
 
           <div className="hero-buttons">
 
-            <button className="primary-btn">
+            <button onClick={() => navigate("/products")} className="primary-btn">
               Shop Collection
             </button>
 

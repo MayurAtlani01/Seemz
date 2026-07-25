@@ -1,0 +1,44 @@
+.section-title {
+    margin-bottom: 70px;
+}
+
+.section-title.center {
+    text-align: center;
+}
+
+.section-title.left {
+    text-align: left;
+}
+
+.section-subtitle {
+    color: #9A9A9A;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.section-heading {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 60px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.section-description {
+    display: block;
+    max-width: 650px;
+    color: #b5b5b5;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.section-title.center .section-description {
+    margin: 0 auto;
+}
+
+.section-title.left .section-description {
+    margin: 0;
+}
