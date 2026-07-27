@@ -1,5 +1,6 @@
 import "./ProductCard.css";
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 
 const ProductCard = ({
   id,
@@ -10,24 +11,30 @@ const ProductCard = ({
 }) => {
   return (
     <div className="product-card">
+
       <Link
         to={`/product/${id}`}
         className="product-link"
       >
+
         <div className="product-image">
+
           <img
             src={image}
             alt={title}
           />
 
-          <div className="product-overlay">
-            <button className="quick-view">
-              Quick View
-            </button>
-          </div>
+          <button
+            className="wishlist-btn"
+            aria-label="Add to Wishlist"
+          >
+            <Heart size={18} />
+          </button>
+
         </div>
 
         <div className="product-details">
+
           <p className="product-category">
             {category}
           </p>
@@ -37,8 +44,11 @@ const ProductCard = ({
           <span className="product-price">
             {price}
           </span>
+
         </div>
+
       </Link>
+
     </div>
   );
 };

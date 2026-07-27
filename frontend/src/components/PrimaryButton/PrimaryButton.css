@@ -7,7 +7,7 @@
 
     border:1px solid white;
 
-    color:white;
+    color:rgb(0, 0, 0);
 
     text-decoration:none;
 
@@ -23,13 +23,13 @@
 }
 
 .primary-btn:hover{
-    background:white;
-    color:black;
+    background:transparent;
+    color:rgb(255, 248, 248);
 }
 
 .primary-btn.filled{
-    background:white;
-    color:black;
+    background:transparent;
+    color:rgb(25, 19, 19);
 }
 
 .primary-btn.filled:hover{

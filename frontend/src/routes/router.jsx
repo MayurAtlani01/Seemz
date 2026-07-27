@@ -15,7 +15,9 @@ import Orders from "../pages/Orders/Orders";
 import Profile from "../pages/Profile/Profile";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
-import Men from "../pages/Men/Men"
+import Men from "../pages/Men/Men";
+import Women from "../pages/Women/Women";
+
 
 const router = createBrowserRouter([
   {path:"/Login",
@@ -30,8 +32,6 @@ const router = createBrowserRouter([
     {path:"/reset-password",
     element: <ResetPassword/>
   },
-  
-
   {
     path: "/",
     element: <MainLayout />,
@@ -41,8 +41,12 @@ const router = createBrowserRouter([
         element: <Home />,
       },
        {
-        path:"men",
-        element: <Men/>,
+        path: "men",
+        element: <Men />,
+      },
+       {
+        path: "women",
+        element: <Women />,
       },
       {
         path: "about",

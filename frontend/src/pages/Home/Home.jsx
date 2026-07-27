@@ -1,6 +1,7 @@
 import "./Home.css";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
+import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 
 import heroVideo from "../../assets/videos/Home2.mp4";
 import MenVideo from "../../assets/videos/Men.mp4";
@@ -61,47 +62,47 @@ function Home() {
     <main className="home">
 
       {/* ================= HERO ================= */}
+<section className="hero">
 
-      <section className="hero">
+  <video
+    className="hero-video"
+    src={heroVideo}
+    autoPlay
+    muted
+    loop
+    playsInline
+  />
 
-        <video
-          className="hero-video"
-          src={heroVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+  <div className="hero-content">
 
-        <div className="hero-content">
+    <p className="hero-tag">
+      LUXURY • MINIMAL • MODERN
+    </p>
 
-          <p className="hero-tag">
-            LUXURY • MINIMAL • MODERN
-          </p>
+    <h1>
+      Crafted
+      <br />
+      For
+      <br />
+      The Bold
+    </h1>
 
-          <h1>
-            Crafted
-            <br />
-            For
-            <br />
-            The Bold
-          </h1>
+    <p className="hero-text">
+      Timeless silhouettes inspired by modern luxury.
+    </p>
 
-          <p className="hero-text">
-            Timeless silhouettes inspired by modern luxury.
-          </p>
+    <div className="hero-buttons">
 
-          <div className="hero-buttons">
+      <PrimaryButton
+        text="SHOP COLLECTION"
+        to="/products"
+      />
 
-            <button onClick={() => navigate("/products")} className="primary-btn">
-              Shop Collection
-            </button>
+    </div>
 
-          </div>
+  </div>
 
-        </div>
-
-      </section>
+</section>
 
       {/* ================= NEW ARRIVALS ================= */}
 

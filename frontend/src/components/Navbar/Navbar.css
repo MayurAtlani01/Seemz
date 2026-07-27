@@ -54,8 +54,8 @@ body{
 }
 
 .navbar.scrolled{
-    background:rgba(13, 12, 12, 0.95);
-    backdrop-filter:blur(2px);
+    background:rgba(23, 18, 18, 0.95);
+    backdrop-filter:blur(1px);
 }
 
 /* ================= LOGO ================= */

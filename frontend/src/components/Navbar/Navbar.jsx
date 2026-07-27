@@ -38,9 +38,9 @@ const Navbar = () => {
 
         <ul className="nav-links">
           <li><NavLink to="/">HOME</NavLink></li>
-          <li><NavLink to="/products">MEN</NavLink></li>
-          <li><NavLink to="/products">WOMEN</NavLink></li>
-          <li><NavLink to="/products">NEW ARRIVALS</NavLink></li>
+          <li><NavLink to="/men">MEN</NavLink></li>
+          <li><NavLink to="/women">WOMEN</NavLink></li>
+          <li><NavLink to="/new">NEW ARRIVALS</NavLink></li>
           <li><NavLink to="/about">ABOUT</NavLink></li>
         </ul>
 
@@ -75,9 +75,9 @@ const Navbar = () => {
 
       <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
         <NavLink to="/">HOME</NavLink>
-        <NavLink to="/products">MEN</NavLink>
-        <NavLink to="/products">WOMEN</NavLink>
-        <NavLink to="/products">NEW ARRIVALS</NavLink>
+        <NavLink to="/men">MEN</NavLink>
+        <NavLink to="/women">WOMEN</NavLink>
+        <NavLink to="/new">NEW ARRIVALS</NavLink>
         <NavLink to="/about">ABOUT</NavLink>
       </div>
 

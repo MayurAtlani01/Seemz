@@ -1,149 +1,198 @@
 import "./Men.css";
 import { Link } from "react-router-dom";
 
-import Navbar from "../../components/Navbar/Navbar";
-import Footer from "../../components/Footer/Footer";
+import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
+import ProductCard from "../../components/ProductCard/ProductCard";
 
+import menHero from "../../assets/videos/Men.mp4";
+import editorialImg from "../../assets/images/editorialImg.jpg";
+import featuredImg from "../../assets/images/featuredImg.jpg";
 
-import heroVideo from "../../assets/videos/MenHero.mp4";
-
-const categories = [
-  {
-    title: "SUITS",
-    image:
-  },
-  {
-    title: "SHIRTS",
-    image: 
-  },
-  {
-    title: "OUTERWEAR",
-    image: 
-  },
-  {
-    title: "FOOTWEAR",
-    image: 
-  },
-];
+import img1 from "../../assets/images/product1.jpg";
+import img2 from "../../assets/images/product2.jpg";
+import img3 from "../../assets/images/product3.jpg";
+import img4 from "../../assets/images/product3.jpg";
+import img5 from "../../assets/images/product2.jpg";
+import img6 from "../../assets/images/product3.jpg";
+import img7 from "../../assets/images/product1.jpg";
+import img8 from "../../assets/images/product1.jpg";
 
 const products = [
   {
     id: 1,
-    name: "Tailored Wool Blazer",
-    price: "₹8,999",
-    image: blazer,
+    image: img1,
+    title: "Classic Black Shirt",
+    category: "Shirts",
+    price: "₹2,499",
   },
   {
     id: 2,
-    name: "Premium Cotton Shirt",
-    price: "₹2,499",
-    image: shirt,
+    image: img2,
+    title: "Tailored Blazer",
+    category: "Outerwear",
+    price: "₹5,999",
   },
   {
     id: 3,
-    name: "Minimal Bomber Jacket",
-    price: "₹6,999",
-    image: jacket,
+    image: img3,
+    title: "Premium Tee",
+    category: "T-Shirts",
+    price: "₹1,499",
   },
   {
     id: 4,
-    name: "Leather Derby Shoes",
-    price: "₹5,999",
-    image: shoes,
+    image: img4,
+    title: "Relaxed Trousers",
+    category: "Bottomwear",
+    price: "₹2,999",
+  },
+  {
+    id: 5,
+    image: img5,
+    title: "Oversized Hoodie",
+    category: "Hoodies",
+    price: "₹3,499",
+  },
+  {
+    id: 6,
+    image: img6,
+    title: "Denim Jacket",
+    category: "Jackets",
+    price: "₹4,299",
+  },
+  {
+    id: 7,
+    image: img7,
+    title: "Straight Fit Jeans",
+    category: "Denim",
+    price: "₹2,699",
+  },
+  {
+    id: 8,
+    image: img8,
+    title: "Luxury Polo",
+    category: "Polos",
+    price: "₹2,199",
   },
 ];
 
-const Men = () => {
-  return (
-    <>
-      <Navbar />
+const categories = [
+  "Shirts",
+  "T-Shirts",
+  "Jackets",
+  "Hoodies",
+  "Jeans",
+  "Trousers",
+];
+
+function Men() {
+  return (<main className="men-page">
 
       {/* ================= HERO ================= */}
 
       <section className="men-hero">
 
         <video
+          className="men-hero-video"
+          src={menHero}
           autoPlay
           muted
           loop
           playsInline
-          className="men-video"
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
+        />
 
-        <div className="men-overlay"></div>
+        <div className="men-hero-overlay"></div>
 
-        <div className="men-content">
+        <div className="men-hero-content">
 
-          <p>SEEMZ MEN</p>
+          <span className="men-hero-tag">
+            MEN COLLECTION 2026
+          </span>
 
           <h1>
             Crafted For
             <br />
-            Modern Gentlemen
+            Modern Men
           </h1>
 
-          <span>
-            Timeless silhouettes. Contemporary tailoring.
-            Designed for confidence.
-          </span>
+          <p>
+            Minimal silhouettes.
+            Premium fabrics.
+            Timeless luxury.
+          </p>
 
-          <Link to="/products" className="hero-btn">
-            SHOP COLLECTION
-          </Link>
+          <div className="men-hero-buttons">
+
+            <PrimaryButton
+              text="Shop Now"
+              to="/products"
+            />
+
+            <Link
+              to="/about"
+              className="hero-link"
+            >
+              Discover More →
+            </Link>
+
+          </div>
 
         </div>
 
       </section>
-            <section className="featured">
 
-        <div className="section-title">
 
-          <p>DISCOVER</p>
 
-          <h2>Featured Collection</h2>
+      {/* ================= NEW ARRIVALS ================= */}
+
+      <section className="section">
+
+        <div className="section-heading">
+
+          <div>
+
+            <span>NEW SEASON</span>
+
+            <h2>
+              New Arrivals
+            </h2>
+
+          </div>
+
+          <Link to="/products">
+            View All →
+          </Link>
 
         </div>
 
-        <div className="featured-grid">
 
-          {categories.map((item, index) => (
 
-            <div
-              className="featured-card"
-              key={index}
-            >
+        <div className="product-grid">
 
-              <img
-                src={item.image}
-                alt={item.title}
-              />
+          {products.map((product) => (
 
-              <div className="featured-overlay">
-
-                <h3>{item.title}</h3>
-
-                <Link to="/products">
-                  Explore →
-                </Link>
-
-              </div>
-
-            </div>
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              image={product.image}
+              title={product.title}
+              category={product.category}
+              price={product.price}
+            />
 
           ))}
 
         </div>
 
       </section>
+            {/* ================= EDITORIAL ================= */}
 
-            <section className="men-editorial">
+      <section className="men-editorial">
 
         <div className="editorial-image">
 
           <img
-            src={editorialImage}
+            src={editorialImg}
             alt="Editorial"
           />
 
@@ -151,30 +200,138 @@ const Men = () => {
 
         <div className="editorial-content">
 
-          <p>EDITORIAL</p>
+          <span>EDITORIAL</span>
 
           <h2>
-            Designed For Men
+            Designed To
             <br />
-            Who Never Follow Trends
+            Stand Apart
           </h2>
 
-          <span>
-            Luxury isn't about chasing fashion.
-            It's about creating a timeless identity.
-          </span>
+          <p>
+            Contemporary tailoring meets timeless aesthetics.
+            Every piece is crafted for men who appreciate
+            understated luxury and refined simplicity.
+          </p>
 
-          <Link
+          <PrimaryButton
+            text="Explore Collection"
             to="/products"
-            className="editorial-btn"
-          >
-            SHOP NOW
-          </Link>
+          />
 
         </div>
 
       </section>
-      </>
-  )}
 
-  export default Men;
+
+
+      {/* ================= TRENDING NOW ================= */}
+
+      <section className="section">
+
+        <div className="section-heading">
+
+          <div>
+
+            <span>TRENDING</span>
+
+            <h2>Trending Now</h2>
+
+          </div>
+
+          <Link to="/products">
+            View All →
+          </Link>
+
+        </div>
+
+        <div className="product-grid">
+
+          {[...products].reverse().map((product) => (
+
+            <ProductCard
+              key={`trend-${product.id}`}
+              id={product.id}
+              image={product.image}
+              title={product.title}
+              category={product.category}
+              price={product.price}
+            />
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+
+      {/* ================= FEATURED ================= */}
+
+      <section className="featured-look">
+
+        <img
+          src={featuredImg}
+          alt="Featured Collection"
+        />
+
+        <div className="featured-overlay">
+
+          <span>FEATURED COLLECTION</span>
+
+          <h2>
+            Autumn
+            <br />
+            Essentials
+          </h2>
+
+          <p>
+            Elevated everyday wear designed with premium
+            fabrics and clean silhouettes.
+          </p>
+
+          <PrimaryButton
+            text="Shop The Look"
+            to="/products"
+          />
+
+        </div>
+
+      </section>
+            {/* BEST SELLERS */}
+
+      <section className="section">
+
+        <div className="section-heading">
+          <div>
+            <span>BEST SELLERS</span>
+            <h2>Customer Favorites</h2>
+          </div>
+
+          <Link to="/products">
+            View All →
+          </Link>
+        </div>
+
+        <div className="product-grid">
+
+          {products.map((product) => (
+            <ProductCard
+              key={`best-${product.id}`}
+              id={product.id}
+              image={product.image}
+              title={product.title}
+              category={product.category}
+              price={product.price}
+            />
+          ))}
+
+        </div>
+
+      </section>
+
+    </main>
+  );
+}
+
+export default Men;
