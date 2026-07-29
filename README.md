@@ -1,14 +1,14 @@
 # SEEMZ
 
-> A modern full-stack fashion e-commerce platform built with the MERN Stack.
+> A modern full-stack luxury fashion e-commerce platform built with the MERN Stack.
 
 ---
 
 ## Overview
 
-Seemz is a scalable fashion e-commerce application developed using the MERN Stack. The project is focused on implementing industry-standard backend architecture while building a modern and responsive frontend.
+SEEMZ is a full-stack luxury fashion e-commerce application inspired by premium brands such as Louis Vuitton, Saint Laurent, COS, and Zara.
 
-The objective of this project is to gain practical experience in full-stack development by developing a production-inspired application from scratch.
+The project is built to simulate a production-level e-commerce platform while following clean architecture, scalable code practices, and modern UI/UX principles. It serves as both a learning project and a portfolio-ready application demonstrating full-stack MERN development.
 
 ---
 
@@ -19,6 +19,7 @@ The objective of this project is to gain practical experience in full-stack deve
 - React
 - React Router
 - Axios
+- CSS3
 
 ### Backend
 
@@ -32,9 +33,51 @@ The objective of this project is to gain practical experience in full-stack deve
 
 ---
 
+## Features
+
+### Authentication
+
+- User Registration
+- User Login & Logout
+- JWT Authentication
+- Protected Routes
+- Forgot Password
+- Reset Password
+
+### User
+
+- User Profile
+- Address Management
+- Wishlist
+- Shopping Cart
+
+### Products
+
+- Product Listing
+- Product Details
+- Product Categories
+- Product Variants (Sizes)
+- Product Management (Admin)
+
+### Orders
+
+- Cash on Delivery Checkout
+- Order Placement
+- Order History
+
+### Admin
+
+- Protected Admin Routes
+- Product Management
+- Order Management
+
+---
+
 ## Current Development Status
 
 ### Backend
+
+✅ Completed
 
 - Authentication
 - User Profile
@@ -45,11 +88,35 @@ The objective of this project is to gain practical experience in full-stack deve
 - Order Management (Cash on Delivery)
 - Admin Protection
 
+---
+
 ### Frontend
 
-Currently under development.
+Currently under active development.
 
-The frontend is being rebuilt from scratch after completing the backend to ensure a scalable component architecture and maintainable codebase.
+Completed:
+
+- Project Setup
+- Routing
+- Main Layout
+- Responsive Navbar
+- Footer
+- Luxury Home Page
+- Men Collection Page
+- Authentication Pages
+- Editorial UI Components
+- Premium Black & White Theme
+
+Remaining:
+
+- Women Collection
+- Product Details
+- Cart UI Integration
+- Wishlist UI Integration
+- Profile Dashboard
+- Checkout Flow
+- API Integration
+- Responsive Polish
 
 ---
 
@@ -71,6 +138,7 @@ SEEMZ
     ├── Components
     ├── Context
     ├── Hooks
+    ├── Layouts
     ├── Pages
     ├── Services
     └── Utils
@@ -80,20 +148,40 @@ SEEMZ
 
 ## Upcoming Features
 
-- Premium UI
 - Product Search
-- Product Filters
-- Payment Gateway
-- Product Reviews
-- Admin Dashboard
+- Advanced Filters
+- Payment Gateway Integration
+- Product Reviews & Ratings
 - Order Tracking
+- Admin Dashboard
+- Image Upload Optimization
 - Deployment
+- Performance Optimization
 
----  
+---
+
+## Screenshots
+
+> Screenshots will be added as development progresses.
+
+---
+
+## Learning Goals
+
+- Production-level MERN Architecture
+- REST API Design
+- Authentication & Authorization
+- State Management
+- Component-Based UI Design
+- Secure Backend Development
+- Git & GitHub Workflow
+- Responsive Web Design
+
+---
 
 ## Author
 
-Mayuresh Atlani
+**Mayuresh Atlani**
 
 B.E. Artificial Intelligence & Data Science
 
@@ -101,3 +189,7 @@ Thadomal Shahani Engineering College (TSEC)
 
 GitHub:
 https://github.com/MayurAtlani01
+
+---
+
+⭐ If you like this project, consider giving it a star.
