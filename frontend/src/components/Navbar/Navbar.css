@@ -163,6 +163,10 @@ body{
     display:none;
 }
 
+.mobile-menu-backdrop{
+    display:none;
+}
+
 @media(max-width:992px){
 
     .navbar{
@@ -182,26 +186,39 @@ body{
         display:flex;
     }
 
+    .mobile-menu-backdrop{
+        display:block;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.65);
+        backdrop-filter:blur(4px);
+        z-index:998;
+        opacity:0;
+        pointer-events:none;
+        transition:opacity .35s ease;
+    }
+
+    .mobile-menu-backdrop.active{
+        opacity:1;
+        pointer-events:auto;
+    }
+
     .mobile-menu{
         position:fixed;
-
-        top:104px;
+        top:100%;
         left:-100%;
-
-        width:280px;
-        height:calc(100vh - 104px);
-
-        background:#050505;
+        width:290px;
+        max-width:82vw;
+        height:calc(100vh - 100%);
+        background:#0a0a0a;
+        border-right:1px solid rgba(255,255,255,0.08);
+        box-shadow:10px 0 40px rgba(0,0,0,0.8);
 
         display:flex;
         flex-direction:column;
-
-        gap:28px;
-
+        gap:24px;
         padding:40px 30px;
-
-        transition:.35s;
-
+        transition:left .35s cubic-bezier(0.19, 1, 0.22, 1);
         z-index:999;
     }
 
@@ -213,6 +230,17 @@ body{
         color:#fff;
         text-decoration:none;
         letter-spacing:2px;
+        font-size:14px;
+        font-weight:500;
+        padding-bottom:8px;
+        border-bottom:1px solid rgba(255,255,255,0.05);
+        transition:color .3s;
+    }
+
+    .mobile-menu a:hover,
+    .mobile-menu a.active{
+        color:#C7A86B;
+        border-bottom-color:#C7A86B;
     }
 }
 
@@ -220,23 +248,50 @@ body{
 
     .announcement-bar{
         height:28px;
+        padding:0 12px;
     }
 
     .announcement-bar p{
         font-size:10px;
+        letter-spacing:1px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
     }
 
     .navbar{
         height:66px;
-        padding:0 18px;
+        padding:0 16px;
     }
 
     .logo a{
-        font-size:30px;
-        letter-spacing:4px;
+        font-size:28px;
+        letter-spacing:3px;
     }
 
     .nav-icons{
-        gap:14px;
+        gap:12px;
+    }
+
+    .nav-icons button svg{
+        width:18px;
+        height:18px;
+    }
+}
+
+@media(max-width:480px){
+
+    .navbar{
+        height:60px;
+        padding:0 12px;
+    }
+
+    .logo a{
+        font-size:24px;
+        letter-spacing:2px;
+    }
+
+    .nav-icons{
+        gap:8px;
     }
 }

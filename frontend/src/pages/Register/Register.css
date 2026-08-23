@@ -315,3 +315,73 @@
     line-height:1.5;
     max-width:280px;
 }
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 992px) {
+    .register-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .image-section {
+        height: 280px;
+    }
+
+    .hero-content {
+        padding: 0 30px 30px;
+    }
+
+    .hero-title {
+        font-size: 48px;
+    }
+
+    .hero-title span {
+        margin-left: 40px;
+    }
+
+    .hero-footer {
+        display: none;
+    }
+
+    .form-section {
+        padding: 40px 24px 60px;
+    }
+
+    .form-container {
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 480px) {
+    .image-section {
+        height: 200px;
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .hero-title span {
+        margin-left: 20px;
+    }
+
+    .form-section {
+        padding: 30px 16px 50px;
+    }
+
+    .logo {
+        font-size: 42px;
+        letter-spacing: 6px;
+        margin-bottom: 20px;
+    }
+
+    .subtitle {
+        margin-bottom: 28px;
+    }
+}

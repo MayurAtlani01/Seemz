@@ -73,6 +73,11 @@ const Navbar = () => {
 
       </nav>
 
+      <div
+        className={`mobile-menu-backdrop ${menuOpen ? "active" : ""}`}
+        onClick={() => setMenuOpen(false)}
+      />
+
       <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
         <NavLink to="/">HOME</NavLink>
         <NavLink to="/men">MEN</NavLink>

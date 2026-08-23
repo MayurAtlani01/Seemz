@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 
 const About = () => {
-  
-const navigate = useNavigate();
+
+  const navigate = useNavigate();
   return (
     <main className="about">
 
@@ -122,9 +122,13 @@ const navigate = useNavigate();
           Explore timeless essentials crafted for the modern wardrobe.
         </p>
 
-    <button onClick={() => navigate("/")}>
-  SHOP NOW
-</button>
+        <button
+          className="about-shop-btn"
+          onClick={() => navigate("/products")}
+        >
+          <span className="btn-text">SHOP NOW</span>
+          <span className="btn-icon">→</span>
+        </button>
 
       </section>
 

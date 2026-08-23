@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="footer-column">
             <h4>SHOP</h4>
 
-            <NavLink to="/new-arrivals">New Arrivals</NavLink>
+            <NavLink to="/new">New Arrivals</NavLink>
             <NavLink to="/men">Men</NavLink>
             <NavLink to="/women">Women</NavLink>
           </div>

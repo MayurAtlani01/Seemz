@@ -368,59 +368,93 @@
 @media(max-width:768px){
 
     .women-hero{
-        height:70vh;
+        height:75svh;
     }
 
     .women-hero-content{
-        left:30px;
-        right:30px;
+        left:20px;
+        right:20px;
+        max-width:100%;
     }
 
     .women-hero-content h1{
         font-size:3rem;
+        line-height:1.05;
+        margin-bottom:18px;
     }
 
     .women-hero-content p{
         font-size:.95rem;
+        margin-bottom:24px;
     }
 
     .women-hero-buttons{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:18px;
+        flex-direction:row;
+        flex-wrap:wrap;
+        align-items:center;
+        gap:16px;
+    }
+
+    .women-section{
+        width:92%;
+        margin:70px auto;
+    }
+
+    .women-section-heading{
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:flex-end;
+        margin-bottom:36px;
     }
 
     .women-section-heading h2{
-        font-size:2.3rem;
+        font-size:2.4rem;
     }
 
     .women-product-grid{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2,1fr);
+        gap:16px;
+    }
+
+    .women-editorial{
+        margin:90px auto;
+        gap:36px;
     }
 
     .women-editorial-image img{
-        height:460px;
+        height:400px;
     }
 
     .women-editorial-content h2{
-        font-size:3rem;
+        font-size:2.8rem;
+        margin-bottom:18px;
+    }
+
+    .women-editorial-content p{
+        font-size:.95rem;
+        margin-bottom:30px;
     }
 
     .women-featured{
-        height:55vh;
+        height:auto;
+        min-height:480px;
+        margin:90px auto;
     }
 
     .women-featured-overlay{
-        padding:30px;
+        padding:36px 24px;
     }
 
     .women-featured-overlay h2{
-        font-size:2.7rem;
+        font-size:2.8rem;
+        line-height:1;
+        margin-bottom:18px;
     }
 
     .women-featured-overlay p{
         font-size:.95rem;
-        line-height:1.8;
+        line-height:1.7;
+        margin-bottom:28px;
     }
 
 }
@@ -429,24 +463,30 @@
 @media(max-width:480px){
 
     .women-hero-content h1{
-        font-size:2.4rem;
+        font-size:2.3rem;
     }
 
     .women-hero-tag{
         font-size:.7rem;
-        padding:8px 14px;
-    }
-
-    .women-section{
-        margin:70px auto;
+        padding:6px 12px;
+        letter-spacing:2px;
     }
 
     .women-section-heading h2{
-        font-size:2rem;
+        font-size:1.8rem;
+    }
+
+    .women-section-heading span{
+        font-size:.7rem;
+        letter-spacing:2px;
+    }
+
+    .women-editorial-image img{
+        height:300px;
     }
 
     .women-editorial-content h2{
-        font-size:2.5rem;
+        font-size:2.2rem;
     }
 
     .women-featured-overlay h2{

@@ -29,3 +29,25 @@
     font-weight:500;
 
 }
+
+@media(max-width:768px){
+    .page-header{
+        padding:100px 16px 50px;
+    }
+    .page-header h1{
+        font-size:48px;
+    }
+    .page-header p{
+        font-size:12px;
+        letter-spacing:3px;
+    }
+}
+
+@media(max-width:480px){
+    .page-header{
+        padding:80px 16px 40px;
+    }
+    .page-header h1{
+        font-size:36px;
+    }
+}

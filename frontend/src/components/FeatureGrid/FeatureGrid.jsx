@@ -1,4 +1,4 @@
-import "./FeaturedGrid.css";
+import "./FeatureGrid.css";
 import { Link } from "react-router-dom";
 
 const FeaturedGrid = ({ items = [] }) => {

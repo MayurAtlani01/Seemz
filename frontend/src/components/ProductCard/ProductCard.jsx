@@ -13,7 +13,7 @@ const ProductCard = ({
     <div className="product-card">
 
       <Link
-        to={`/product/${id}`}
+        to={`/products/${id}`}
         className="product-link"
       >
 
@@ -25,8 +25,13 @@ const ProductCard = ({
           />
 
           <button
+            type="button"
             className="wishlist-btn"
             aria-label="Add to Wishlist"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
             <Heart size={18} />
           </button>

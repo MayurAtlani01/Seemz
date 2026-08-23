@@ -1,89 +1,114 @@
 import "./Women.css";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
+import { getAllProducts } from "../../services/productservices";
 
 import womenHero from "../../assets/videos/Women.mp4";
 import editorialImg from "../../assets/images/women/womenEditorial.jpg";
 import featuredImg from "../../assets/images/women/womenFeatured2.jpg";
-
-import img1 from "../../assets/images/women/women1.jpg";
-import img2 from "../../assets/images/women/women2.jpg";
-import img3 from "../../assets/images/women/women3.jpg";
-import img4 from "../../assets/images/women/women4.jpg";
-import img5 from "../../assets/images/women/women5.jpg";
-import img6 from "../../assets/images/women/women6.jpg";
-import img7 from "../../assets/images/women/women7.jpg";
-import img8 from "../../assets/images/women/women8.jpg";
-
-const products = [
-  {
-    id: 1,
-    image: img1,
-    title: "Silk Evening Dress",
-    category: "Dresses",
-    price: "₹4,999",
-  },
-  {
-    id: 2,
-    image: img2,
-    title: "Oversized Blazer",
-    category: "Outerwear",
-    price: "₹5,499",
-  },
-  {
-    id: 3,
-    image: img3,
-    title: "Satin Blouse",
-    category: "Tops",
-    price: "₹2,499",
-  },
-  {
-    id: 4,
-    image: img4,
-    title: "Pleated Trousers",
-    category: "Bottomwear",
-    price: "₹3,299",
-  },
-  {
-    id: 5,
-    image: img5,
-    title: "Luxury Handbag",
-    category: "Accessories",
-    price: "₹6,999",
-  },
-  {
-    id: 6,
-    image: img6,
-    title: "Leather Heels",
-    category: "Footwear",
-    price: "₹4,499",
-  },
-  {
-    id: 7,
-    image: img7,
-    title: "Cashmere Knit",
-    category: "Knitwear",
-    price: "₹3,799",
-  },
-  {
-    id: 8,
-    image: img8,
-    title: "Minimal Gold Necklace",
-    category: "Jewellery",
-    price: "₹2,999",
-  },
-];
+import imgFallback from "../../assets/images/women/women1.jpg";
 
 function Women() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchWomenProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllProducts();
+        if (data?.success && Array.isArray(data?.products)) {
+          const womenItems = data.products.filter(
+            (p) =>
+              !p.category ||
+              p.category.toLowerCase() === "women" ||
+              p.category.toLowerCase() === "woman" ||
+              p.category.toLowerCase() === "womens"
+          );
+          setProducts(womenItems.length > 0 ? womenItems : data.products);
+        } else if (Array.isArray(data)) {
+          setProducts(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch products for Women page:", err);
+        setError("Unable to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWomenProducts();
+  }, []);
+
+  const formatPrice = (price) => {
+    if (typeof price === "number") {
+      return `₹${price.toLocaleString("en-IN")}`;
+    }
+    return price || "";
+  };
+
+  const getProductImage = (product) => {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images[0];
+    }
+    return product.image || imgFallback;
+  };
+
+  const renderProductCards = (items, prefix = "women-prod") => {
+    if (loading) {
+      return [1, 2, 3, 4].map((n) => (
+        <div
+          key={`skeleton-${prefix}-${n}`}
+          className="product-card"
+          style={{ opacity: 0.4, minHeight: "380px" }}
+        >
+          <div
+            className="product-image"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              height: "320px",
+            }}
+          />
+          <div className="product-details" style={{ padding: "16px 0" }}>
+            <p className="product-category" style={{ color: "#555" }}>
+              Loading...
+            </p>
+          </div>
+        </div>
+      ));
+    }
+
+    if (!items || items.length === 0) {
+      return (
+        <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 0", color: "#888" }}>
+          <p>No products available at the moment.</p>
+        </div>
+      );
+    }
+
+    return items.map((product) => {
+      const productId = product._id || product.id;
+      return (
+        <ProductCard
+          key={`${prefix}-${productId}`}
+          id={productId}
+          image={getProductImage(product)}
+          title={product.name || product.title}
+          category={product.subCategory || product.category || "Women"}
+          price={formatPrice(product.price)}
+        />
+      );
+    });
+  };
+
   return (
     <main className="women-page">
-
-      {/* HERO */}
-
+      {/* ================= HERO ================= */}
       <section className="women-hero">
-
         <video
           className="women-hero-video"
           src={womenHero}
@@ -96,10 +121,7 @@ function Women() {
         <div className="women-hero-overlay"></div>
 
         <div className="women-hero-content">
-
-          <span className="women-hero-tag">
-            WOMEN COLLECTION 2026
-          </span>
+          <span className="women-hero-tag">WOMEN COLLECTION 2026</span>
 
           <h1>
             Elegance
@@ -114,76 +136,38 @@ function Women() {
           </p>
 
           <div className="women-hero-buttons">
+            <PrimaryButton text="Shop Now" to="/products" />
 
-            <PrimaryButton
-              text="Shop Now"
-              to="/products"
-            />
-
-            <Link
-              to="/about"
-              className="women-hero-link"
-            >
+            <Link to="/about" className="women-hero-link">
               Discover More →
             </Link>
-
           </div>
-
         </div>
-
       </section>
 
-      {/* NEW ARRIVALS */}
-
+      {/* ================= NEW ARRIVALS ================= */}
       <section className="women-section">
-
         <div className="women-section-heading">
-
           <div>
             <span>NEW SEASON</span>
             <h2>New Arrivals</h2>
           </div>
 
-          <Link to="women">
-            View All →
-          </Link>
-
+          <Link to="/products">View All →</Link>
         </div>
 
         <div className="women-product-grid">
-
-          {products.map((product) => (
-
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              image={product.image}
-              title={product.title}
-              category={product.category}
-              price={product.price}
-            />
-
-          ))}
-
+          {renderProductCards(products.slice(0, 8), "new")}
         </div>
-
       </section>
 
-      {/* EDITORIAL */}
-
+      {/* ================= EDITORIAL ================= */}
       <section className="women-editorial">
-
         <div className="women-editorial-image">
-
-          <img
-            src={editorialImg}
-            alt="Editorial"
-          />
-
+          <img src={editorialImg} alt="Editorial" />
         </div>
 
         <div className="women-editorial-content">
-
           <span>EDITORIAL</span>
 
           <h2>
@@ -198,62 +182,31 @@ function Women() {
             confidence, individuality and timeless style.
           </p>
 
-          <PrimaryButton
-            text="Explore Collection"
-            to="/products"
-          />
-
+          <PrimaryButton text="Explore Collection" to="/products" />
         </div>
-
       </section>
 
-      {/* TRENDING */}
-
+      {/* ================= TRENDING NOW ================= */}
       <section className="women-section">
-
         <div className="women-section-heading">
-
           <div>
             <span>TRENDING</span>
             <h2>Trending Now</h2>
           </div>
 
-          <Link to="/products">
-            View All →
-          </Link>
-
+          <Link to="/products">View All →</Link>
         </div>
 
         <div className="women-product-grid">
-
-          {[...products].reverse().map((product) => (
-
-            <ProductCard
-              key={`trend-${product.id}`}
-              id={product.id}
-              image={product.image}
-              title={product.title}
-              category={product.category}
-              price={product.price}
-            />
-
-          ))}
-
+          {renderProductCards([...products].reverse().slice(0, 8), "trend")}
         </div>
-
       </section>
 
-      {/* FEATURED */}
-
+      {/* ================= FEATURED ================= */}
       <section className="women-featured">
-
-        <img
-          src={featuredImg}
-          alt="Featured Collection"
-        />
+        <img src={featuredImg} alt="Featured Collection" />
 
         <div className="women-featured-overlay">
-
           <span>FEATURED COLLECTION</span>
 
           <h2>
@@ -269,51 +222,25 @@ function Women() {
             every wardrobe with effortless elegance.
           </p>
 
-          <PrimaryButton
-            text="Shop The Look"
-            to="/products"
-          />
-
+          <PrimaryButton text="Shop The Look" to="/products" />
         </div>
-
       </section>
 
-      {/* EDITOR'S PICKS */}
-
+      {/* ================= EDITOR'S PICKS ================= */}
       <section className="women-section">
-
         <div className="women-section-heading">
-
           <div>
             <span>EDITOR'S PICKS</span>
             <h2>Our Favorites</h2>
           </div>
 
-          <Link to="/products">
-            View All →
-          </Link>
-
+          <Link to="/products">View All →</Link>
         </div>
 
         <div className="women-product-grid">
-
-          {products.map((product) => (
-
-            <ProductCard
-              key={`editor-${product.id}`}
-              id={product.id}
-              image={product.image}
-              title={product.title}
-              category={product.category}
-              price={product.price}
-            />
-
-          ))}
-
+          {renderProductCards(products.slice(0, 8), "editor")}
         </div>
-
       </section>
-
     </main>
   );
 }

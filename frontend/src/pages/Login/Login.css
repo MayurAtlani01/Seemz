@@ -259,3 +259,62 @@
 .login-right .bottom-text a:hover {
     border-bottom-color: var(--white);
 }
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 992px) {
+    .login-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .login-left {
+        height: 280px;
+    }
+
+    .login-left .hero-content {
+        padding: 0 30px 30px;
+    }
+
+    .login-left .hero-content h1 {
+        font-size: 48px;
+    }
+
+    .login-left .hero-description {
+        display: none;
+    }
+
+    .login-right {
+        max-width: 420px;
+        padding: 40px 24px 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-left {
+        height: 200px;
+    }
+
+    .login-left .hero-content h1 {
+        font-size: 36px;
+    }
+
+    .login-right {
+        padding: 30px 16px 50px;
+    }
+
+    .login-right .logo {
+        font-size: 42px;
+        letter-spacing: 6px;
+        margin-bottom: 20px;
+    }
+
+    .login-right .subtitle {
+        margin-bottom: 28px;
+    }
+}

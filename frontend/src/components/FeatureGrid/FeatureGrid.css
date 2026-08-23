@@ -63,3 +63,36 @@
     font-size:12px;
     text-transform:uppercase;
 }
+
+@media(max-width:768px){
+    .featured-grid{
+        grid-template-columns:repeat(2, 1fr);
+        gap:16px;
+    }
+
+    .featured-card{
+        height:380px;
+    }
+
+    .featured-overlay{
+        padding:24px 18px;
+    }
+
+    .featured-overlay h3{
+        font-size:28px;
+    }
+}
+
+@media(max-width:480px){
+    .featured-grid{
+        grid-template-columns:1fr;
+    }
+
+    .featured-card{
+        height:320px;
+    }
+
+    .featured-overlay h3{
+        font-size:24px;
+    }
+}
