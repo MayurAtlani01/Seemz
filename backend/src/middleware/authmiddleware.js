@@ -17,8 +17,14 @@ const protect = async (req, res, next) => {
 
         const user = await User.findById(decoded.id);
 
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found or session expired"
+            });
+        }
+
         req.user = user;
-       
 
         next();
 

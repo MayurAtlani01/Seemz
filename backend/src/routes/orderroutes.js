@@ -4,8 +4,9 @@ const protect = require("../middleware/authmiddleware");
 
 const {
   placeOrder,
-  getMyOrders,getSingleOrder
-} = require("../controllers/orderController");
+  getMyOrders,
+  getSingleOrder,
+} = require("../controllers/ordercontroller");
 
 const router = express.Router();
 

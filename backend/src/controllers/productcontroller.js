@@ -152,7 +152,63 @@ const deleteProduct = async (req, res) => {
 
     }
 };
+const cloudinary = require("../config/cloudinary");
+
+const uploadImages = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select at least one image to upload",
+      });
+    }
+
+    const uploadPromises = req.files.map(async (file) => {
+      if (
+        process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET
+      ) {
+        return new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder: "seemz_products",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          uploadStream.end(file.buffer);
+        });
+      } else {
+        const b64 = Buffer.from(file.buffer).toString("base64");
+        return `data:${file.mimetype};base64,${b64}`;
+      }
+    });
+
+    const urls = await Promise.all(uploadPromises);
+
+    return res.status(200).json({
+      success: true,
+      message: "Images uploaded successfully",
+      urls,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to upload images",
+    });
+  }
+};
+
 module.exports = {
-    createProduct,
-    getProducts,getProductById,updateProduct,deleteProduct
+  createProduct,
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  uploadImages,
 };
