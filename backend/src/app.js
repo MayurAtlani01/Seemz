@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const cartRoute = require("./routes/cartroutes")
 const wishlistRoutes = require("./routes/wishlistroutes");
 const addressRoutes = require("./routes/addressroutes");
-const orderRoutes = require("./routes/orderRoutes");
+const orderRoutes = require("./routes/orderroutes");
 const cors = require("cors");
 
 const app=express()
