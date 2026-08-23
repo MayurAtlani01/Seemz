@@ -18,20 +18,25 @@ import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import Men from "../pages/Men/Men";
 import Women from "../pages/Women/Women";
 import NewArrivals from "../pages/NewArrivals/NewArrivals";
-
+import AdminProducts from "../pages/Admin/AdminProducts";
+import AdminRoute from "../components/AdminRoute/AdminRoute";
 
 const router = createBrowserRouter([
-  {path:"/Login",
-    element: <Login/>
+  {
+    path: "/login",
+    element: <Login />,
   },
-  {path:"/register",
-    element: <Register/>
+  {
+    path: "/register",
+    element: <Register />,
   },
-  {path:"/forgot-password",
-    element: <ForgotPassword/>
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
-    {path:"/reset-password",
-    element: <ResetPassword/>
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/",
@@ -41,11 +46,11 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-       {
+      {
         path: "men",
         element: <Men />,
       },
-       {
+      {
         path: "women",
         element: <Women />,
       },
@@ -77,13 +82,29 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
-       {
+      {
         path: "new",
         element: <NewArrivals />,
       },
       {
         path: "new-arrivals",
         element: <NewArrivals />,
+      },
+      {
+        path: "admin",
+        element: (
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/products",
+        element: (
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        ),
       },
     ],
   },

@@ -1,115 +1,167 @@
 import "./Home.css";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
+import ProductCard from "../../components/ProductCard/ProductCard";
+import { getAllProducts } from "../../services/productservices";
 
 import heroVideo from "../../assets/videos/Home2.mp4";
 import MenVideo from "../../assets/videos/Men.mp4";
 import WomenVideo from "../../assets/videos/Women.mp4";
 import Acc from "../../assets/videos/Acc.mp4";
-import product1 from "../../assets/images/product1.jpg"
-import product2 from "../../assets/images/product2.jpg"
-import product3 from "../../assets/images/product3.jpg"
-import product4 from "../../assets/images/product4.jpg"
-import Trendy from "../../assets/images/Autumn collection.jpg"
-
-const newArrivals = [
-  {
-    id: 1,
-    name: "Oversized Wool Coat",
-    price: "₹8,999",
-    image: product1,
-  },
-  {
-    id: 2,
-    name: "Classic Black Blazer",
-    price: "₹6,499",
-    image:product2,
-  },
-  {
-    id: 3,
-    name: "Minimal Shirt",
-    price: "₹2,999",
-    image:product3,
-  },
-  {
-    id: 4,
-    name: "Premium Denim",
-    price: "₹4,299",
-    image: product4,
-  },
-];
+import Trendy from "../../assets/images/Autumn collection.jpg";
+import imgFallback from "../../assets/images/product1.jpg";
 
 const categories = [
   {
     title: "Men",
     video: MenVideo,
+    link: "/men",
   },
   {
     title: "Women",
     video: WomenVideo,
+    link: "/women",
   },
   {
-    title: "Accessories",
+    title: "New Arrivals",
     video: Acc,
+    link: "/new",
   },
 ];
 
 function Home() {
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const navigate=useNavigate();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllProducts();
+        if (data?.success && Array.isArray(data?.products)) {
+          setProducts(data.products);
+        } else if (Array.isArray(data)) {
+          setProducts(data);
+        }
+      } catch (err) {
+        console.error("Failed to load products for Home:", err);
+        setError("Unable to load latest collection.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const formatPrice = (price) => {
+    if (typeof price === "number") {
+      return `₹${price.toLocaleString("en-IN")}`;
+    }
+    return price || "";
+  };
+
+  const getProductImage = (product) => {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images[0];
+    }
+    return product.image || imgFallback;
+  };
+
+  const renderProductCards = () => {
+    if (loading) {
+      return [1, 2, 3, 4].map((n) => (
+        <div
+          key={`skeleton-home-${n}`}
+          className="product-card"
+          style={{ opacity: 0.4, minHeight: "380px" }}
+        >
+          <div
+            className="product-image"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              height: "320px",
+            }}
+          />
+          <div className="product-details" style={{ padding: "16px 0" }}>
+            <p className="product-category" style={{ color: "#555" }}>
+              Loading...
+            </p>
+          </div>
+        </div>
+      ));
+    }
+
+    if (!products || products.length === 0) {
+      return (
+        <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "50px 0", color: "#888" }}>
+          <p style={{ fontSize: "16px", letterSpacing: "1px" }}>No products available in collection yet.</p>
+        </div>
+      );
+    }
+
+    return products.slice(0, 4).map((product) => {
+      const productId = product._id || product.id;
+      return (
+        <ProductCard
+          key={`home-${productId}`}
+          id={productId}
+          image={getProductImage(product)}
+          title={product.name || product.title}
+          category={product.subCategory || product.category || "Collection"}
+          price={formatPrice(product.price)}
+        />
+      );
+    });
+  };
+
   return (
     <main className="home">
 
       {/* ================= HERO ================= */}
-<section className="hero">
+      <section className="hero">
+        <video
+          className="hero-video"
+          src={heroVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
 
-  <video
-    className="hero-video"
-    src={heroVideo}
-    autoPlay
-    muted
-    loop
-    playsInline
-  />
+        <div className="hero-content">
+          <p className="hero-tag">
+            LUXURY • MINIMAL • MODERN
+          </p>
 
-  <div className="hero-content">
+          <h1>
+            Crafted
+            <br />
+            For
+            <br />
+            The Bold
+          </h1>
 
-    <p className="hero-tag">
-      LUXURY • MINIMAL • MODERN
-    </p>
+          <p className="hero-text">
+            Timeless silhouettes inspired by modern luxury.
+          </p>
 
-    <h1>
-      Crafted
-      <br />
-      For
-      <br />
-      The Bold
-    </h1>
-
-    <p className="hero-text">
-      Timeless silhouettes inspired by modern luxury.
-    </p>
-
-    <div className="hero-buttons">
-
-      <PrimaryButton
-        text="SHOP COLLECTION"
-        to="/products"
-      />
-
-    </div>
-
-  </div>
-
-</section>
+          <div className="hero-buttons">
+            <PrimaryButton
+              text="SHOP COLLECTION"
+              to="/products"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-
       <section className="section">
-
         <div className="section-heading">
-
           <div>
             <p>Latest Collection</p>
             <h2>New Arrivals</h2>
@@ -119,44 +171,14 @@ function Home() {
             View All
             <ArrowRight size={18} />
           </Link>
-
         </div>
 
         <div className="product-grid">
-
-          {newArrivals.map((item) => (
-
-            <div className="product-card" key={item.id}>
-
-              <div className="product-image">
-
-                <img
-                  src={item.image}
-                  alt={item.name}
-                />
-
-                <button>
-                  <Heart size={18} />
-                </button>
-
-              </div>
-
-              <div className="product-info">
-
-                <h3>{item.name}</h3>
-
-                <p>{item.price}</p>
-
-              </div>
-
-            </div>
-
-          ))}
-
+          {renderProductCards()}
         </div>
-
       </section>
-            {/* ================= EDITORIAL ================= */}
+
+      {/* ================= EDITORIAL ================= */}
 
       <section className="editorial">
 

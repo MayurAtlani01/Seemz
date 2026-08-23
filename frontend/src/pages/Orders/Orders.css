@@ -1,0 +1,276 @@
+/* =====================================================
+   ORDERS PAGE (SEEMZ LUXURY ARCHIVES)
+===================================================== */
+
+.orders-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: #ffffff;
+  padding: 120px 0 100px;
+}
+
+.orders-header {
+  text-align: center;
+  padding: 20px 20px 45px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.orders-eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #888888;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.orders-header h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 52px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.orders-header p {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #777777;
+}
+
+.orders-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.orders-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.order-item-card {
+  background: #0a0a0a;
+  border: 1px solid #1c1c1c;
+  padding: 28px;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
+}
+
+.order-ref {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.order-timestamp {
+  font-size: 12px;
+  color: #777777;
+}
+
+.order-status-badge {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.order-products-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 18px;
+}
+
+.order-product-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.order-product-thumb {
+  width: 60px;
+  height: 80px;
+  background: #141414;
+  border: 1px solid #222222;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.order-product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-product-meta h4 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.order-product-sub {
+  font-size: 12px;
+  color: #777777;
+  margin-bottom: 4px;
+}
+
+.order-product-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.order-total-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.order-total-info strong {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.orders-back-row {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.orders-back-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.orders-back-link:hover {
+  color: #ffffff;
+}
+
+/* ================= EMPTY & LOADING ================= */
+
+.orders-empty-box {
+  text-align: center;
+  max-width: 540px;
+  margin: 60px auto 0;
+  padding: 60px 24px;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+}
+
+.orders-icon-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #141414;
+  border: 1px solid #222222;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.orders-empty-box h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 42px;
+  margin-bottom: 16px;
+}
+
+.orders-empty-box p {
+  color: #888888;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.orders-btn-primary {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  padding: 14px 30px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.orders-btn-primary:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+.orders-loading-box {
+  text-align: center;
+  padding: 140px 20px;
+  color: #888888;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .orders-page {
+    padding: 90px 0 70px;
+  }
+
+  .orders-header h1 {
+    font-size: 36px;
+  }
+
+  .order-item-card {
+    padding: 20px 16px;
+  }
+
+  .order-card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .order-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

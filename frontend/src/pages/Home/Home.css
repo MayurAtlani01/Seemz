@@ -115,17 +115,17 @@ button{
     justify-content: center;
     width: fit-content;
 
-    padding: 12px 30px;
+    padding: 14px 34px;
 
     background: var(--white);
-    color: #cd2929;
+    color: #000000;
 
     border: 1px solid var(--white);
     border-radius: 2px;
 
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 13px;
+    letter-spacing: 2.5px;
+    font-size: 12px;
     font-weight: 500;
 
     cursor: pointer;
@@ -204,7 +204,8 @@ button{
 }
 
 .section-heading a:hover{
-    color:#C7A86B;
+    color:#FFFFFF;
+    transform:translateX(4px);
 }
 
 /* =====================================================
@@ -536,7 +537,7 @@ button{
 }
 
 .newsletter button:hover{
-    background:#C7A86B;
+    background:#e6e6e6;
 }
 
 /*====================================================

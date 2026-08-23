@@ -1,0 +1,348 @@
+/* =====================================================
+   PRODUCTS PAGE (SEEMZ LUXURY MINIMAL)
+===================================================== */
+
+.products-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: #ffffff;
+  padding-bottom: 120px;
+}
+
+/* ================= HEADER ================= */
+
+.products-header {
+  text-align: center;
+  padding: 130px 20px 50px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.products-tag {
+  color: #888888;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.products-header h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 64px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.05;
+  margin-bottom: 18px;
+}
+
+.products-subtitle {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* ================= FILTER & CONTROLS ================= */
+
+.products-filter-bar {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.category-tab-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 8px 0;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.category-tab-btn:hover {
+  color: #ffffff;
+}
+
+.category-tab-btn.active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.category-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -21px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+}
+
+.products-meta-controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.product-count-label {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #777777;
+}
+
+.sort-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sort-icon {
+  position: absolute;
+  left: 12px;
+  color: #888888;
+  pointer-events: none;
+}
+
+.sort-select {
+  background: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 16px 10px 32px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.sort-select:focus,
+.sort-select:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.sort-select option {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* ================= SUBCATEGORY PILLS ================= */
+
+.subcategory-pills {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sub-pill {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.65);
+  padding: 6px 16px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sub-pill:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sub-pill.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  font-weight: 500;
+}
+
+/* ================= PRODUCT GRID ================= */
+
+.products-grid-section {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+/* Skeletons */
+
+.skeleton-card {
+  opacity: 0.35;
+  background: #0e0e0e;
+  pointer-events: none;
+}
+
+.skeleton-image {
+  background: #181818;
+  aspect-ratio: 3/4;
+}
+
+.skeleton-details {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-line {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 50%;
+}
+
+/* Empty & Error State */
+
+.products-state-box {
+  text-align: center;
+  padding: 80px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.state-title {
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.state-desc {
+  color: #888888;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.state-btn {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  padding: 12px 28px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.state-btn:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 992px) {
+  .products-header h1 {
+    font-size: 50px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-header {
+    padding: 90px 16px 36px;
+  }
+
+  .products-header h1 {
+    font-size: 38px;
+  }
+
+  .products-filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .category-tabs {
+    gap: 14px;
+  }
+
+  .category-tab-btn {
+    font-size: 12px;
+  }
+
+  .category-tab-btn.active::after {
+    bottom: -17px;
+  }
+
+  .products-meta-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-header h1 {
+    font-size: 32px;
+  }
+
+  .products-subtitle {
+    font-size: 14px;
+  }
+
+  .category-tabs {
+    gap: 10px 16px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}

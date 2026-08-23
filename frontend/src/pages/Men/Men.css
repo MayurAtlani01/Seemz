@@ -120,13 +120,16 @@
 
 .section-heading a{
     text-decoration:none;
-    color:#111;
-    letter-spacing:2px;
-    transition:.3s;
+    color:#D9D9D9;
+    letter-spacing:2.5px;
+    font-size:12px;
+    text-transform:uppercase;
+    transition:.3s ease;
 }
 
 .section-heading a:hover{
-    transform:translateX(6px);
+    color:#ffffff;
+    transform:translateX(4px);
 }
 
 
