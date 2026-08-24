@@ -3,14 +3,13 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingBag, ArrowLeft, Check, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { getProductById } from "../../services/productservices";
-import { addToCart } from "../../services/cartservices";
 import { useAuth } from "../../context/AuthContext";
 import imgFallback from "../../assets/images/product1.jpg";
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isProductWishlisted, toggleWishlist } = useAuth();
+  const { user, isProductWishlisted, toggleWishlist, addToCart } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +20,7 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [cartError, setCartError] = useState("");
 
   const isWishlisted = isProductWishlisted(id);
 
@@ -65,13 +65,24 @@ function ProductDetails() {
       navigate("/login");
       return;
     }
+    if (Array.isArray(product?.sizes) && product.sizes.length > 0 && !selectedSize) {
+      setCartError("Please select a size first");
+      return;
+    }
     try {
       setAddingToCart(true);
-      await addToCart(product._id, quantity, selectedSize);
-      setAddedToCart(true);
-      setTimeout(() => setAddedToCart(false), 2500);
+      setCartError("");
+      const res = await addToCart(product._id, quantity, selectedSize);
+      if (res?.success) {
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2500);
+      } else {
+        setCartError(res?.message || "Could not add to cart");
+        setTimeout(() => setCartError(""), 3500);
+      }
     } catch (err) {
       console.error("Add to cart error:", err);
+      setCartError("Failed to add to cart. Please try again.");
     } finally {
       setAddingToCart(false);
     }
@@ -233,13 +244,20 @@ function ProductDetails() {
             )}
           </div>
 
+          {/* Cart Error Message */}
+          {cartError && (
+            <div className="product-cart-error" style={{ color: "#ef4444", fontSize: "13px", marginTop: "10px", letterSpacing: "0.5px" }}>
+              {cartError}
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="details-actions">
             <button
               type="button"
               className={`add-cart-btn ${addedToCart ? "added" : ""}`}
               onClick={handleAddToCart}
-              disabled={!inStock}
+              disabled={!inStock || addingToCart}
             >
               {addedToCart ? (
                 <>
@@ -247,7 +265,7 @@ function ProductDetails() {
                 </>
               ) : inStock ? (
                 <>
-                  <ShoppingBag size={18} /> Add to Bag
+                  <ShoppingBag size={18} /> {addingToCart ? "Adding..." : "Add to Bag"}
                 </>
               ) : (
                 "Sold Out"

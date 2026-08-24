@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../../services/authservices";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import "./Login.css";
 import fashionImg from "../../assets/fashion.jpg";
 
@@ -27,7 +27,7 @@ function Login() {
 
     try {
       const data = await loginUser({
-        email,
+        email: email.trim(),
         password,
       });
 
@@ -41,26 +41,28 @@ function Login() {
           navigate(from, { replace: true });
         }
       } else {
-        setErrorMessage(data?.message || "Login failed");
+        setErrorMessage(data?.message || "Invalid credentials provided.");
       }
     } catch (error) {
       console.error(error);
-      setErrorMessage(error.response?.data?.message || "Invalid email or password");
+      setErrorMessage(
+        error.response?.data?.message || "Invalid email or password. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="login-page">
-      {/* LEFT EDITORIAL */}
-      <div className="login-left">
+    <main className="login-page">
+      {/* LEFT EDITORIAL COLUMN */}
+      <section className="login-left" aria-hidden="true">
         <img
           src={fashionImg}
-          alt="Fashion"
+          alt="SEEMZ Editorial Atelier"
           className="hero-image"
         />
-        <div className="overlay"></div>
+        <div className="overlay" />
 
         <div className="hero-content">
           <h1>
@@ -70,84 +72,94 @@ function Login() {
           </h1>
 
           <div className="hero-description">
-            <div className="line"></div>
+            <div className="line" />
             <div>
               <h4>SEEMZ ATELIER</h4>
               <p>Continue your luxury journey with timeless confidence.</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* RIGHT FORM */}
-      <div className="login-right">
-        <span className="brand-tag">EST. 2026</span>
-        <h1 className="logo">SEEMZ</h1>
-        <h2>Client Sign In</h2>
-        <p className="subtitle">Enter your credentials to access your private account.</p>
+      {/* RIGHT FORM COLUMN */}
+      <section className="login-right">
+        <div className="login-form-container">
+          <span className="brand-tag">SEEMZ PRIVATE CLIENT</span>
+          <Link to="/" className="logo">SEEMZ</Link>
+          <h2 className="login-title">Sign In</h2>
+          <p className="subtitle">Enter your credentials to access your private account.</p>
 
-        {justRegistered && (
-          <div style={{ color: "#4ade80", fontSize: "12px", letterSpacing: "1px", marginBottom: "16px", padding: "12px", background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)" }}>
-            Account created successfully. Please sign in.
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          {errorMessage && (
-            <div style={{ color: "#ef4444", fontSize: "12px", letterSpacing: "1px", marginBottom: "16px", padding: "12px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
-              {errorMessage}
+          {justRegistered && (
+            <div className="auth-alert success" role="status">
+              <CheckCircle2 size={16} />
+              <span>Account created successfully. Please sign in below.</span>
             </div>
           )}
 
-          <div className="input-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="password-toggle-btn"
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
+          {errorMessage && (
+            <div className="auth-alert error" role="alert">
+              <AlertCircle size={16} />
+              <span>{errorMessage}</span>
             </div>
-          </div>
+          )}
 
-          <div className="forgot">
-            <Link to="/forgot-password">Forgot Password?</Link>
-          </div>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="input-group">
+              <label htmlFor="login-email">Email Address</label>
+              <input
+                id="login-email"
+                type="email"
+                required
+                placeholder="client@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+            </div>
 
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "AUTHENTICATING..." : "SIGN IN"}
-          </button>
+            <div className="input-group">
+              <label htmlFor="login-password">Password</label>
+              <div className="password-input-wrapper">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
 
-          <p className="bottom-text">
-            Don't have an account?{" "}
-            <Link to="/register">Create Account</Link>
-          </p>
-        </form>
-      </div>
-    </div>
+            <div className="forgot">
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </div>
+
+            <button
+              type="submit"
+              className="auth-submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "AUTHENTICATING..." : "SIGN IN"}
+            </button>
+
+            <p className="bottom-text">
+              Don't have an account?{" "}
+              <Link to="/register">Create Account</Link>
+            </p>
+          </form>
+        </div>
+      </section>
+    </main>
   );
 }
 

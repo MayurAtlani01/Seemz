@@ -15,8 +15,11 @@ const updateCart = async (productId, quantity, size = "") => {
   return response.data;
 };
 
-const removeFromCart = async (productId) => {
-  const response = await API.delete(`/cart/remove/${productId}`);
+const removeFromCart = async (productId, size = "") => {
+  const url = size
+    ? `/cart/remove/${productId}?size=${encodeURIComponent(size)}`
+    : `/cart/remove/${productId}`;
+  const response = await API.delete(url);
   return response.data;
 };
 

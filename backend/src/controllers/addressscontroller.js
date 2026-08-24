@@ -2,14 +2,30 @@ const Address = require("../models/address.model");
 
 const addAddress = async (req, res) => {
   try {
-    const address = await Address.create({
-      ...req.body,
+    const { fullName, phone, address, city, state, country, pincode } = req.body;
+
+    if (!fullName || !phone || !address || !city || !state || !country || !pincode) {
+      return res.status(400).json({
+        success: false,
+        message: "All address fields are required",
+      });
+    }
+
+    const newAddress = await Address.create({
+      fullName,
+      phone,
+      address,
+      city,
+      state,
+      country,
+      pincode,
       user: req.user._id,
     });
 
     res.status(201).json({
       success: true,
-      address,
+      message: "Address added successfully",
+      address: newAddress,
     });
   } catch (error) {
     res.status(500).json({
@@ -23,7 +39,7 @@ const getAddress = async (req, res) => {
   try {
     const addresses = await Address.find({
       user: req.user._id,
-    });
+    }).sort({ _id: -1 });
 
     res.status(200).json({
       success: true,
@@ -39,16 +55,25 @@ const getAddress = async (req, res) => {
 
 const updateAddress = async (req, res) => {
   try {
-    const address = await Address.findByIdAndUpdate(
-      req.params.id,
+    const address = await Address.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
       req.body,
       {
         new: true,
+        runValidators: true,
       }
     );
 
+    if (!address) {
+      return res.status(404).json({
+        success: false,
+        message: "Address not found or unauthorized",
+      });
+    }
+
     res.status(200).json({
       success: true,
+      message: "Address updated successfully",
       address,
     });
   } catch (error) {
@@ -61,11 +86,21 @@ const updateAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
   try {
-    await Address.findByIdAndDelete(req.params.id);
+    const address = await Address.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!address) {
+      return res.status(404).json({
+        success: false,
+        message: "Address not found or unauthorized",
+      });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Address deleted",
+      message: "Address deleted successfully",
     });
   } catch (error) {
     res.status(500).json({

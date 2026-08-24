@@ -1,9 +1,13 @@
-:root{
-
---primary:#7C3AED;
-
---bg:#0A0A0A;
-
---text:white;
-
+:root {
+  --bg: #050505;
+  --surface: #0a0a0a;
+  --surface-raised: #111111;
+  --surface-card: #0e0e0e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #ffffff;
+  --text-muted: #888888;
+  --text-dim: #666666;
+  --primary: #ffffff;
+  --gold: #C7A86B;
 }

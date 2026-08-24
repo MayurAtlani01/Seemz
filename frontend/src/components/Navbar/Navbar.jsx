@@ -1,6 +1,6 @@
 import "./Navbar.css";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Search, Heart, User, Menu, X, LogOut, Shield, ChevronDown } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, X, LogOut, Shield, Package } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -9,11 +9,12 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const { user, isAuthenticated, isAdmin, logout, wishlistItems } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout, wishlistItems, cartCount } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
+  // Scroll listener for sticky navbar background
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
@@ -29,7 +30,34 @@ const Navbar = () => {
     setDropdownOpen(false);
   }, [location]);
 
-  // Click outside to close dropdown
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [menuOpen]);
+
+  // Press Escape to close menu & dropdown
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setDropdownOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Click outside to close desktop dropdown
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -47,6 +75,10 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <header className="header">
       <div className="announcement-bar">
@@ -55,7 +87,7 @@ const Navbar = () => {
 
       <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">
-          <NavLink to="/">SEEMZ</NavLink>
+          <NavLink to="/" onClick={closeMenu}>SEEMZ</NavLink>
         </div>
 
         <ul className="nav-links">
@@ -76,6 +108,13 @@ const Navbar = () => {
             <Heart size={20} strokeWidth={1.7} />
             {wishlistItems.length > 0 && (
               <span className="navbar-badge">{wishlistItems.length}</span>
+            )}
+          </NavLink>
+
+          <NavLink to="/cart" className="nav-icon-btn cart-nav-link" aria-label="Shopping Bag">
+            <ShoppingBag size={20} strokeWidth={1.7} />
+            {cartCount > 0 && (
+              <span className="navbar-badge">{cartCount}</span>
             )}
           </NavLink>
 
@@ -112,8 +151,16 @@ const Navbar = () => {
                     <User size={15} /> My Profile
                   </NavLink>
 
+                  <NavLink to="/orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    <Package size={15} /> My Orders
+                  </NavLink>
+
                   <NavLink to="/wishlist" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                     <Heart size={15} /> My Wishlist ({wishlistItems.length})
+                  </NavLink>
+
+                  <NavLink to="/cart" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    <ShoppingBag size={15} /> Shopping Bag ({cartCount})
                   </NavLink>
 
                   {isAdmin && (
@@ -130,9 +177,11 @@ const Navbar = () => {
             )}
           </div>
 
+          {/* Hamburger Menu Toggle Button */}
           <button
+            type="button"
             className="menu-btn"
-            aria-label="Toggle navigation menu"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             onClick={() => setMenuOpen((prev) => !prev)}
           >
             {menuOpen ? (
@@ -144,55 +193,90 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Mobile Drawer Backdrop */}
       <div
         className={`mobile-menu-backdrop ${menuOpen ? "active" : ""}`}
-        onClick={() => setMenuOpen(false)}
+        onClick={closeMenu}
+        aria-hidden="true"
       />
 
-      <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
-        <div className="mobile-menu-brand">
-          <span>SEEMZ LUXURY</span>
-          {isAuthenticated && (
-            <p className="mobile-welcome-user">Welcome, {user?.name}</p>
-          )}
+      {/* Mobile Navigation Drawer */}
+      <aside
+        className={`mobile-menu ${menuOpen ? "active" : ""}`}
+        aria-label="Mobile Navigation"
+      >
+        <div className="mobile-menu-top-bar">
+          <div className="mobile-menu-brand">
+            <span>SEEMZ ATELIER</span>
+            {isAuthenticated && (
+              <p className="mobile-welcome-user">Client: {user?.name}</p>
+            )}
+          </div>
+          <button
+            type="button"
+            className="mobile-close-btn"
+            onClick={closeMenu}
+            aria-label="Close menu"
+          >
+            <X size={22} strokeWidth={1.5} />
+          </button>
         </div>
 
-        <NavLink to="/">HOME</NavLink>
-        <NavLink to="/products">ALL COLLECTIONS</NavLink>
-        <NavLink to="/men">MEN</NavLink>
-        <NavLink to="/women">WOMEN</NavLink>
-        <NavLink to="/new">NEW ARRIVALS</NavLink>
-        <NavLink to="/about">ABOUT</NavLink>
+        <nav className="mobile-nav-list">
+          <NavLink to="/" onClick={closeMenu}>HOME</NavLink>
+          <NavLink to="/men" onClick={closeMenu}>MEN</NavLink>
+          <NavLink to="/women" onClick={closeMenu}>WOMEN</NavLink>
+          <NavLink to="/new" onClick={closeMenu}>NEW ARRIVALS</NavLink>
+          <NavLink to="/products" onClick={closeMenu}>COLLECTIONS</NavLink>
+          <NavLink to="/about" onClick={closeMenu}>ABOUT</NavLink>
 
-        <div className="mobile-menu-divider" />
+          <div className="mobile-menu-divider" />
 
-        <NavLink to="/wishlist">MY WISHLIST ({wishlistItems.length})</NavLink>
-
-        {isAuthenticated ? (
-          <>
-            <NavLink to="/profile">MY ACCOUNT</NavLink>
-            {isAdmin && (
-              <NavLink to="/admin/products" className="mobile-admin-link">
-                ADMIN PRODUCT PANEL
-              </NavLink>
+          <NavLink to="/wishlist" onClick={closeMenu} className="mobile-flex-link">
+            <span>MY WISHLIST</span>
+            {wishlistItems.length > 0 && (
+              <span className="mobile-count-pill">{wishlistItems.length}</span>
             )}
-            <button
-              type="button"
-              className="mobile-logout-btn"
-              onClick={handleLogout}
-            >
-              SIGN OUT
-            </button>
-          </>
-        ) : (
-          <>
-            <NavLink to="/login" className="mobile-login-highlight">
-              SIGN IN
-            </NavLink>
-            <NavLink to="/register">CREATE ACCOUNT</NavLink>
-          </>
-        )}
-      </div>
+          </NavLink>
+
+          <NavLink to="/cart" onClick={closeMenu} className="mobile-flex-link">
+            <span>SHOPPING BAG</span>
+            {cartCount > 0 && (
+              <span className="mobile-count-pill">{cartCount}</span>
+            )}
+          </NavLink>
+
+          <div className="mobile-menu-divider" />
+
+          {isAuthenticated ? (
+            <>
+              <NavLink to="/orders" onClick={closeMenu}>MY ORDERS</NavLink>
+              <NavLink to="/profile" onClick={closeMenu}>MY ACCOUNT</NavLink>
+              {isAdmin && (
+                <NavLink to="/admin/products" onClick={closeMenu} className="mobile-admin-link">
+                  ADMIN PRODUCT PANEL
+                </NavLink>
+              )}
+              <button
+                type="button"
+                className="mobile-logout-btn"
+                onClick={handleLogout}
+              >
+                SIGN OUT
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" onClick={closeMenu} className="mobile-login-highlight">
+                SIGN IN
+              </NavLink>
+              <NavLink to="/register" onClick={closeMenu}>
+                CREATE ACCOUNT
+              </NavLink>
+            </>
+          )}
+        </nav>
+      </aside>
     </header>
   );
 };

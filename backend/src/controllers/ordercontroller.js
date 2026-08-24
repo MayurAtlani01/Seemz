@@ -1,12 +1,19 @@
 const Order = require("../models/order.model");
 const Cart = require("../models/cart.model");
 const Address = require("../models/address.model");
+const Product = require("../models/product.model");
 
 const placeOrder = async (req, res) => {
   try {
     const { addressId } = req.body;
 
- 
+    if (!addressId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a delivery address",
+      });
+    }
+
     const address = await Address.findOne({
       _id: addressId,
       user: req.user._id,
@@ -15,7 +22,7 @@ const placeOrder = async (req, res) => {
     if (!address) {
       return res.status(404).json({
         success: false,
-        message: "Address not found",
+        message: "Delivery address not found",
       });
     }
 
@@ -26,50 +33,65 @@ const placeOrder = async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Cart is empty",
+        message: "Your cart is empty",
       });
     }
 
     let totalAmount = 0;
+    const orderItems = [];
 
     for (const item of cart.items) {
       if (!item.product) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: "One or more products in your cart are no longer available",
         });
       }
 
       if (item.quantity > item.product.stock) {
         return res.status(400).json({
           success: false,
-          message: `${item.product.name} is out of stock`,
+          message: `${item.product.name} has only ${item.product.stock} items left in stock`,
         });
       }
 
       totalAmount += item.product.price * item.quantity;
+      orderItems.push({
+        product: item.product._id,
+        quantity: item.quantity,
+        size: item.size || "",
+      });
     }
 
+    // Decrement stock for all purchased items
+    for (const item of cart.items) {
+      await Product.findByIdAndUpdate(item.product._id, {
+        $inc: { stock: -item.quantity },
+      });
+    }
 
     const order = await Order.create({
       user: req.user._id,
-      items: cart.items,
+      items: orderItems,
       address: address._id,
       totalAmount,
       paymentMethod: "COD",
       orderStatus: "Pending",
     });
 
-
+    // Empty the user's cart in database
     cart.items = [];
     await cart.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("items.product")
+      .populate("address");
 
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
-      order,
+      order: populatedOrder,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -99,7 +121,6 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-
 const getSingleOrder = async (req, res) => {
   try {
     const order = await Order.findOne({
@@ -120,18 +141,13 @@ const getSingleOrder = async (req, res) => {
       success: true,
       order,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
-
-
 
 module.exports = {
   placeOrder,

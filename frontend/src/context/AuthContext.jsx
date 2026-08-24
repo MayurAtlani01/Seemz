@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getProfile } from "../services/profileservices";
 import { getWishlist, addToWishlist, removeFromWishlist } from "../services/wishlistservices";
+import {
+  getCart,
+  addToCart as apiAddToCart,
+  updateCart as apiUpdateCart,
+  removeFromCart as apiRemoveFromCart,
+  clearCart as apiClearCart,
+} from "../services/cartservices";
 import API from "../services/api";
 
 const AuthContext = createContext();
@@ -8,9 +15,15 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Wishlist state
   const [wishlistIds, setWishlistIds] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  // Cart state
+  const [cart, setCart] = useState({ items: [] });
+  const [cartLoading, setCartLoading] = useState(false);
 
   // Fetch Wishlist for authenticated user
   const fetchUserWishlist = useCallback(async () => {
@@ -37,6 +50,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Fetch Cart for authenticated user
+  const fetchUserCart = useCallback(async () => {
+    try {
+      setCartLoading(true);
+      const data = await getCart();
+      if (data?.success && data?.cart) {
+        setCart(data.cart);
+      } else {
+        setCart({ items: [] });
+      }
+    } catch {
+      setCart({ items: [] });
+    } finally {
+      setCartLoading(false);
+    }
+  }, []);
+
   // Fetch Current User
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -44,21 +74,24 @@ export const AuthProvider = ({ children }) => {
       const data = await getProfile();
       if (data?.success && data?.user) {
         setUser(data.user);
-        // User is authenticated -> load wishlist
+        // User is authenticated -> load wishlist and cart
         fetchUserWishlist();
+        fetchUserCart();
       } else {
         setUser(null);
         setWishlistIds([]);
         setWishlistItems([]);
+        setCart({ items: [] });
       }
     } catch {
       setUser(null);
       setWishlistIds([]);
       setWishlistItems([]);
+      setCart({ items: [] });
     } finally {
       setLoading(false);
     }
-  }, [fetchUserWishlist]);
+  }, [fetchUserWishlist, fetchUserCart]);
 
   useEffect(() => {
     fetchCurrentUser();
@@ -67,6 +100,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     fetchUserWishlist();
+    fetchUserCart();
   };
 
   const logout = async () => {
@@ -78,6 +112,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setWishlistIds([]);
       setWishlistItems([]);
+      setCart({ items: [] });
     }
   };
 
@@ -130,6 +165,76 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Cart operations
+  const addToCart = async (productId, quantity = 1, size = "") => {
+    if (!user) {
+      return { success: false, requireLogin: true };
+    }
+    try {
+      const res = await apiAddToCart(productId, quantity, size);
+      if (res?.success && res?.cart) {
+        setCart(res.cart);
+        return { success: true, message: res.message, cart: res.cart };
+      }
+      return { success: false, message: res?.message || "Failed to add to cart" };
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "Failed to add to cart";
+      return { success: false, message: msg };
+    }
+  };
+
+  const updateCartQty = async (productId, quantity, size = "") => {
+    if (!user) {
+      return { success: false, requireLogin: true };
+    }
+    try {
+      const res = await apiUpdateCart(productId, quantity, size);
+      if (res?.success && res?.cart) {
+        setCart(res.cart);
+        return { success: true, cart: res.cart };
+      }
+      return { success: false, message: res?.message || "Failed to update cart" };
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "Failed to update cart";
+      return { success: false, message: msg };
+    }
+  };
+
+  const removeItemFromCart = async (productId, size = "") => {
+    if (!user) {
+      return { success: false, requireLogin: true };
+    }
+    try {
+      const res = await apiRemoveFromCart(productId, size);
+      if (res?.success && res?.cart) {
+        setCart(res.cart);
+        return { success: true, cart: res.cart };
+      }
+      return { success: false, message: res?.message || "Failed to remove item" };
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || "Failed to remove item";
+      return { success: false, message: msg };
+    }
+  };
+
+  const clearUserCart = async () => {
+    if (!user) return { success: false };
+    try {
+      const res = await apiClearCart();
+      if (res?.success) {
+        setCart({ items: [] });
+        return { success: true };
+      }
+      return { success: false };
+    } catch (err) {
+      console.error("Clear cart error:", err);
+      return { success: false };
+    }
+  };
+
+  const cartItems = Array.isArray(cart?.items) ? cart.items : [];
+  const cartCount = cartItems.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
+
   const isAdmin = user?.role === "admin";
   const isAuthenticated = !!user;
 
@@ -143,12 +248,23 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         refreshUser: fetchCurrentUser,
+        // Wishlist
         wishlistIds,
         wishlistItems,
         wishlistLoading,
         fetchWishlist: fetchUserWishlist,
         isProductWishlisted,
         toggleWishlist,
+        // Cart
+        cart,
+        cartItems,
+        cartCount,
+        cartLoading,
+        fetchCart: fetchUserCart,
+        addToCart,
+        updateCartQty,
+        removeFromCart: removeItemFromCart,
+        clearCart: clearUserCart,
       }}
     >
       {children}
@@ -157,3 +273,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+

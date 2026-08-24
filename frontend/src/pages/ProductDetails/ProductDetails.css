@@ -518,8 +518,27 @@
 }
 
 @media (max-width: 480px) {
+  .product-details-page {
+    padding: 75px 0 50px;
+  }
+
+  .details-container {
+    width: 94%;
+    gap: 30px;
+  }
+
+  .details-breadcrumb {
+    width: 94%;
+    margin-bottom: 24px;
+    font-size: 10.5px;
+  }
+
+  .breadcrumb-current {
+    max-width: 160px;
+  }
+
   .product-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .details-actions {
@@ -533,5 +552,19 @@
 
   .add-cart-btn {
     height: 48px;
+  }
+}
+
+@media (max-width: 375px) {
+  .product-title {
+    font-size: 24px;
+  }
+
+  .price-val {
+    font-size: 20px;
+  }
+
+  .breadcrumb-current {
+    max-width: 130px;
   }
 }

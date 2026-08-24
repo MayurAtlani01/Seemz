@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../../services/authservices";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import fashionImage from "../../assets/fashion.jpg";
 import "./Register.css";
 
@@ -19,6 +19,17 @@ function Register() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErrorMessage("");
+
+    if (!name.trim() || !email.trim() || !password) {
+      setErrorMessage("Please fill in all required fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -34,7 +45,7 @@ function Register() {
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message ||
-          "Registration failed. Please check your credentials."
+          "Registration failed. Please check your details and try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -43,13 +54,13 @@ function Register() {
 
   return (
     <main className="register-page">
-      {/* LEFT PANEL */}
-      <section className="image-section">
+      {/* LEFT EDITORIAL COLUMN */}
+      <section className="image-section" aria-hidden="true">
         <img
           src={fashionImage}
-          alt="Luxury Fashion"
+          alt="SEEMZ Essence of Luxury"
         />
-        <div className="image-overlay"></div>
+        <div className="image-overlay" />
 
         <div className="hero-content">
           <h2 className="hero-title">
@@ -58,7 +69,7 @@ function Register() {
           </h2>
 
           <div className="hero-footer">
-            <div className="line"></div>
+            <div className="line" />
             <div>
               <h3>SEEMZ ATELIER</h3>
               <p>Discover pieces crafted for the modern individual.</p>
@@ -67,28 +78,29 @@ function Register() {
         </div>
       </section>
 
-      {/* RIGHT PANEL */}
+      {/* RIGHT FORM COLUMN */}
       <section className="form-section">
         <div className="form-container">
-          <p className="brand-tag">SEEMZ STUDIO</p>
-          <h1 className="logo">SEEMZ</h1>
+          <span className="brand-tag">SEEMZ CLIENTELE</span>
+          <Link to="/" className="logo">SEEMZ</Link>
           <h2 className="title">Create Account</h2>
           <p className="subtitle">Join our private clientele for bespoke releases and collections.</p>
 
-          <form onSubmit={handleSubmit} noValidate>
-            {errorMessage && (
-              <p className="form-error" role="alert">
-                {errorMessage}
-              </p>
-            )}
+          {errorMessage && (
+            <div className="auth-alert error" role="alert">
+              <AlertCircle size={16} />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
+          <form onSubmit={handleSubmit} noValidate>
             <div className="input-group">
-              <label htmlFor="name">FULL NAME</label>
+              <label htmlFor="reg-name">Full Name</label>
               <input
-                id="name"
+                id="reg-name"
                 type="text"
                 autoComplete="name"
-                placeholder="e.g. Alexander Vance"
+                placeholder="Alexander Vance"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -96,12 +108,12 @@ function Register() {
             </div>
 
             <div className="input-group">
-              <label htmlFor="email">EMAIL ADDRESS</label>
+              <label htmlFor="reg-email">Email Address</label>
               <input
-                id="email"
+                id="reg-email"
                 type="email"
                 autoComplete="email"
-                placeholder="e.g. client@domain.com"
+                placeholder="client@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -109,16 +121,16 @@ function Register() {
             </div>
 
             <div className="input-group">
-              <label htmlFor="password">PASSWORD</label>
+              <label htmlFor="reg-password">Password</label>
               <div className="password-input-wrapper">
                 <input
-                  id="password"
+                  id="reg-password"
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  placeholder="Min. 8 characters"
+                  placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  minLength={8}
+                  minLength={6}
                   required
                 />
                 <button
@@ -127,13 +139,14 @@ function Register() {
                   onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
             <button
               type="submit"
+              className="auth-submit-btn"
               disabled={isSubmitting}
             >
               {isSubmitting

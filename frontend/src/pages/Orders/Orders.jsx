@@ -1,7 +1,7 @@
 import "./Orders.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Package, ArrowLeft, ArrowRight, Clock, CheckCircle, Truck } from "lucide-react";
+import { Package, ArrowLeft, ArrowRight, MapPin, CreditCard, Clock, ShieldCheck } from "lucide-react";
 import { getMyOrders } from "../../services/orderservices";
 import { useAuth } from "../../context/AuthContext";
 import imgFallback from "../../assets/images/product1.jpg";
@@ -83,65 +83,125 @@ function Orders() {
 
       <div className="orders-container">
         <div className="orders-list-wrapper">
-          {orders.map((ord) => (
-            <div key={ord._id} className="order-item-card">
-              <div className="order-card-header">
-                <div>
-                  <span className="order-ref">ORDER #{ord._id.slice(-8).toUpperCase()}</span>
-                  <span className="order-timestamp">
-                    Placed on {new Date(ord.createdAt).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
+          {orders.map((ord) => {
+            const addr = ord.address;
+
+            return (
+              <div key={ord._id} className="order-item-card">
+                {/* Order Top Bar */}
+                <div className="order-card-header">
+                  <div className="order-header-meta">
+                    <span className="order-ref">ORDER #{ord._id.slice(-8).toUpperCase()}</span>
+                    <span className="order-timestamp">
+                      Placed on {new Date(ord.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+
+                  <span className={`order-status-badge ${ord.orderStatus?.toLowerCase()}`}>
+                    {ord.orderStatus || "Pending"}
                   </span>
                 </div>
 
-                <span className={`order-status-badge ${ord.orderStatus?.toLowerCase()}`}>
-                  {ord.orderStatus || "Confirmed"}
-                </span>
-              </div>
+                {/* Ordered Products List */}
+                <div className="order-products-grid">
+                  {ord.items?.map((item, idx) => {
+                    const p = item.product;
+                    const img =
+                      Array.isArray(p?.images) && p?.images.length > 0
+                        ? p.images[0]
+                        : p?.image || imgFallback;
 
-              <div className="order-products-grid">
-                {ord.items?.map((item, idx) => {
-                  const p = item.product;
-                  const img =
-                    Array.isArray(p?.images) && p?.images.length > 0
-                      ? p.images[0]
-                      : p?.image || imgFallback;
+                    return (
+                      <div key={idx} className="order-product-row">
+                        <div className="order-product-thumb">
+                          <img src={img} alt={p?.name || "Garment"} />
+                        </div>
 
-                  return (
-                    <div key={idx} className="order-product-row">
-                      <div className="order-product-thumb">
-                        <img src={img} alt={p?.name || "Garment"} />
+                        <div className="order-product-meta">
+                          <div className="order-product-title-row">
+                            <h4>{p?.name || "SEEMZ Luxury Garment"}</h4>
+                            <span className="order-product-price">
+                              {formatPrice((p?.price || 0) * item.quantity)}
+                            </span>
+                          </div>
+
+                          <div className="order-product-sub-row">
+                            <span className="order-qty-tag">Quantity: <strong>{item.quantity}</strong></span>
+                            {item.size && (
+                              <span className="order-size-tag">
+                                Size: <strong>{item.size}</strong>
+                              </span>
+                            )}
+                            {p?.brand && <span className="order-brand-tag">• {p.brand}</span>}
+                            {p?.price && (
+                              <span className="order-unit-price-tag">
+                                ({formatPrice(p.price)} each)
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
 
-                      <div className="order-product-meta">
-                        <h4>{p?.name || "SEEMZ Luxury Garment"}</h4>
-                        <p className="order-product-sub">
-                          Qty: {item.quantity} {p?.brand && `• ${p.brand}`}
-                        </p>
-                        <span className="order-product-price">
-                          {formatPrice(p?.price * item.quantity)}
-                        </span>
+                {/* Delivery Address & Summary Grid */}
+                <div className="order-card-middle">
+                  {addr && (
+                    <div className="order-address-box">
+                      <div className="order-section-title">
+                        <MapPin size={14} />
+                        <span>Delivery Destination</span>
                       </div>
+                      <p className="order-addr-name">{addr.fullName}</p>
+                      <p className="order-addr-line">{addr.address}</p>
+                      <p className="order-addr-city">
+                        {addr.city}, {addr.state} - {addr.pincode}
+                      </p>
+                      <p className="order-addr-country">{addr.country}</p>
+                      <p className="order-addr-phone">Phone: {addr.phone}</p>
                     </div>
-                  );
-                })}
-              </div>
+                  )}
 
-              <div className="order-card-footer">
-                <div className="order-payment-info">
-                  <span>Payment: <strong>{ord.paymentMethod || "COD"}</strong></span>
+                  <div className="order-summary-box">
+                    <div className="order-section-title">
+                      <CreditCard size={14} />
+                      <span>Payment & Fulfillment</span>
+                    </div>
+                    <div className="order-detail-row">
+                      <span>Payment Mode:</span>
+                      <strong>{ord.paymentMethod || "Cash on Delivery (COD)"}</strong>
+                    </div>
+                    <div className="order-detail-row">
+                      <span>Fulfillment Status:</span>
+                      <strong>{ord.orderStatus || "Processing"}</strong>
+                    </div>
+                    <div className="order-detail-row">
+                      <span>Express Shipping:</span>
+                      <strong>Complimentary</strong>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="order-total-info">
-                  <span>Total Amount:</span>
-                  <strong>{formatPrice(ord.totalAmount)}</strong>
+                {/* Card Footer with Total */}
+                <div className="order-card-footer">
+                  <div className="order-guarantee-note">
+                    <ShieldCheck size={14} />
+                    <span>SEEMZ Authenticity Guaranteed</span>
+                  </div>
+
+                  <div className="order-total-info">
+                    <span>Grand Total:</span>
+                    <strong>{formatPrice(ord.totalAmount)}</strong>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="orders-back-row">
             <Link to="/products" className="orders-back-link">

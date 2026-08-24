@@ -726,41 +726,96 @@ button{
 @media(max-width:480px){
 
 .hero-content h1{
-    font-size:40px;
+    font-size:clamp(32px, 9vw, 40px);
+    line-height:1.05;
+    word-break:break-word;
 }
 
 .hero-tag{
-    letter-spacing:3px;
+    letter-spacing:2.5px;
     font-size:9px;
+    margin-bottom:12px;
+}
+
+.hero-text{
+    font-size:14px;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.section{
+    padding:60px 4%;
+    width:94%;
+}
+
+.section-heading{
+    margin-bottom:28px;
 }
 
 .section-heading h2{
-    font-size:30px;
+    font-size:28px;
 }
 
 .section-heading p{
     font-size:10px;
-    letter-spacing:3px;
+    letter-spacing:2.5px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(2, 1fr);
+    gap:12px;
 }
 
 .category-card{
-    height:300px;
+    height:280px;
 }
 
 .category-overlay h3{
-    font-size:32px;
+    font-size:28px;
+}
+
+.editorial-left{
+    height:280px;
+}
+
+.editorial-right{
+    padding:36px 18px;
 }
 
 .editorial-right h2{
-    font-size:34px;
+    font-size:30px;
+    margin-bottom:14px;
+}
+
+.brand-story{
+    padding:60px 4%;
 }
 
 .brand-story h2{
-    font-size:32px;
+    font-size:28px;
+}
+
+.newsletter{
+    padding:60px 4%;
 }
 
 .newsletter h2{
+    font-size:28px;
+}
+
+}
+
+@media(max-width:375px){
+.hero-content h1{
     font-size:30px;
 }
 
+.section-heading h2{
+    font-size:24px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px;
+}
 }
