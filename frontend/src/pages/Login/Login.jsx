@@ -33,7 +33,7 @@ function Login() {
 
       if (data?.success) {
         if (data.user) {
-          login(data.user);
+          login(data.user, data.token);
         }
         if (data.user?.role === "admin") {
           navigate("/admin/products");

@@ -219,7 +219,7 @@
     transition:transform .8s ease;
 }
 
-.women-featured :hover img{
+.women-featured:hover img{
     transform:scale(1.05);
 }
 
@@ -269,18 +269,15 @@
     animation:womenFadeUp .8s ease;
 }
 
-@keyframes womenFadeUp{
-
-    from{
-        opacity:0;
-        transform:translateY(45px);
+@keyframes womenFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(45px);
     }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-
 }
 
 

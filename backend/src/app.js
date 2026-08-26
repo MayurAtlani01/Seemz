@@ -9,22 +9,36 @@ const addressRoutes = require("./routes/addressroutes");
 const orderRoutes = require("./routes/orderroutes");
 const cors = require("cors");
 
-const app=express()
+const app = express();
 
-
+app.set("trust proxy", 1);
 app.use(cookieParser());
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
-  process.env.CLIENT_URL,
+  "https://seemz.vercel.app",
+  process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, "") : null,
 ].filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      const normalized = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(normalized) ||
+        /\.vercel\.app$/.test(new URL(origin).hostname)
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With", "Accept"],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 app.use(express.json({ limit: "50mb" }));

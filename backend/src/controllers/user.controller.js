@@ -98,16 +98,24 @@ const loginUser = async (req, res) => {
     }
 );
 
-res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 60 * 1000
-});
+        const isProduction =
+            process.env.NODE_ENV === "production" ||
+            req.secure ||
+            req.headers["x-forwarded-proto"] === "https" ||
+            (process.env.CLIENT_URL && process.env.CLIENT_URL.includes("vercel.app"));
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: isProduction ? true : false,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        });
         
         res.status(200).json({
             success: true,
             message: "Login Successful",
+            token,
             user: {
                 _id: user._id,
                 name: user.name,
@@ -129,12 +137,18 @@ res.cookie("token", token, {
 // LOG OUT CONTROLLER
 const logoutUser = async (req, res) => {
     try {
+        const isProduction =
+            process.env.NODE_ENV === "production" ||
+            req.secure ||
+            req.headers["x-forwarded-proto"] === "https" ||
+            (process.env.CLIENT_URL && process.env.CLIENT_URL.includes("vercel.app"));
 
         res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-});
+            httpOnly: true,
+            secure: isProduction ? true : false,
+            sameSite: isProduction ? "none" : "lax",
+            path: "/"
+        });
 
         res.status(200).json({
             success: true,

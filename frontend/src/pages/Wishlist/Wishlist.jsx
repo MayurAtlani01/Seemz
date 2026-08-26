@@ -1,9 +1,8 @@
 import "./Wishlist.css";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
+import { Heart, ShoppingBag, Trash2, ArrowRight, Check } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { addToCart } from "../../services/cartservices";
 import imgFallback from "../../assets/images/product1.jpg";
 
 function Wishlist() {
@@ -15,7 +14,11 @@ function Wishlist() {
     wishlistLoading,
     fetchWishlist,
     toggleWishlist,
+    addToCart,
   } = useAuth();
+
+  const [addingId, setAddingId] = useState(null);
+  const [addedMap, setAddedMap] = useState({});
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -31,11 +34,20 @@ function Wishlist() {
   };
 
   const handleAddToCart = async (product) => {
+    const prodId = product._id || product.id;
     try {
-      await addToCart(product._id || product.id, 1, product.sizes?.[0] || "");
-      alert("Added to bag!");
+      setAddingId(prodId);
+      const res = await addToCart(prodId, 1, product.sizes?.[0] || "");
+      if (res?.success) {
+        setAddedMap((prev) => ({ ...prev, [prodId]: true }));
+        setTimeout(() => {
+          setAddedMap((prev) => ({ ...prev, [prodId]: false }));
+        }, 2000);
+      }
     } catch (err) {
       console.error("Cart error:", err);
+    } finally {
+      setAddingId(null);
     }
   };
 
@@ -166,10 +178,23 @@ function Wishlist() {
                 <div className="wishlist-card-actions">
                   <button
                     type="button"
-                    className="wishlist-add-bag-btn"
+                    className={`wishlist-add-bag-btn ${addedMap[prodId] ? "added" : ""}`}
                     onClick={() => handleAddToCart(product)}
+                    disabled={addingId === prodId}
                   >
-                    <ShoppingBag size={15} /> Add to Bag
+                    {addedMap[prodId] ? (
+                      <>
+                        <Check size={14} /> Added
+                      </>
+                    ) : addingId === prodId ? (
+                      <>
+                        <ShoppingBag size={14} /> Adding...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={14} /> Add to Bag
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

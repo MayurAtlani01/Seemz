@@ -8,7 +8,7 @@ import {
   removeFromCart as apiRemoveFromCart,
   clearCart as apiClearCart,
 } from "../services/cartservices";
-import API from "../services/api";
+import API, { setAuthToken } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -79,12 +79,14 @@ export const AuthProvider = ({ children }) => {
         fetchUserCart();
       } else {
         setUser(null);
+        setAuthToken(null);
         setWishlistIds([]);
         setWishlistItems([]);
         setCart({ items: [] });
       }
     } catch {
       setUser(null);
+      setAuthToken(null);
       setWishlistIds([]);
       setWishlistItems([]);
       setCart({ items: [] });
@@ -97,7 +99,10 @@ export const AuthProvider = ({ children }) => {
     fetchCurrentUser();
   }, [fetchCurrentUser]);
 
-  const login = (userData) => {
+  const login = (userData, token = null) => {
+    if (token) {
+      setAuthToken(token);
+    }
     setUser(userData);
     fetchUserWishlist();
     fetchUserCart();
@@ -109,6 +114,7 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {
       console.error("Logout error", e);
     } finally {
+      setAuthToken(null);
       setUser(null);
       setWishlistIds([]);
       setWishlistItems([]);

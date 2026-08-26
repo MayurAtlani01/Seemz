@@ -151,12 +151,12 @@
 
 .wishlist-add-bag-btn {
   width: 100%;
-  height: 42px;
+  height: 44px;
   background: #ffffff;
   color: #000000;
   border: 1px solid #ffffff;
   font-size: 11px;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   font-weight: 600;
   display: inline-flex;
@@ -164,12 +164,25 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.25s ease;
 }
 
-.wishlist-add-bag-btn:hover {
+.wishlist-add-bag-btn:hover:not(:disabled) {
   background: transparent;
   color: #ffffff;
+}
+
+.wishlist-add-bag-btn.added {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.wishlist-add-bag-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
 }
 
 /* ================= AUTH & EMPTY STATES ================= */
@@ -305,6 +318,10 @@
 }
 
 @media (max-width: 480px) {
+  .wishlist-page {
+    padding: 75px 0 50px;
+  }
+
   .wishlist-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -324,8 +341,21 @@
   }
 
   .wishlist-add-bag-btn {
-    height: 36px;
+    height: 40px;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
+    gap: 6px;
+    padding: 0 6px;
+  }
+}
+
+@media (max-width: 375px) {
+  .wishlist-card-title {
+    font-size: 12px;
+  }
+
+  .wishlist-add-bag-btn {
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
   }
 }
