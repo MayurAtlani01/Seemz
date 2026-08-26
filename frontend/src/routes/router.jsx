@@ -20,8 +20,13 @@ import Women from "../pages/Women/Women";
 import NewArrivals from "../pages/NewArrivals/NewArrivals";
 import AdminProducts from "../pages/Admin/AdminProducts";
 import AdminRoute from "../components/AdminRoute/AdminRoute";
+import ChangingRoom from "../pages/ChangingRoom/ChangingRoom";
 
 const router = createBrowserRouter([
+  {
+    path: "/changing-room",
+    element: <ChangingRoom />,
+  },
   {
     path: "/login",
     element: <Login />,

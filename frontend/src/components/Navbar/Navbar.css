@@ -607,3 +607,46 @@ body{
         padding: 20px 16px 30px;
     }
 }
+
+/* ================= CHANGING ROOM EXCLUSIVE BADGE ================= */
+.nav-changing-room-link {
+    position: relative;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #ffffff !important;
+}
+
+.nav-changing-room-link .exclusive-badge,
+.mobile-changing-room-link .exclusive-badge {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 2px 7px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: shimmerBadge 2.5s ease-in-out infinite alternate;
+    text-transform: uppercase;
+}
+
+.mobile-changing-room-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+@keyframes shimmerBadge {
+    0% {
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+    100% {
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+    }
+}

@@ -96,6 +96,12 @@ const Navbar = () => {
           <li><NavLink to="/men">MEN</NavLink></li>
           <li><NavLink to="/women">WOMEN</NavLink></li>
           <li><NavLink to="/new">NEW ARRIVALS</NavLink></li>
+          <li>
+            <NavLink to="/changing-room" className="nav-changing-room-link">
+              <span>CHANGING ROOM</span>
+              <span className="exclusive-badge">EXCLUSIVE</span>
+            </NavLink>
+          </li>
           <li><NavLink to="/about">ABOUT</NavLink></li>
         </ul>
 
@@ -227,6 +233,10 @@ const Navbar = () => {
           <NavLink to="/men" onClick={closeMenu}>MEN</NavLink>
           <NavLink to="/women" onClick={closeMenu}>WOMEN</NavLink>
           <NavLink to="/new" onClick={closeMenu}>NEW ARRIVALS</NavLink>
+          <NavLink to="/changing-room" onClick={closeMenu} className="mobile-changing-room-link">
+            <span>CHANGING ROOM</span>
+            <span className="exclusive-badge">EXCLUSIVE</span>
+          </NavLink>
           <NavLink to="/products" onClick={closeMenu}>COLLECTIONS</NavLink>
           <NavLink to="/about" onClick={closeMenu}>ABOUT</NavLink>
 

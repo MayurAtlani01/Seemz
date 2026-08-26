@@ -257,6 +257,26 @@ function Home() {
 
       </section>
 
+      {/* ================= 3D CHANGING ROOM ATELIER BANNER ================= */}
+      <section className="home-changing-room-banner">
+        <div className="changing-room-banner-backdrop" />
+        <div className="changing-room-banner-content">
+          <div className="banner-exclusive-pill">
+            <span className="pill-dot" />
+            <span>EXCLUSIVE 3D ATELIER</span>
+          </div>
+          <h2>THE 3D CHANGING ROOM</h2>
+          <p>
+            Enter our independent digital fashion laboratory. Shape personalized 3D proportions,
+            test procedural material physics, and visualize bespoke fits.
+          </p>
+          <Link to="/changing-room" className="changing-room-cta-btn">
+            <span>ENTER 3D FITTING ROOM</span>
+            <span className="cta-arrow">→</span>
+          </Link>
+        </div>
+      </section>
+
       {/* ================= BRAND STORY ================= */}
 
       <section className="brand-story">
