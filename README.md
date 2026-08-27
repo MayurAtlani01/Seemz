@@ -1,195 +1,222 @@
-# SEEMZ
+# SEEMZ — Luxury Fashion E-Commerce
 
-> A modern full-stack luxury fashion e-commerce platform built with the MERN Stack.
+SEEMZ is a full-stack luxury fashion e-commerce platform built with the MERN stack.
 
----
+Designed around a monochrome black-and-white aesthetic, SEEMZ combines a premium editorial interface with a complete e-commerce experience including authentication, product management, wishlist, cart, addresses, orders, profiles, and an admin panel.
 
-## Overview
-
-SEEMZ is a full-stack luxury fashion e-commerce application inspired by premium brands such as Louis Vuitton, Saint Laurent, COS, and Zara.
-
-The project is built to simulate a production-level e-commerce platform while following clean architecture, scalable code practices, and modern UI/UX principles. It serves as both a learning project and a portfolio-ready application demonstrating full-stack MERN development.
+The project is fully deployed with a React/Vite frontend, Node/Express backend, MongoDB Atlas database, and Cloudinary image storage.
 
 ---
 
-## Tech Stack
+## ✦ Live Project
+
+**Frontend:**  
+https://seemz.vercel.app
+
+**Backend:**  
+https://seemz.onrender.com
+
+---
+
+## ✦ Features
+
+### Fashion Experience
+
+- Luxury black-and-white visual identity
+- Editorial-inspired UI
+- Men & Women collections
+- New Arrivals
+- Product catalogue
+- Product detail pages
+- Responsive product cards
+- Mobile-first responsive experience
+
+### Authentication
+
+- User registration
+- User login
+- JWT authentication
+- HTTP-only authentication cookies
+- Protected routes
+- Admin authentication
+- Forgot password
+- Reset password
+- Logout
+
+### Shopping
+
+- Add products to cart
+- Update cart quantities
+- Remove products from cart
+- Wishlist
+- Add wishlist products to cart
+- Product size selection
+- Stock handling
+- Address management
+- Checkout
+- Order placement
+- Order history
+- User profile
+
+### Admin
+
+- Admin dashboard
+- Product management
+- Create products
+- Update products
+- Delete products
+- Product categories
+- Product sizes
+- Stock management
+- Product image uploads
+
+### Media
+
+Product images are uploaded to Cloudinary and stored as hosted URLs in MongoDB.
+
+---
+
+## ✦ Tech Stack
 
 ### Frontend
 
 - React
+- Vite
 - React Router
 - Axios
-- CSS3
+- CSS
 
 ### Backend
 
 - Node.js
 - Express.js
-- MongoDB
+- JWT
+- HTTP cookies
 - Mongoose
-- JWT Authentication
-- bcrypt
-- Nodemailer
+
+### Database
+
+- MongoDB
+- MongoDB Atlas
+
+### Image Storage
+
+- Cloudinary
+
+### Deployment
+
+- Vercel — Frontend
+- Render — Backend
+- MongoDB Atlas — Database
 
 ---
 
-## Features
-
-### Authentication
-
-- User Registration
-- User Login & Logout
-- JWT Authentication
-- Protected Routes
-- Forgot Password
-- Reset Password
-
-### User
-
-- User Profile
-- Address Management
-- Wishlist
-- Shopping Cart
-
-### Products
-
-- Product Listing
-- Product Details
-- Product Categories
-- Product Variants (Sizes)
-- Product Management (Admin)
-
-### Orders
-
-- Cash on Delivery Checkout
-- Order Placement
-- Order History
-
-### Admin
-
-- Protected Admin Routes
-- Product Management
-- Order Management
-
----
-
-## Current Development Status
-
-### Backend
-
-✅ Completed
-
-- Authentication
-- User Profile
-- Product Management
-- Cart
-- Wishlist
-- Address Management
-- Order Management (Cash on Delivery)
-- Admin Protection
-
----
-
-### Frontend
-
-Currently under active development.
-
-Completed:
-
-- Project Setup
-- Routing
-- Main Layout
-- Responsive Navbar
-- Footer
-- Luxury Home Page
-- Men Collection Page
-- Authentication Pages
-- Editorial UI Components
-- Premium Black & White Theme
-
-Remaining:
-
-- Women Collection
-- Product Details
-- Cart UI Integration
-- Wishlist UI Integration
-- Profile Dashboard
-- Checkout Flow
-- API Integration
-- Responsive Polish
-
----
-
-## Project Structure
+## ✦ Architecture
 
 ```text
-SEEMZ
+                    SEEMZ
+                      │
+              ┌───────┴───────┐
+              │               │
+          Frontend          Backend
+          Vercel            Render
+              │               │
+              └───────┬───────┘
+                      │
+                 MongoDB Atlas
+                      │
+                  Product Data
 
-├── Backend
-│   ├── Config
-│   ├── Controllers
-│   ├── Middleware
-│   ├── Models
-│   ├── Routes
-│   └── Utils
+Product Images:
+
+Admin Panel
+     ↓
+Render API
+     ↓
+Cloudinary
+     ↓
+Secure Image URL
+     ↓
+MongoDB Atlas
+
+
+SEEMZ/
 │
-└── Frontend
-    ├── Assets
-    ├── Components
-    ├── Context
-    ├── Hooks
-    ├── Layouts
-    ├── Pages
-    ├── Services
-    └── Utils
-```
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── context/
+│   │   ├── services/
+│   │   └── ...
+│   │
+│   ├── public/
+│   └── ...
+│
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   └── ...
+│   │
+│   └── ...
+│
+└── README.md
+
+
+# ✦ Routes
+
+## Main Routes
+
+| Route | Description | Access |
+|---|---|---|
+| `/` | Home page | Public |
+| `/men` | Men's collection | Public |
+| `/women` | Women's collection | Public |
+| `/new` | New Arrivals | Public |
+| `/about` | About SEEMZ | Public |
+| `/products` | Product catalogue | Public |
+| `/products/:id` | Product details | Public |
+
+## Authentication Routes
+
+| Route | Description | Access |
+|---|---|---|
+| `/login` | User login | Public |
+| `/register` | User registration | Public |
+| `/forgot-password` | Request password reset | Public |
+| `/reset-password` | Reset password | Public |
+
+## Commerce Routes
+
+| Route | Description | Access |
+|---|---|---|
+| `/cart` | Shopping bag | Authenticated |
+| `/checkout` | Checkout | Authenticated |
+| `/orders` | Order history | Authenticated |
+| `/profile` | User profile | Authenticated |
+| `/wishlist` | Wishlist | Authenticated |
+
+## Admin Routes
+
+| Route | Description | Access |
+|---|---|---|
+| `/admin` | Admin dashboard | Admin |
+| `/admin/products` | Product management | Admin |
 
 ---
+## ✦ Screenshots
 
-## Upcoming Features
+### Home
+![SEEMZ Home](./screenshots/home.png)
 
-- Product Search
-- Advanced Filters
-- Payment Gateway Integration
-- Product Reviews & Ratings
-- Order Tracking
-- Admin Dashboard
-- Image Upload Optimization
-- Deployment
-- Performance Optimization
+### Collections
+![SEEMZ Collections](./screenshots/collections.png)
 
----
+### Product Details
+![SEEMZ Product Details](./screenshots/product-details.png)
 
-## Screenshots
-
-> Screenshots will be added as development progresses.
-
----
-
-## Learning Goals
-
-- Production-level MERN Architecture
-- REST API Design
-- Authentication & Authorization
-- State Management
-- Component-Based UI Design
-- Secure Backend Development
-- Git & GitHub Workflow
-- Responsive Web Design
-
----
-
-## Author
-
-**Mayuresh Atlani**
-
-B.E. Artificial Intelligence & Data Science
-
-Thadomal Shahani Engineering College (TSEC)
-
-GitHub:
-https://github.com/MayurAtlani01
-
----
-
-⭐ If you like this project, consider giving it a star. 
+### Profile & Account
+![SEEMZ Profile](./screenshots/profile.png)
