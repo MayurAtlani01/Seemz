@@ -1,72 +1,42 @@
-import React, { useState } from "react";
-import { BODY_PRESETS, DEFAULT_BODY_MEN, DEFAULT_BODY_WOMEN } from "../../services/changingRoom/bodyEngine";
-import { User, Sparkles, Check, RotateCcw, X, Sliders } from "lucide-react";
+import React from "react";
+import { AVATAR_PRESETS, DEFAULT_AVATAR_PARAMS } from "../../services/changingRoom/avatarEngine";
+import { Sliders, Sparkles, X, RotateCcw, User } from "lucide-react";
 import "./MeasurementPanel.css";
 
-const CM_TO_IN = 0.393701;
-const IN_TO_CM = 2.54;
+const MeasurementPanel = ({
+  bodyParams = DEFAULT_AVATAR_PARAMS,
+  onUpdateBody,
+  onClose,
+  isMobileModal = false,
+}) => {
+  const currentParams = { ...DEFAULT_AVATAR_PARAMS, ...bodyParams };
+  const currentCategory = currentParams.category || "men";
+  const activePresets = AVATAR_PRESETS[currentCategory] || AVATAR_PRESETS.men;
 
-const MeasurementPanel = ({ bodyParams, onUpdateBody, onClose, isMobileModal = false }) => {
-  const [unit, setUnit] = useState("cm"); // 'cm' or 'in'
-  const [category, setCategory] = useState(bodyParams.category || "men");
-  const [measurements, setMeasurements] = useState({ ...bodyParams });
-
-  // Handle category change (Men / Women)
   const handleCategoryChange = (newCat) => {
-    setCategory(newCat);
-    const defaults = newCat === "women" ? DEFAULT_BODY_WOMEN : DEFAULT_BODY_MEN;
-    const updated = { ...defaults, category: newCat };
-    setMeasurements(updated);
-    onUpdateBody(updated);
+    onUpdateBody({
+      ...currentParams,
+      category: newCat,
+    });
   };
 
-  // Handle preset selection
+  const handleSliderChange = (field, value) => {
+    const num = Math.max(0, Math.min(100, parseFloat(value) || 0));
+    onUpdateBody({
+      ...currentParams,
+      [field]: num,
+    });
+  };
+
   const handlePresetSelect = (presetId) => {
-    const preset = BODY_PRESETS.find((p) => p.id === presetId);
-    if (!preset) return;
-    const presetData = category === "women" ? preset.women : preset.men;
-    const updated = { ...presetData, category };
-    setMeasurements(updated);
-    onUpdateBody(updated);
-  };
-
-  // Handle slider/input change with validation bounds
-  const handleValueChange = (field, valCm) => {
-    let num = Number(valCm);
-    if (isNaN(num)) return;
-
-    // Bounds limits in cm for realistic fashion mannequin
-    const bounds = {
-      height: [155, 205],
-      chest: [75, 130],
-      waist: [58, 120],
-      hip: [80, 135],
-      shoulderWidth: [35, 55],
-      inseam: [68, 92],
-    };
-
-    if (bounds[field]) {
-      num = Math.max(bounds[field][0], Math.min(bounds[field][1], num));
+    const preset = activePresets.find((p) => p.id === presetId);
+    if (preset) {
+      onUpdateBody({ ...preset.params });
     }
-
-    const updated = { ...measurements, [field]: num };
-    setMeasurements(updated);
-    onUpdateBody(updated);
   };
 
-  // Convert for display
-  const displayVal = (cmVal) => {
-    if (unit === "in") {
-      return Math.round(cmVal * CM_TO_IN * 10) / 10;
-    }
-    return Math.round(cmVal);
-  };
-
-  const handleDisplayChange = (field, displayVal) => {
-    let num = Number(displayVal);
-    if (isNaN(num)) return;
-    const cmVal = unit === "in" ? num * IN_TO_CM : num;
-    handleValueChange(field, cmVal);
+  const handleReset = () => {
+    onUpdateBody({ ...DEFAULT_AVATAR_PARAMS, category: currentCategory });
   };
 
   return (
@@ -74,62 +44,53 @@ const MeasurementPanel = ({ bodyParams, onUpdateBody, onClose, isMobileModal = f
       <div className="panel-header">
         <div className="panel-title-wrap">
           <Sliders size={16} strokeWidth={1.8} />
-          <h3>BODY PROPORTIONS</h3>
+          <h3>BODY ARCHITECTURE</h3>
         </div>
         <div className="panel-header-actions">
-          {/* Unit Toggle */}
-          <div className="unit-toggle-pill">
-            <button
-              type="button"
-              className={unit === "cm" ? "active" : ""}
-              onClick={() => setUnit("cm")}
-            >
-              CM
-            </button>
-            <button
-              type="button"
-              className={unit === "in" ? "active" : ""}
-              onClick={() => setUnit("in")}
-            >
-              IN
-            </button>
-          </div>
+          <button
+            type="button"
+            className="panel-reset-icon-btn"
+            onClick={handleReset}
+            title="Reset to Neutral Baseline"
+          >
+            <RotateCcw size={14} />
+          </button>
           {onClose && (
-            <button type="button" className="panel-close-btn" onClick={onClose}>
+            <button type="button" className="panel-close-btn" onClick={onClose} title="Close Panel">
               <X size={18} />
             </button>
           )}
         </div>
       </div>
 
-      {/* Step 1: Category Selection */}
+      {/* 1. Man / Woman Morphology Toggle */}
       <div className="measurement-section">
-        <label className="section-label">ATELIER PROFILE</label>
+        <label className="section-label">HUMAN PROFILE</label>
         <div className="category-toggle-grid">
           <button
             type="button"
-            className={`category-btn ${category === "men" ? "active" : ""}`}
+            className={`category-btn ${currentCategory === "men" ? "active" : ""}`}
             onClick={() => handleCategoryChange("men")}
           >
-            <User size={16} />
-            <span>MEN ATELIER</span>
+            <User size={14} />
+            <span>MAN</span>
           </button>
           <button
             type="button"
-            className={`category-btn ${category === "women" ? "active" : ""}`}
+            className={`category-btn ${currentCategory === "women" ? "active" : ""}`}
             onClick={() => handleCategoryChange("women")}
           >
-            <User size={16} />
-            <span>WOMEN ATELIER</span>
+            <User size={14} />
+            <span>WOMAN</span>
           </button>
         </div>
       </div>
 
-      {/* Presets */}
+      {/* 2. Proportion Presets */}
       <div className="measurement-section">
-        <label className="section-label">PROPORTION PRESETS</label>
+        <label className="section-label">SILHOUETTE PRESETS</label>
         <div className="presets-pill-row">
-          {BODY_PRESETS.map((preset) => (
+          {activePresets.map((preset) => (
             <button
               key={preset.id}
               type="button"
@@ -143,157 +104,95 @@ const MeasurementPanel = ({ bodyParams, onUpdateBody, onClose, isMobileModal = f
         </div>
       </div>
 
-      {/* Measurements Sliders */}
+      {/* 3. 4 Clean Body Parameters */}
       <div className="measurement-section sliders-section">
-        <label className="section-label">PARAMETRIC METRICS</label>
+        <label className="section-label">PARAMETRIC MORPH CONTROLS</label>
 
-        {/* Height */}
+        {/* 1. Height */}
         <div className="slider-row">
           <div className="slider-header">
-            <span>Height</span>
+            <span className="slider-title">Height</span>
             <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.height)}
-                onChange={(e) => handleDisplayChange("height", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
+              <span className="slider-num-value">{Math.round(currentParams.height)}</span>
+              <span className="unit-label">%</span>
             </div>
           </div>
           <input
             type="range"
-            min={unit === "in" ? 61 : 155}
-            max={unit === "in" ? 81 : 205}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.height)}
-            onChange={(e) => handleDisplayChange("height", e.target.value)}
+            min={0}
+            max={100}
+            step={1}
+            value={currentParams.height}
+            onChange={(e) => handleSliderChange("height", e.target.value)}
             className="seemz-range-slider"
           />
         </div>
 
-        {/* Chest / Bust */}
+        {/* 2. Weight */}
         <div className="slider-row">
           <div className="slider-header">
-            <span>{category === "women" ? "Bust" : "Chest"}</span>
+            <span className="slider-title">Weight</span>
             <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.chest)}
-                onChange={(e) => handleDisplayChange("chest", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
+              <span className="slider-num-value">{Math.round(currentParams.weight)}</span>
+              <span className="unit-label">%</span>
             </div>
           </div>
           <input
             type="range"
-            min={unit === "in" ? 30 : 75}
-            max={unit === "in" ? 51 : 130}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.chest)}
-            onChange={(e) => handleDisplayChange("chest", e.target.value)}
+            min={0}
+            max={100}
+            step={1}
+            value={currentParams.weight}
+            onChange={(e) => handleSliderChange("weight", e.target.value)}
             className="seemz-range-slider"
           />
         </div>
 
-        {/* Waist */}
+        {/* 3. Muscle */}
         <div className="slider-row">
           <div className="slider-header">
-            <span>Waist</span>
+            <span className="slider-title">Muscle</span>
             <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.waist)}
-                onChange={(e) => handleDisplayChange("waist", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
+              <span className="slider-num-value">{Math.round(currentParams.muscle)}</span>
+              <span className="unit-label">%</span>
             </div>
           </div>
           <input
             type="range"
-            min={unit === "in" ? 23 : 58}
-            max={unit === "in" ? 47 : 120}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.waist)}
-            onChange={(e) => handleDisplayChange("waist", e.target.value)}
+            min={0}
+            max={100}
+            step={1}
+            value={currentParams.muscle}
+            onChange={(e) => handleSliderChange("muscle", e.target.value)}
             className="seemz-range-slider"
           />
         </div>
 
-        {/* Hip */}
+        {/* 4. Proportions / Contour */}
         <div className="slider-row">
           <div className="slider-header">
-            <span>Hips / Pelvis</span>
+            <span className="slider-title">
+              {currentCategory === "women" ? "Bust & Contour" : "Torso Proportion"}
+            </span>
             <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.hip)}
-                onChange={(e) => handleDisplayChange("hip", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
+              <span className="slider-num-value">{Math.round(currentParams.proportions)}</span>
+              <span className="unit-label">%</span>
             </div>
           </div>
           <input
             type="range"
-            min={unit === "in" ? 31 : 80}
-            max={unit === "in" ? 53 : 135}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.hip)}
-            onChange={(e) => handleDisplayChange("hip", e.target.value)}
-            className="seemz-range-slider"
-          />
-        </div>
-
-        {/* Shoulder Width (Optional) */}
-        <div className="slider-row">
-          <div className="slider-header">
-            <span>Shoulder Breadth</span>
-            <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.shoulderWidth)}
-                onChange={(e) => handleDisplayChange("shoulderWidth", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
-            </div>
-          </div>
-          <input
-            type="range"
-            min={unit === "in" ? 14 : 35}
-            max={unit === "in" ? 22 : 55}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.shoulderWidth)}
-            onChange={(e) => handleDisplayChange("shoulderWidth", e.target.value)}
-            className="seemz-range-slider"
-          />
-        </div>
-
-        {/* Inseam (Optional) */}
-        <div className="slider-row">
-          <div className="slider-header">
-            <span>Inseam / Leg Length</span>
-            <div className="slider-input-wrap">
-              <input
-                type="number"
-                value={displayVal(measurements.inseam)}
-                onChange={(e) => handleDisplayChange("inseam", e.target.value)}
-              />
-              <span className="unit-label">{unit}</span>
-            </div>
-          </div>
-          <input
-            type="range"
-            min={unit === "in" ? 27 : 68}
-            max={unit === "in" ? 36 : 92}
-            step={unit === "in" ? 0.5 : 1}
-            value={displayVal(measurements.inseam)}
-            onChange={(e) => handleDisplayChange("inseam", e.target.value)}
+            min={0}
+            max={100}
+            step={1}
+            value={currentParams.proportions}
+            onChange={(e) => handleSliderChange("proportions", e.target.value)}
             className="seemz-range-slider"
           />
         </div>
       </div>
 
       <div className="panel-footer-note">
-        <span>* Procedural mannequin scales smoothly in real time</span>
+        <span>* Dynamic 3D avatar morphs smoothly in real time</span>
       </div>
     </div>
   );

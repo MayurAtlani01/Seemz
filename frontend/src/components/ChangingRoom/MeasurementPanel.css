@@ -50,28 +50,36 @@
   gap: 8px;
 }
 
-.unit-toggle-pill {
-  display: flex;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 2px;
-}
-
-.unit-toggle-pill button {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 16px;
+.panel-reset-icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  padding: 5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
 
-.unit-toggle-pill button.active {
-  background: #ffffff;
-  color: #000000;
+.panel-reset-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.slider-title {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.slider-num-value {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  min-width: 24px;
+  text-align: right;
 }
 
 .panel-close-btn {

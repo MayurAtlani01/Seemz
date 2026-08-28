@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { createBodyModel, updateBodyModel } from "../../services/changingRoom/bodyEngine";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { applyAvatarParamsToMesh } from "../../services/changingRoom/avatarEngine";
 import { createGarmentModel } from "../../services/changingRoom/garmentEngine";
 import "./ChangingRoomScene.css";
 
@@ -18,6 +19,7 @@ const ChangingRoomScene = ({
   activeCameraView = "front",
   isAutoRotate = false,
   isTensionMode = false,
+  onAvatarLoaded = null,
 }) => {
   const containerRef = useRef(null);
 
@@ -26,6 +28,11 @@ const ChangingRoomScene = ({
   const rendererRef = useRef(null);
   const cameraRef = useRef(null);
   const bodyRootRef = useRef(null);
+  const avatarMeshRef = useRef(null);
+  const onAvatarLoadedRef = useRef(onAvatarLoaded);
+  onAvatarLoadedRef.current = onAvatarLoaded;
+  const bodyParamsRef = useRef(bodyParams);
+  bodyParamsRef.current = bodyParams;
   const garmentRootRef = useRef(null);
   const animFrameRef = useRef(null);
 
@@ -80,15 +87,129 @@ const ChangingRoomScene = ({
     // Build Lighting
     buildStudioLighting(scene);
 
-    // Initial Body Model
-    const bodyMesh = createBodyModel(bodyParams);
-    scene.add(bodyMesh);
-    bodyRootRef.current = bodyMesh;
+    // Load Dynamic Avatar Model from GLB
+    const loader = new GLTFLoader();
+    loader.load(
+      "/models/Seemz_avatar.glb",
+      (gltf) => {
+        const avatarScene = gltf.scene;
+        avatarScene.name = "AvatarRoot";
+        // Position feet directly at y = 0.0 on top of studio floor
+        avatarScene.position.set(0, 0.027, 0);
+        avatarScene.scale.set(1.0, 1.0, 1.0);
 
-    // Initial Garment Model
-    const garmentMesh = createGarmentModel(garmentConfig, bodyParams, isTensionMode);
-    scene.add(garmentMesh);
-    garmentRootRef.current = garmentMesh;
+        let foundMesh = null;
+        avatarScene.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (child.material) {
+              child.material.roughness = 0.38;
+              child.material.metalness = 0.04;
+              child.material.color = new THREE.Color("#EFECE6");
+              child.material.needsUpdate = true;
+            }
+            if (child.morphTargetDictionary) {
+              foundMesh = child;
+            }
+          }
+        });
+
+        if (foundMesh) {
+          // Connected components filter to keep only the clean mannequin pieces:
+          // - Head skin: 0
+          // - Left Eyeball: 3
+          // - Right Eyeball: 6
+          // - Bodysuit torso helper: 369
+          // - Gloves/Hands: 4, 7
+          // - Shoes/Feet: 5, 8
+          // This drops the hair, explicit anatomy, and clothing proxy layers.
+          const geometry = foundMesh.geometry;
+          const position = geometry.attributes.position;
+          const index = geometry.index;
+          if (index) {
+            const vertexCount = position.count;
+            const faceCount = index.count / 3;
+
+            // 1. Adjacency list
+            const adjList = Array.from({ length: vertexCount }, () => []);
+            for (let i = 0; i < faceCount; i++) {
+              const v0 = index.getX(i * 3);
+              const v1 = index.getY(i * 3);
+              const v2 = index.getZ(i * 3);
+              adjList[v0].push(v1, v2);
+              adjList[v1].push(v0, v2);
+              adjList[v2].push(v0, v1);
+            }
+
+            // 2. BFS connected components search
+            const vertexToComponent = new Int32Array(vertexCount).fill(-1);
+            let componentCount = 0;
+            for (let i = 0; i < vertexCount; i++) {
+              if (vertexToComponent[i] !== -1) continue;
+              const queue = [i];
+              vertexToComponent[i] = componentCount;
+              let head = 0;
+              while (head < queue.length) {
+                const u = queue[head++];
+                const neighbors = adjList[u];
+                for (let j = 0; j < neighbors.length; j++) {
+                  const v = neighbors[j];
+                  if (vertexToComponent[v] === -1) {
+                    vertexToComponent[v] = componentCount;
+                    queue.push(v);
+                  }
+                }
+              }
+              componentCount++;
+            }
+
+            // 3. Keep clean components
+            const wantedComponents = new Set([0, 3, 6, 369, 4, 7, 5, 8]);
+            const newIndices = [];
+            for (let i = 0; i < faceCount; i++) {
+              const v0 = index.getX(i * 3);
+              const v1 = index.getY(i * 3);
+              const v2 = index.getZ(i * 3);
+
+              const compId = vertexToComponent[v0];
+              if (wantedComponents.has(compId)) {
+                newIndices.push(v0, v1, v2);
+              }
+            }
+
+            // 4. Update index buffer
+            geometry.index = new THREE.BufferAttribute(new Uint32Array(newIndices), 1);
+            geometry.index.needsUpdate = true;
+            geometry.computeVertexNormals();
+          }
+
+          avatarMeshRef.current = foundMesh;
+          if (bodyParamsRef.current) {
+            applyAvatarParamsToMesh(foundMesh, bodyParamsRef.current);
+          }
+          if (onAvatarLoadedRef.current) {
+            onAvatarLoadedRef.current({
+              mesh: foundMesh,
+              dictionary: { ...foundMesh.morphTargetDictionary },
+              influences: [...foundMesh.morphTargetInfluences],
+            });
+          }
+        }
+
+        scene.add(avatarScene);
+        bodyRootRef.current = avatarScene;
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading Seemz_avatar.glb:", error);
+      }
+    );
+
+    // Garment disabled for pure avatar inspection
+    // const garmentMesh = createGarmentModel(garmentConfig, bodyParams, isTensionMode);
+    // scene.add(garmentMesh);
+    // garmentRootRef.current = garmentMesh;
 
     // Animation Render Loop
     let lastTime = performance.now();
@@ -208,35 +329,19 @@ const ChangingRoomScene = ({
     sphericalRef.current.theta = Math.atan2(offset.x, offset.z);
   }, [activeCameraView]);
 
-  // 3. Dynamic Body Updates
+  // 3. Dynamic Avatar Morph Updates (Height, Weight, Muscle, Proportions)
   useEffect(() => {
-    if (bodyRootRef.current && bodyParams) {
-      updateBodyModel(bodyRootRef.current, bodyParams);
-    }
+    const mesh = avatarMeshRef.current;
+    if (!mesh || !bodyParams) return;
+    applyAvatarParamsToMesh(mesh, bodyParams);
   }, [bodyParams]);
 
-  // 4. Dynamic Garment Updates
+  // 4. Dynamic Garment Updates (Disabled for pure avatar inspection)
   useEffect(() => {
-    if (sceneRef.current && garmentConfig && bodyParams) {
-      // Remove old garment mesh cleanly
-      if (garmentRootRef.current) {
-        sceneRef.current.remove(garmentRootRef.current);
-        garmentRootRef.current.traverse((child) => {
-          if (child.geometry) child.geometry.dispose();
-          if (child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach((m) => m.dispose());
-            } else {
-              child.material.dispose();
-            }
-          }
-        });
-      }
-
-      // Generate updated procedural garment
-      const newGarment = createGarmentModel(garmentConfig, bodyParams, isTensionMode);
-      sceneRef.current.add(newGarment);
-      garmentRootRef.current = newGarment;
+    if (!sceneRef.current) return;
+    if (garmentRootRef.current) {
+      sceneRef.current.remove(garmentRootRef.current);
+      garmentRootRef.current = null;
     }
   }, [garmentConfig, bodyParams, isTensionMode]);
 

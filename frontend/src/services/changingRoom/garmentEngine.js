@@ -8,6 +8,7 @@ import { createGarmentMaterial } from "./materialEngine";
  */
 
 export const GARMENT_CATEGORIES = [
+  { id: "none", name: "Bare Avatar", icon: "Eye", type: "none" },
   { id: "tshirt", name: "T-Shirt", icon: "Shirt", type: "top" },
   { id: "jeans", name: "Jeans", icon: "Layers", type: "bottom" },
   { id: "shirt", name: "Tailored Shirt", icon: "Shirt", type: "top" },
@@ -72,6 +73,10 @@ export function createGarmentModel(garmentConfig, bodyParams, isTensionMode = fa
   const root = new THREE.Group();
   root.name = "GarmentRoot";
 
+  if (!garmentConfig || garmentConfig.category === "none" || !garmentConfig.category) {
+    return root; // Clean bare avatar - no clothing
+  }
+
   const { category = "tshirt", material = "cotton", color = "#F5F5F5", style = "oversized", size = "L" } = garmentConfig;
   const mat = createGarmentMaterial(material, color, isTensionMode);
 
@@ -95,7 +100,7 @@ export function createGarmentModel(garmentConfig, bodyParams, isTensionMode = fa
       buildJacket(root, mat, garmentConfig, bodyParams);
       break;
     default:
-      buildTShirt(root, mat, garmentConfig, bodyParams);
+      break;
   }
 
   return root;

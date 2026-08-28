@@ -6,7 +6,7 @@ import GarmentControls from "../../components/ChangingRoom/GarmentControls";
 import FitAnalysis from "../../components/ChangingRoom/FitAnalysis";
 import CameraControls from "../../components/ChangingRoom/CameraControls";
 import TransitionOverlay from "../../components/ChangingRoom/TransitionOverlay";
-import { DEFAULT_BODY_MEN } from "../../services/changingRoom/bodyEngine";
+import { DEFAULT_AVATAR_PARAMS } from "../../services/changingRoom/avatarEngine";
 import agentBridge from "../../services/changingRoom/agentBridge";
 import { Sliders, Layers, Activity, ArrowLeft, RotateCcw, Eye, Sparkles } from "lucide-react";
 import "./ChangingRoom.css";
@@ -14,12 +14,12 @@ import "./ChangingRoom.css";
 const STORAGE_KEY = "seemz_changing_room_config";
 
 const DEFAULT_INITIAL_STATE = {
-  body: DEFAULT_BODY_MEN,
+  body: DEFAULT_AVATAR_PARAMS,
   garment: {
-    category: "tshirt",
+    category: "none", // Loads bare avatar - clothing is selected on demand
     material: "cotton",
-    style: "oversized",
-    size: "L",
+    style: "regular",
+    size: "M",
     color: "#F5F5F5",
   },
 };
@@ -141,7 +141,7 @@ function ChangingRoom() {
           isTensionMode={isTensionMode}
         />
 
-        {/* Desktop Floating Left Panel (Body Measurements) */}
+        {/* Desktop Floating Left Panel (Body Measurements / Morph Controls) */}
         {showBodyPanelDesktop && (
           <aside className="studio-floating-panel desktop-left-panel">
             <MeasurementPanel
@@ -152,8 +152,8 @@ function ChangingRoom() {
           </aside>
         )}
 
-        {/* Desktop Floating Right Panel (Garment & Live Fit Analysis) */}
-        <aside className="studio-floating-panel desktop-right-panel">
+        {/* Desktop Floating Right Panel (Garment & Live Fit Analysis - Disabled for avatar testing) */}
+        {/* <aside className="studio-floating-panel desktop-right-panel">
           <GarmentControls
             garmentConfig={config.garment}
             onUpdateGarment={handleUpdateGarment}
@@ -164,7 +164,7 @@ function ChangingRoom() {
             isTensionMode={isTensionMode}
             onToggleTensionMode={() => setIsTensionMode((prev) => !prev)}
           />
-        </aside>
+        </aside> */}
 
         {/* Floating Bottom Center: Camera & Turntable Controls */}
         <div className="studio-camera-dock">

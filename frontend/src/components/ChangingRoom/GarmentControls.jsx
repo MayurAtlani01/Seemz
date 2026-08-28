@@ -17,13 +17,21 @@ const GarmentControls = ({ garmentConfig, onUpdateGarment }) => {
   const availableSizes = isPants ? SIZES_NUMERIC : SIZES_ALPHA;
 
   const handleCategoryChange = (catId) => {
+    if (catId === "none") {
+      onUpdateGarment({
+        ...garmentConfig,
+        category: "none",
+      });
+      return;
+    }
+
     const nextCategory = GARMENT_CATEGORIES.find((c) => c.id === catId);
     const nextType = nextCategory?.type || "top";
     const nextStyles = GARMENT_STYLES[nextType] || GARMENT_STYLES.top;
     const nextSizes = nextType === "bottom" ? SIZES_NUMERIC : SIZES_ALPHA;
 
     // Default material recommendation based on category
-    let nextMat = garmentConfig.material;
+    let nextMat = garmentConfig.material || "cotton";
     if (catId === "jeans") nextMat = "denim";
     else if (catId === "trousers") nextMat = "wool";
     else if (catId === "shirt") nextMat = "linen";

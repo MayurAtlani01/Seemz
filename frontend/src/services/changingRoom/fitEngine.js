@@ -28,7 +28,19 @@ const STYLE_EASE_OFFSET = {
 /**
  * Calculates complete fit metrics based on body measurements and garment configuration
  */
-export function analyzeFit(bodyParams, garmentConfig) {
+export function analyzeFit(bodyParams = {}, garmentConfig = null) {
+  if (!garmentConfig || garmentConfig.category === "none" || !garmentConfig.category) {
+    return {
+      silhouette: "Natural Base Silhouette",
+      metrics: {
+        chest: { label: "Chest Ease", deltaCm: 0, status: "Natural Contour", color: "#60a5fa" },
+        waist: { label: "Waist Ease", deltaCm: 0, status: "Natural Contour", color: "#60a5fa" },
+        hip: { label: "Hips Ease", deltaCm: 0, status: "Natural Contour", color: "#60a5fa" },
+        shoulder: { label: "Shoulder Drop", deltaCm: 0, status: "Natural Contour", color: "#60a5fa" },
+      },
+    };
+  }
+
   const isWomen = bodyParams.category === "women";
   const userChest = bodyParams.chest || (isWomen ? 88 : 100);
   const userWaist = bodyParams.waist || (isWomen ? 68 : 82);
