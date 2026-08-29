@@ -137,6 +137,7 @@
 .studio-floating-panel::-webkit-scrollbar {
   width: 4px;
 }
+
 .studio-floating-panel::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -250,8 +251,13 @@
   }
 
   @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    from {
+      transform: translateY(100%);
+    }
+
+    to {
+      transform: translateY(0);
+    }
   }
 
   .mobile-drawer-handle {

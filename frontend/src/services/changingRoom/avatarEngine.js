@@ -67,51 +67,133 @@ export const AVATAR_PRESETS = {
 export function computeMorphInfluences(params = DEFAULT_AVATAR_PARAMS) {
   const isMan = (params.category || params.gender || "men") === "men";
 
-  const heightNorm = Math.max(0, Math.min(100, params.height ?? 50)) / 100;
-  const weightNorm = Math.max(0, Math.min(100, params.weight ?? 50)) / 100;
-  const muscleNorm = Math.max(0, Math.min(100, params.muscle ?? 50)) / 100;
-  const propNorm = Math.max(0, Math.min(100, params.proportions ?? 50)) / 100;
+  const heightVal = Math.max(0, Math.min(100, params.height ?? 50));
+  const weightVal = Math.max(0, Math.min(100, params.weight ?? 50));
+  const muscleVal = Math.max(0, Math.min(100, params.muscle ?? 50));
+  const propVal = Math.max(0, Math.min(100, params.proportions ?? 50));
+
+  // Map 0-100 to -1.0 to 1.0 (with 50 mapping to 0.0 baseline)
+  const weightNorm = (weightVal - 50) / 50;
+  const muscleNorm = (muscleVal - 50) / 50;
+  const propNorm = (propVal - 50) / 50;
 
   const influences = {};
 
+  // === 1. UNISEX STRUCTURAL MORPHS (TORSO, SHOULDERS, WAIST, HIPS) ===
+  if (propNorm > 0) {
+    // Broaden and expand the torso & skeletal structure
+    influences["torso_width_incr"] = propNorm * 0.70;
+    influences["torso_width_decr"] = 0.0;
+    influences["torso_length_incr"] = propNorm * 0.40;
+    influences["torso_length_decr"] = 0.0;
+    influences["shoulder_width_incr"] = propNorm * 0.60;
+    influences["shoulder_width_decr"] = 0.0;
+    influences["waist_width_incr"] = propNorm * 0.50;
+    influences["waist_width_decr"] = 0.0;
+    influences["hips_width_incr"] = propNorm * 0.50;
+    influences["hips_width_decr"] = 0.0;
+    influences["hip_scale_horiz_incr"] = propNorm * 0.50;
+    influences["hip_scale_horiz_decr"] = 0.0;
+  } else {
+    // Narrow and slim down the torso & skeletal structure
+    influences["torso_width_incr"] = 0.0;
+    influences["torso_width_decr"] = -propNorm * 0.70;
+    influences["torso_length_incr"] = 0.0;
+    influences["torso_length_decr"] = -propNorm * 0.40;
+    influences["shoulder_width_incr"] = 0.0;
+    influences["shoulder_width_decr"] = -propNorm * 0.60;
+    influences["waist_width_incr"] = 0.0;
+    influences["waist_width_decr"] = -propNorm * 0.50;
+    influences["hips_width_incr"] = 0.0;
+    influences["hips_width_decr"] = -propNorm * 0.50;
+    influences["hip_scale_horiz_incr"] = 0.0;
+    influences["hip_scale_horiz_decr"] = -propNorm * 0.50;
+  }
+
+  // === 2. GENDER SPECIFIC MORPHOLOGY & TARGETS ===
   if (isMan) {
-    // === PURE MAN / MALE MORPHOLOGY ===
-    // 1. Male Demographics (1/3 equal blend = pure balanced neutral male)
+    // === MALE BASICS & DEMOGRAPHICS ===
     influences["$md-$as-$ma-$yn"] = 0.333;
     influences["$md-$ca-$ma-$yn"] = 0.333;
     influences["$md-$af-$ma-$yn"] = 0.333;
+    influences["$md-$ma-$yn-$av$mu-max$wg-max$hg"] = (heightVal / 100) * 0.65;
 
-    // 2. Zero out all female morph targets completely
+    // Male Weight
+    if (weightNorm > 0) {
+      influences["male_weight_max"] = weightNorm * 0.90;
+      influences["male_weight_min"] = 0.0;
+    } else {
+      influences["male_weight_max"] = 0.0;
+      influences["male_weight_min"] = -weightNorm * 0.90;
+    }
+
+    // Male Muscle
+    if (muscleNorm > 0) {
+      influences["male_muscle_max"] = muscleNorm * 0.90;
+      influences["male_muscle_min"] = 0.0;
+    } else {
+      influences["male_muscle_max"] = 0.0;
+      influences["male_muscle_min"] = -muscleNorm * 0.90;
+    }
+
+    // Zero out all female targets
     influences["$md-$as-$fe-$yn"] = 0.0;
     influences["$md-$ca-$fe-$yn"] = 0.0;
     influences["$md-$af-$fe-$yn"] = 0.0;
     influences["$md-$fe-$yn-$av$mu-max$wg-maxcup-$av$fi"] = 0.0;
     influences["$md-$fe-$yn-$av$mu-max$wg-$avcup-max$fi"] = 0.0;
     influences["$md-$fe-$yn-$av$mu-max$wg-max$hg"] = 0.0;
-    influences["$md-universal-$fe-$yn-$av$mu-max$wg"] = 0.0;
+    influences["female_weight_max"] = 0.0;
+    influences["female_weight_min"] = 0.0;
+    influences["female_muscle_max"] = 0.0;
+    influences["female_muscle_min"] = 0.0;
 
-    // 3. Male specific scaling
-    influences["$md-$ma-$yn-$av$mu-max$wg-max$hg"] = heightNorm * 0.50;
-    influences["$md-universal-$ma-$yn-$av$mu-max$wg"] = (weightNorm * 0.45) + (muscleNorm * 0.50);
+    // Backward compatibility for old keys (set to safe defaults)
+    influences["$md-universal-$ma-$yn-$av$mu-max$wg"] = 0.0;
+    influences["$md-universal-$fe-$yn-$av$mu-max$wg"] = 0.0;
   } else {
-    // === PURE WOMAN / FEMALE MORPHOLOGY ===
-    // 1. Female Demographics (1/3 equal blend = pure balanced neutral female)
+    // === FEMALE BASICS & DEMOGRAPHICS ===
     influences["$md-$as-$fe-$yn"] = 0.333;
     influences["$md-$ca-$fe-$yn"] = 0.333;
     influences["$md-$af-$fe-$yn"] = 0.333;
+    influences["$md-$fe-$yn-$av$mu-max$wg-max$hg"] = (heightVal / 100) * 0.65;
 
-    // 2. Zero out all male morph targets completely
+    // Female Breast/Contour (linear mapping using original proportion key)
+    const rawProp = propVal / 100;
+    influences["$md-$fe-$yn-$av$mu-max$wg-maxcup-$av$fi"] = rawProp * 0.60;
+    influences["$md-$fe-$yn-$av$mu-max$wg-$avcup-max$fi"] = rawProp * 0.40;
+
+    // Female Weight
+    if (weightNorm > 0) {
+      influences["female_weight_max"] = weightNorm * 0.90;
+      influences["female_weight_min"] = 0.0;
+    } else {
+      influences["female_weight_max"] = 0.0;
+      influences["female_weight_min"] = -weightNorm * 0.90;
+    }
+
+    // Female Muscle
+    if (muscleNorm > 0) {
+      influences["female_muscle_max"] = muscleNorm * 0.90;
+      influences["female_muscle_min"] = 0.0;
+    } else {
+      influences["female_muscle_max"] = 0.0;
+      influences["female_muscle_min"] = -muscleNorm * 0.90;
+    }
+
+    // Zero out all male targets
     influences["$md-$as-$ma-$yn"] = 0.0;
     influences["$md-$ca-$ma-$yn"] = 0.0;
     influences["$md-$af-$ma-$yn"] = 0.0;
     influences["$md-$ma-$yn-$av$mu-max$wg-max$hg"] = 0.0;
-    influences["$md-universal-$ma-$yn-$av$mu-max$wg"] = 0.0;
+    influences["male_weight_max"] = 0.0;
+    influences["male_weight_min"] = 0.0;
+    influences["male_muscle_max"] = 0.0;
+    influences["male_muscle_min"] = 0.0;
 
-    // 3. Female specific scaling & contours
-    influences["$md-$fe-$yn-$av$mu-max$wg-max$hg"] = heightNorm * 0.50;
-    influences["$md-universal-$fe-$yn-$av$mu-max$wg"] = (weightNorm * 0.75) + (muscleNorm * 0.20);
-    influences["$md-$fe-$yn-$av$mu-max$wg-maxcup-$av$fi"] = propNorm * 0.60;
-    influences["$md-$fe-$yn-$av$mu-max$wg-$avcup-max$fi"] = propNorm * 0.40;
+    // Backward compatibility for old keys (set to safe defaults)
+    influences["$md-universal-$ma-$yn-$av$mu-max$wg"] = 0.0;
+    influences["$md-universal-$fe-$yn-$av$mu-max$wg"] = 0.0;
   }
 
   return influences;
