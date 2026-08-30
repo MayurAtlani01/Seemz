@@ -6,10 +6,12 @@ export const setAuthToken = (token) => {
   authToken = token;
   if (token) {
     try {
+      localStorage.setItem("seemz_auth_token", token);
       sessionStorage.setItem("seemz_auth_token", token);
     } catch {}
   } else {
     try {
+      localStorage.removeItem("seemz_auth_token");
       sessionStorage.removeItem("seemz_auth_token");
     } catch {}
   }
@@ -18,7 +20,17 @@ export const setAuthToken = (token) => {
 export const getAuthToken = () => {
   if (authToken) return authToken;
   try {
-    return sessionStorage.getItem("seemz_auth_token");
+    const local = localStorage.getItem("seemz_auth_token");
+    if (local) {
+      authToken = local;
+      return local;
+    }
+    const session = sessionStorage.getItem("seemz_auth_token");
+    if (session) {
+      authToken = session;
+      return session;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -32,8 +44,13 @@ const API = axios.create({
 API.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
-    if (token && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+      if (config.headers?.set) {
+        config.headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

@@ -8,7 +8,7 @@ import {
   removeFromCart as apiRemoveFromCart,
   clearCart as apiClearCart,
 } from "../services/cartservices";
-import API, { setAuthToken } from "../services/api";
+import API, { setAuthToken, getAuthToken } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -69,6 +69,18 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch Current User
   const fetchCurrentUser = useCallback(async () => {
+    const existingToken = getAuthToken();
+
+    // If no token exists in storage, skip protected request so guest visitors don't produce 401 console noise
+    if (!existingToken) {
+      setUser(null);
+      setLoading(false);
+      setWishlistIds([]);
+      setWishlistItems([]);
+      setCart({ items: [] });
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await getProfile();
@@ -84,7 +96,8 @@ export const AuthProvider = ({ children }) => {
         setWishlistItems([]);
         setCart({ items: [] });
       }
-    } catch {
+    } catch (err) {
+      console.warn("[Auth] Session validation:", err.response?.status === 401 ? "Session expired or invalid" : err.message);
       setUser(null);
       setAuthToken(null);
       setWishlistIds([]);

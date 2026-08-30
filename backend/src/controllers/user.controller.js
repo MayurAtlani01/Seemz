@@ -356,11 +356,12 @@ const loginUser = async (req, res) => {
       });
     }
 
+    const jwtSecret = (process.env.JWT_SECRET || "").trim();
     const token = jwt.sign(
       {
         id: user._id,
       },
-      process.env.JWT_SECRET,
+      jwtSecret,
       {
         expiresIn: "7d",
       }
