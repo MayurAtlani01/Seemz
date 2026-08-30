@@ -4,32 +4,99 @@ const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const nodemailer = require("nodemailer");
 
-// HELPER: Send OTP Email
-const sendVerificationEmail = async (email, name, otp) => {
-  const smtpUser = (process.env.EMAIL_USER || "").trim();
-  const smtpPass = (process.env.EMAIL_PASS || "").trim();
+// HELPER: Resilient Mail Delivery with Cloud Fallbacks & Safe Diagnostics
+const sendMailHelper = async ({ to, subject, text, actionName = "OTP" }) => {
+  const smtpUser = (
+    process.env.EMAIL_USER ||
+    process.env.SMTP_USER ||
+    process.env.MAIL_USER ||
+    process.env.GMAIL_USER ||
+    process.env.EMAIL ||
+    ""
+  ).trim();
 
-  console.log(`[SMTP Diagnostic] sendVerificationEmail to ${email}. USER length: ${smtpUser.length}, PASS length: ${smtpPass.length}`);
+  const smtpPass = (
+    process.env.EMAIL_PASS ||
+    process.env.SMTP_PASS ||
+    process.env.MAIL_PASS ||
+    process.env.GMAIL_PASS ||
+    process.env.EMAIL_PASSWORD ||
+    ""
+  ).trim();
 
-  try {
-    const transporter = nodemailer.createTransport({
+  console.log(`[OTP] Request received for: ${to} (Action: ${actionName})`);
+  console.log(`[OTP] Email configuration present: ${Boolean(smtpUser && smtpPass)} (USER length: ${smtpUser.length}, PASS length: ${smtpPass.length})`);
+
+  if (!smtpUser || !smtpPass) {
+    const missingVarMsg = "Missing EMAIL_USER or EMAIL_PASS in server environment variables.";
+    console.error(`[OTP] CRITICAL ERROR: ${missingVarMsg}`);
+    throw new Error(missingVarMsg);
+  }
+
+  // Multi-tier transports:
+  // Tier 1: Gmail service predefined configuration
+  // Tier 2: Direct SSL Port 465
+  // Tier 3: Direct TLS Port 587
+  const transportConfigs = [
+    {
+      service: "gmail",
+      auth: { user: smtpUser, pass: smtpPass },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    },
+    {
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+      auth: { user: smtpUser, pass: smtpPass },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    },
+    {
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: { user: smtpUser, pass: smtpPass },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    },
+  ];
 
-    await transporter.sendMail({
-      from: smtpUser,
-      to: email,
-      subject: "Welcome to Seemz - Verify Your Account",
-      text: `
+  let lastError = null;
+  for (let i = 0; i < transportConfigs.length; i++) {
+    try {
+      console.log(`[OTP] Attempting email delivery (tier ${i + 1}/${transportConfigs.length})...`);
+      const transporter = nodemailer.createTransport(transportConfigs[i]);
+      await transporter.sendMail({
+        from: `"Seemz Atelier" <${smtpUser}>`,
+        to,
+        subject,
+        text,
+      });
+      console.log(`[OTP] Email delivery completed successfully to: ${to}`);
+      return true;
+    } catch (err) {
+      console.warn(`[OTP] Transport tier ${i + 1} failed: ${err.name} - ${err.message}`);
+      lastError = err;
+    }
+  }
+
+  console.error(`[OTP] All email delivery tiers failed for ${to}:`, lastError?.message);
+  throw lastError || new Error("Failed to deliver email through all SMTP transports.");
+};
+
+// HELPER: Send OTP Email
+const sendVerificationEmail = async (email, name, otp) => {
+  return sendMailHelper({
+    to: email,
+    subject: "Welcome to Seemz - Verify Your Account",
+    text: `
 Hello ${name},
 
 Thank you for registering with Seemz Atelier.
@@ -41,12 +108,8 @@ This OTP is valid for 10 minutes.
 Regards,
 Seemz Atelier
 `,
-    });
-    console.log(`[SMTP Diagnostic] Verification email sent successfully to ${email}`);
-  } catch (error) {
-    console.error(`[SMTP Error] Failed to send verification email to ${email}:`, error.message);
-    throw error;
-  }
+    actionName: "register_verification",
+  });
 };
 
 // REGISTER CONTROLLER
@@ -461,28 +524,8 @@ const forgotPassword = async (req, res) => {
     user.otpExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // NodeMailer Transporter
-    const smtpUser = (process.env.EMAIL_USER || "").trim();
-    const smtpPass = (process.env.EMAIL_PASS || "").trim();
-
-    console.log(`[SMTP Diagnostic] forgotPassword email to ${email}. USER length: ${smtpUser.length}, PASS length: ${smtpPass.length}`);
-
     try {
-      const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-        tls: {
-          rejectUnauthorized: false
-        }
-      });
-
-      await transporter.sendMail({
-        from: smtpUser,
+      await sendMailHelper({
         to: email,
         subject: "Seemz Password Reset OTP",
         text: `
@@ -498,20 +541,24 @@ If you did not request a password reset, please ignore this email.
 
 Regards,
 Seemz Atelier
-      `,
+`,
+        actionName: "forgot_password",
       });
-      console.log(`[SMTP Diagnostic] Forgot password email sent successfully to ${email}`);
     } catch (error) {
-      console.error(`[SMTP Error] Failed to send forgot password email to ${email}:`, error.message);
-      throw error;
+      console.error(`[OTP] Forgot password email error:`, error.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send verification email. Please check server email configuration or try again.",
+      });
     }
 
+    console.log(`[OTP] Response sent: 200 OK for ${email}`);
     res.status(200).json({
       success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(`[OTP] Unhandled error in forgotPassword:`, error);
     res.status(500).json({
       success: false,
       message: "Server Error",
