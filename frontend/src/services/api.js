@@ -39,6 +39,7 @@ export const getAuthToken = () => {
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
+  timeout: 18000, // 18 seconds timeout guard
 });
 
 API.interceptors.request.use(
@@ -55,6 +56,26 @@ API.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === "ECONNABORTED" || error.message?.includes("timeout")) {
+      const customErr = {
+        ...error,
+        response: {
+          data: {
+            success: false,
+            message: "Request timed out. The server is taking too long to respond. Please try again.",
+          },
+          status: 504,
+        },
+      };
+      return Promise.reject(customErr);
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default API;
