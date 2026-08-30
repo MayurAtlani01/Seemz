@@ -1,12 +1,9 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
 
-// Explicitly prefer IPv4 to prevent IPv6 ENETUNREACH on cloud container networks
 try {
   dns.setDefaultResultOrder("ipv4first");
-} catch (e) {
-  // Ignore in environments where setDefaultResultOrder is unavailable
-}
+} catch (e) {}
 
 // Safe email address masking for logs (e.g., client@domain.com -> c****t@domain.com)
 const maskEmail = (email) => {
@@ -25,8 +22,22 @@ const sanitizeErrorMessage = (msg) => {
     .replace(/[a-zA-Z0-9_-]{24,}/g, "[REDACTED_SECRET]");
 };
 
+// Explicit IPv4 DNS resolver for smtp.gmail.com to completely bypass IPv6 ENETUNREACH
+const resolveGmailIpv4Host = async () => {
+  try {
+    const addresses = await dns.promises.resolve4("smtp.gmail.com");
+    if (addresses && addresses.length > 0) {
+      console.log(`[OTP] Resolved Gmail SMTP IPv4 address: ${addresses[0]}`);
+      return addresses[0];
+    }
+  } catch (err) {
+    console.warn(`[OTP] DNS IPv4 resolution warning: ${err.message}`);
+  }
+  return "smtp.gmail.com";
+};
+
 // CREATE CENTRALIZED GMAIL SMTP TRANSPORTER
-const createGmailTransporter = () => {
+const createGmailTransporter = async () => {
   const user = (
     process.env.EMAIL_USER ||
     process.env.SMTP_USER ||
@@ -49,11 +60,14 @@ const createGmailTransporter = () => {
     throw new Error("Gmail SMTP credentials missing. Please set EMAIL_USER and EMAIL_PASS (Google App Password).");
   }
 
+  // Force literal IPv4 host string
+  const resolvedHost = await resolveGmailIpv4Host();
+
   return nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: resolvedHost,
     port: 587,
     secure: false,
-    family: 4, // Explicitly force IPv4
+    family: 4, // Force IPv4
     auth: {
       user,
       pass,
@@ -63,7 +77,7 @@ const createGmailTransporter = () => {
     socketTimeout: 10000,
     tls: {
       rejectUnauthorized: false,
-      servername: "smtp.gmail.com",
+      servername: "smtp.gmail.com", // Ensure TLS certificate matches domain
     },
   });
 };
@@ -83,7 +97,7 @@ const sendEmail = async ({ to, subject, text, html, actionName = "OTP" }) => {
   console.log(`[OTP] Email delivery started (Nodemailer Gmail SMTP, Recipient: ${maskedTo})`);
 
   try {
-    const transporter = createGmailTransporter();
+    const transporter = await createGmailTransporter();
 
     // Verify SMTP connection
     await transporter.verify();
