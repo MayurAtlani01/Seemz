@@ -94,12 +94,23 @@ function Register() {
 
     try {
       const data = await verifyRegisterOTP(email.trim(), otp.trim());
-      setSuccessMessage(data?.message || "Account activated! Redirecting...");
-      setTimeout(() => {
-        navigate("/login", {
-          state: { justRegistered: true },
-        });
-      }, 1500);
+      setSuccessMessage(data?.message || "Account activated! Welcome to Seemz.");
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+        if (data?.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+        window.dispatchEvent(new Event("authChange"));
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 1200);
+      } else {
+        setTimeout(() => {
+          navigate("/login", {
+            state: { justRegistered: true },
+          });
+        }, 1500);
+      }
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message ||

@@ -68,7 +68,7 @@ const sendViaResend = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
   });
 };
 
-// STRATEGY 2: Brevo / Sendinblue HTTPS REST API (Port 443 - 300 free emails/day)
+// STRATEGY 2: Brevo / Sendinblue HTTPS REST API (Port 443 - 300 free emails/day, no sandbox lock)
 const sendViaBrevo = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
   return new Promise((resolve, reject) => {
     const senderEmail = fromEmail || process.env.EMAIL_FROM || process.env.EMAIL_USER || "seemzatelier@gmail.com";
@@ -221,39 +221,65 @@ const sendEmail = async ({ to, subject, text, html, actionName = "OTP" }) => {
 
   // Delivery function executing configured strategies
   const executeDelivery = async () => {
+    let lastError = null;
+
     // 1. Resend REST API (HTTPS port 443 - highest priority for cloud environments)
     if (resendApiKey) {
-      console.log(`[OTP] Email delivery started (Provider: Resend HTTPS API, Recipient: ${maskedTo})`);
-      const result = await sendViaResend({ apiKey: resendApiKey, toEmail: to, subject, text, html });
-      console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
-      return result;
+      try {
+        console.log(`[OTP] Email delivery started (Provider: Resend HTTPS API, Recipient: ${maskedTo})`);
+        const result = await sendViaResend({ apiKey: resendApiKey, toEmail: to, subject, text, html });
+        console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
+        return result;
+      } catch (err) {
+        console.warn(`[OTP] Resend HTTP delivery failed: ${err.message}`);
+        lastError = err;
+        // If Brevo is NOT configured, fail fast with the exact Resend error
+        if (!brevoApiKey) {
+          throw err;
+        }
+      }
     }
 
-    // 2. Brevo REST API (HTTPS port 443)
+    // 2. Brevo REST API (HTTPS port 443 - secondary cloud provider)
     if (brevoApiKey) {
-      console.log(`[OTP] Email delivery started (Provider: Brevo HTTPS API, Recipient: ${maskedTo})`);
-      const result = await sendViaBrevo({ apiKey: brevoApiKey, toEmail: to, subject, text, html });
-      console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
-      return result;
+      try {
+        console.log(`[OTP] Email delivery started (Provider: Brevo HTTPS API, Recipient: ${maskedTo})`);
+        const result = await sendViaBrevo({ apiKey: brevoApiKey, toEmail: to, subject, text, html });
+        console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
+        return result;
+      } catch (err) {
+        console.warn(`[OTP] Brevo HTTP delivery failed: ${err.message}`);
+        lastError = err;
+      }
     }
 
     // 3. Custom SMTP Server (if configured)
     if (smtpHost && smtpUser && smtpPass) {
-      console.log(`[OTP] Email delivery started (Provider: Custom SMTP ${smtpHost}:${smtpPort}, Recipient: ${maskedTo})`);
-      const result = await sendViaNodemailer({ host: smtpHost, port: smtpPort, secure: smtpSecure, user: smtpUser, pass: smtpPass, to, subject, text, html });
-      console.log(`[OTP] Email delivery completed successfully via Custom SMTP`);
-      return result;
+      try {
+        console.log(`[OTP] Email delivery started (Provider: Custom SMTP ${smtpHost}:${smtpPort}, Recipient: ${maskedTo})`);
+        const result = await sendViaNodemailer({ host: smtpHost, port: smtpPort, secure: smtpSecure, user: smtpUser, pass: smtpPass, to, subject, text, html });
+        console.log(`[OTP] Email delivery completed successfully via Custom SMTP`);
+        return result;
+      } catch (err) {
+        console.warn(`[OTP] Custom SMTP failed: ${err.message}`);
+        lastError = err;
+      }
     }
 
-    // 4. Standard Gmail SMTP (localhost fallback)
-    if (smtpUser && smtpPass) {
-      console.log(`[OTP] Email delivery started (Provider: Gmail SMTP, Recipient: ${maskedTo})`);
-      const result = await sendViaNodemailer({ service: "gmail", user: smtpUser, pass: smtpPass, to, subject, text, html });
-      console.log(`[OTP] Email delivery completed successfully via Gmail SMTP`);
-      return result;
+    // 4. Standard Gmail SMTP (localhost fallback only)
+    if (smtpUser && smtpPass && process.env.NODE_ENV !== "production") {
+      try {
+        console.log(`[OTP] Email delivery started (Provider: Gmail SMTP, Recipient: ${maskedTo})`);
+        const result = await sendViaNodemailer({ service: "gmail", user: smtpUser, pass: smtpPass, to, subject, text, html });
+        console.log(`[OTP] Email delivery completed successfully via Gmail SMTP`);
+        return result;
+      } catch (err) {
+        console.warn(`[OTP] Gmail SMTP failed: ${err.message}`);
+        lastError = err;
+      }
     }
 
-    throw new Error("No configured email transports available.");
+    throw lastError || new Error("No configured email transports available or all failed.");
   };
 
   // Hard timeout guard (8000ms max) ensuring request NEVER hangs

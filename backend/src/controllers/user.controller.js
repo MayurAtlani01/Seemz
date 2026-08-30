@@ -253,10 +253,38 @@ const verifyRegisterOTP = async (req, res) => {
     user.otpAttempts = 0;
     await user.save();
 
+    const jwtSecret = (process.env.JWT_SECRET || "").trim();
+    const token = jwtSecret
+      ? jwt.sign({ id: user._id }, jwtSecret, { expiresIn: "7d" })
+      : null;
+
+    if (token) {
+      const isProduction =
+        process.env.NODE_ENV === "production" ||
+        req.secure ||
+        req.headers["x-forwarded-proto"] === "https" ||
+        (process.env.CLIENT_URL && process.env.CLIENT_URL.includes("vercel.app"));
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: Boolean(isProduction),
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+    }
+
     console.log("[OTP-DEBUG] Verification completed successfully");
     return res.status(200).json({
       success: true,
-      message: "Account verified successfully. You can now log in.",
+      message: "Account verified successfully! You are now logged in.",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("[OTP-DEBUG] Verification exception:", error.message);
