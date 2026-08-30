@@ -1,6 +1,6 @@
 import "./Home.css";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
@@ -33,6 +33,7 @@ const categories = [
 
 function Home() {
   const navigate = useNavigate();
+  const { onStartBodyScan, onStartLiveTryOn } = useOutletContext();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -213,6 +214,33 @@ function Home() {
 
         </div>
 
+      </section>
+
+      {/* ================= AI BODY SCANNER SECTION ================= */}
+      <section className="atelier-scanner-home">
+        <div className="atelier-scanner-home-content">
+          <p className="atelier-eyebrow">SEEMZ ATELIER EXPERIENCE</p>
+          <h2>AI Body Scan & Live Try-On</h2>
+          <p className="atelier-desc">
+            Calibrate your personal morphology using our premium on-device camera scanner, or launch experimental real-time garment tracking directly on your body.
+          </p>
+          <div className="atelier-home-btn-group">
+            <button 
+              type="button" 
+              className="atelier-scan-home-btn"
+              onClick={onStartBodyScan}
+            >
+              START BODY SCAN
+            </button>
+            <button 
+              type="button" 
+              className="atelier-tryon-home-btn"
+              onClick={onStartLiveTryOn}
+            >
+              LIVE TRY-ON (BETA)
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* ================= CATEGORIES ================= */}

@@ -6,35 +6,47 @@ const nodemailer = require("nodemailer");
 
 // HELPER: Send OTP Email
 const sendVerificationEmail = async (email, name, otp) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  const smtpUser = (process.env.EMAIL_USER || "").trim();
+  const smtpPass = (process.env.EMAIL_PASS || "").trim();
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "Welcome to Seemz - Verify Your Account",
-    text: `
+  console.log(`[SMTP Diagnostic] sendVerificationEmail to ${email}. USER length: ${smtpUser.length}, PASS length: ${smtpPass.length}`);
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    await transporter.sendMail({
+      from: smtpUser,
+      to: email,
+      subject: "Welcome to Seemz - Verify Your Account",
+      text: `
 Hello ${name},
 
 Thank you for registering with Seemz Atelier.
 
-Please use the following One-Time Password (OTP) to verify and activate your account:
-
-Your OTP code is: ${otp}
+Your One-Time Password (OTP) is: ${otp}
 
 This OTP is valid for 10 minutes.
 
-If you did not request this, please ignore this email.
-
 Regards,
-Team Seemz
-    `,
-  });
+Seemz Atelier
+`,
+    });
+    console.log(`[SMTP Diagnostic] Verification email sent successfully to ${email}`);
+  } catch (error) {
+    console.error(`[SMTP Error] Failed to send verification email to ${email}:`, error.message);
+    throw error;
+  }
 };
 
 // REGISTER CONTROLLER
@@ -449,19 +461,30 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // NodeMailer Transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const smtpUser = (process.env.EMAIL_USER || "").trim();
+    const smtpPass = (process.env.EMAIL_PASS || "").trim();
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Seemz Password Reset OTP",
-      text: `
+    console.log(`[SMTP Diagnostic] forgotPassword email to ${email}. USER length: ${smtpUser.length}, PASS length: ${smtpPass.length}`);
+
+    try {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+
+      await transporter.sendMail({
+        from: smtpUser,
+        to: email,
+        subject: "Seemz Password Reset OTP",
+        text: `
 Hello ${user.name},
 
 We received a request to reset your Seemz account password.
@@ -473,9 +496,14 @@ This OTP is valid for 10 minutes.
 If you did not request a password reset, please ignore this email.
 
 Regards,
-Team Seemz
+Seemz Atelier
       `,
-    });
+      });
+      console.log(`[SMTP Diagnostic] Forgot password email sent successfully to ${email}`);
+    } catch (error) {
+      console.error(`[SMTP Error] Failed to send forgot password email to ${email}:`, error.message);
+      throw error;
+    }
 
     res.status(200).json({
       success: true,

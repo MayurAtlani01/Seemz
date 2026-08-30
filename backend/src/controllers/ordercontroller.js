@@ -180,10 +180,10 @@ const cancelOrderAdmin = async (req, res) => {
       });
     }
 
-    if (order.orderStatus === "Cancelled") {
+    if (order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") {
       return res.status(400).json({
         success: false,
-        message: "Order is already cancelled",
+        message: `Order cannot be cancelled because it is already ${order.orderStatus}`,
       });
     }
 

@@ -650,3 +650,57 @@ body{
         box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
     }
 }
+
+/* Body Scan Nav Triggers */
+.navbar-body-scan-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,.75);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: .3s;
+}
+
+.navbar-body-scan-btn:hover {
+    color: #fff;
+}
+
+.navbar-body-scan-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 0;
+    height: 1px;
+    background: #fff;
+    transition: .3s;
+}
+
+.navbar-body-scan-btn:hover::after {
+    width: 100%;
+}
+
+.mobile-nav-body-scan-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    padding: 8px 0;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    width: 100%;
+}
+
+.mobile-nav-body-scan-btn:hover {
+    color: #ffffff;
+    font-weight: 600;
+}

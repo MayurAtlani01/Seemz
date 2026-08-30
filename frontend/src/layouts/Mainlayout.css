@@ -1,0 +1,51 @@
+/* =====================================================
+   SEEMZ Floating Body Scan Button Styles
+   ===================================================== */
+
+.seemz-floating-scan-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 999;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 12px 18px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 4px;
+}
+
+.seemz-floating-scan-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
+.seemz-floating-scan-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.seemz-floating-scan-btn:hover svg {
+  transform: scale(1.1) rotate(-10deg);
+}
+
+@media (max-width: 768px) {
+  .seemz-floating-scan-btn {
+    bottom: 16px;
+    left: 16px;
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+}

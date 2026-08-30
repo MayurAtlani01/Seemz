@@ -938,3 +938,121 @@ button{
         font-size: 13px;
     }
 }
+
+/* =====================================================
+               AI BODY SCANNER HOMEPAGE BANNER
+======================================================*/
+
+.atelier-scanner-home {
+    width: 84%;
+    margin: 80px auto;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #0e1014 0%, #060709 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+.atelier-scanner-home-content {
+    max-width: 600px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.atelier-eyebrow {
+    color: #8A8A8A;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.atelier-scanner-home h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 42px;
+    font-weight: 500;
+    color: #F5F5F5;
+    margin: 0;
+}
+
+.atelier-desc {
+    font-size: 14px;
+    color: #b0b0b0;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.atelier-home-btn-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.atelier-scan-home-btn,
+.atelier-tryon-home-btn {
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 16px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.atelier-scan-home-btn {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #ffffff;
+}
+
+.atelier-scan-home-btn:hover {
+    background: transparent;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
+.atelier-tryon-home-btn {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.atelier-tryon-home-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+@media(max-width: 768px) {
+    .atelier-scanner-home {
+        width: 90%;
+        padding: 40px 20px;
+        margin: 50px auto;
+    }
+    .atelier-scanner-home h2 {
+        font-size: 32px;
+    }
+    .atelier-desc {
+        font-size: 13px;
+    }
+    .atelier-home-btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    .atelier-scan-home-btn,
+    .atelier-tryon-home-btn {
+        width: 100%;
+    }
+}
