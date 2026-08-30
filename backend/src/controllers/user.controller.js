@@ -4,18 +4,43 @@ const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const { sendEmail, generateOtpEmailHtml, maskEmail } = require("../utils/emailService");
 
+// DIAGNOSTIC STATUS CONTROLLER (Safe environment verification)
+const getDiagnosticStatus = async (req, res) => {
+  return res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    nodeEnv: process.env.NODE_ENV || "development",
+    envCheck: {
+      MONGO_URI: Boolean(process.env.MONGO_URI),
+      JWT_SECRET: Boolean(process.env.JWT_SECRET),
+      CLIENT_URL: Boolean(process.env.CLIENT_URL),
+      EMAIL_USER: Boolean(process.env.EMAIL_USER || process.env.SMTP_USER || process.env.MAIL_USER || process.env.GMAIL_USER || process.env.EMAIL),
+      EMAIL_PASS: Boolean(process.env.EMAIL_PASS || process.env.SMTP_PASS || process.env.MAIL_PASS || process.env.GMAIL_PASS || process.env.EMAIL_PASSWORD),
+      RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
+      BREVO_API_KEY: Boolean(process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY),
+      SMTP_HOST: Boolean(process.env.SMTP_HOST),
+      SMTP_PORT: Boolean(process.env.SMTP_PORT),
+      EMAIL_FROM: Boolean(process.env.EMAIL_FROM || process.env.RESEND_FROM),
+    },
+  });
+};
+
 // REGISTER CONTROLLER
 const registerUser = async (req, res) => {
-  console.log("[OTP] Registration request received");
+  console.log("[OTP-DEBUG] Registration endpoint reached");
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
+      console.log("[OTP-DEBUG] Validation failed: Missing required fields");
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
+
+    console.log("[OTP-DEBUG] Validation passed");
 
     const normalizedEmail = email.trim().toLowerCase();
     const existingUser = await User.findOne({ email: normalizedEmail });
@@ -26,7 +51,7 @@ const registerUser = async (req, res) => {
       lowerCaseAlphabets: false,
       specialChars: false,
     });
-    console.log("[OTP] OTP generated");
+    console.log("[OTP-DEBUG] OTP generation completed");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     if (existingUser) {
@@ -46,6 +71,10 @@ const registerUser = async (req, res) => {
         existingUser.otpAttempts = 0;
         existingUser.otpLastSent = new Date();
 
+        await existingUser.save();
+        console.log("[OTP-DEBUG] OTP storage completed");
+
+        console.log("[OTP-DEBUG] Email service called");
         try {
           await sendEmail({
             to: normalizedEmail,
@@ -54,16 +83,16 @@ const registerUser = async (req, res) => {
             html: generateOtpEmailHtml({ name: name.trim(), otp, purpose: "account registration" }),
             actionName: "registration",
           });
+          console.log("[OTP-DEBUG] Email service returned");
         } catch (mailErr) {
+          console.error(`[OTP-DEBUG] Email service error: ${mailErr.message}`);
           return res.status(503).json({
             success: false,
             message: "Unable to send verification code. Please try again.",
           });
         }
 
-        await existingUser.save();
-        console.log("[OTP] OTP storage completed");
-
+        console.log("[OTP-DEBUG] HTTP response sent");
         return res.status(200).json({
           success: true,
           message: "Verification code sent to your email.",
@@ -84,6 +113,10 @@ const registerUser = async (req, res) => {
       otpLastSent: new Date(),
     });
 
+    await user.save();
+    console.log("[OTP-DEBUG] OTP storage completed");
+
+    console.log("[OTP-DEBUG] Email service called");
     try {
       await sendEmail({
         to: normalizedEmail,
@@ -92,23 +125,23 @@ const registerUser = async (req, res) => {
         html: generateOtpEmailHtml({ name: name.trim(), otp, purpose: "account registration" }),
         actionName: "registration",
       });
+      console.log("[OTP-DEBUG] Email service returned");
     } catch (mailErr) {
+      console.error(`[OTP-DEBUG] Email service error: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
       });
     }
 
-    await user.save();
-    console.log("[OTP] OTP storage completed");
-
+    console.log("[OTP-DEBUG] HTTP response sent");
     return res.status(201).json({
       success: true,
       message: "Registration successful. Please check your email for the verification code.",
       email: normalizedEmail,
     });
   } catch (error) {
-    console.error("[OTP] Registration error:", error.message);
+    console.error("[OTP-DEBUG] Registration exception:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -118,7 +151,7 @@ const registerUser = async (req, res) => {
 
 // VERIFY REGISTER OTP CONTROLLER
 const verifyRegisterOTP = async (req, res) => {
-  console.log("[OTP] Verification request received");
+  console.log("[OTP-DEBUG] Verification endpoint reached");
   try {
     const { email, otp } = req.body;
 
@@ -200,13 +233,13 @@ const verifyRegisterOTP = async (req, res) => {
     user.otpAttempts = 0;
     await user.save();
 
-    console.log("[OTP] Email delivery completed / Verification completed");
+    console.log("[OTP-DEBUG] Verification completed successfully");
     return res.status(200).json({
       success: true,
       message: "Account verified successfully. You can now log in.",
     });
   } catch (error) {
-    console.error("[OTP] Verification error:", error.message);
+    console.error("[OTP-DEBUG] Verification exception:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -216,7 +249,7 @@ const verifyRegisterOTP = async (req, res) => {
 
 // RESEND REGISTER OTP CONTROLLER
 const resendRegisterOTP = async (req, res) => {
-  console.log("[OTP] Resend OTP request received");
+  console.log("[OTP-DEBUG] Resend OTP endpoint reached");
   try {
     const { email } = req.body;
 
@@ -255,12 +288,13 @@ const resendRegisterOTP = async (req, res) => {
       });
     }
 
+    console.log("[OTP-DEBUG] Validation passed");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
-    console.log("[OTP] OTP generated");
+    console.log("[OTP-DEBUG] OTP generation completed");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
@@ -268,6 +302,10 @@ const resendRegisterOTP = async (req, res) => {
     user.otpAttempts = 0;
     user.otpLastSent = new Date();
 
+    await user.save();
+    console.log("[OTP-DEBUG] OTP storage completed");
+
+    console.log("[OTP-DEBUG] Email service called");
     try {
       await sendEmail({
         to: normalizedEmail,
@@ -276,22 +314,22 @@ const resendRegisterOTP = async (req, res) => {
         html: generateOtpEmailHtml({ name: user.name, otp, purpose: "account verification" }),
         actionName: "resend_otp",
       });
+      console.log("[OTP-DEBUG] Email service returned");
     } catch (mailErr) {
+      console.error(`[OTP-DEBUG] Email service error: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
       });
     }
 
-    await user.save();
-    console.log("[OTP] OTP storage completed");
-
+    console.log("[OTP-DEBUG] HTTP response sent");
     return res.status(200).json({
       success: true,
       message: "Verification code resent successfully.",
     });
   } catch (error) {
-    console.error("[OTP] Resend OTP error:", error.message);
+    console.error("[OTP-DEBUG] Resend OTP exception:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -423,11 +461,12 @@ const logoutUser = async (req, res) => {
 
 // PASSWORD RESET CONTROLLER - FORGOT
 const forgotPassword = async (req, res) => {
-  console.log("[OTP] Forgot password request received");
+  console.log("[OTP-DEBUG] Forgot-password endpoint reached");
   try {
     const { email } = req.body;
 
     if (!email) {
+      console.log("[OTP-DEBUG] Validation failed: Missing email");
       return res.status(400).json({
         success: false,
         message: "Email is required",
@@ -445,17 +484,22 @@ const forgotPassword = async (req, res) => {
       });
     }
 
+    console.log("[OTP-DEBUG] Validation passed");
+
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
-    console.log("[OTP] OTP generated");
+    console.log("[OTP-DEBUG] OTP generation completed");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
     user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+    console.log("[OTP-DEBUG] OTP storage completed");
 
+    console.log("[OTP-DEBUG] Email service called");
     try {
       await sendEmail({
         to: normalizedEmail,
@@ -464,22 +508,22 @@ const forgotPassword = async (req, res) => {
         html: generateOtpEmailHtml({ name: user.name, otp, purpose: "password reset" }),
         actionName: "forgot_password",
       });
+      console.log("[OTP-DEBUG] Email service returned");
     } catch (mailErr) {
+      console.error(`[OTP-DEBUG] Email service error: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
       });
     }
 
-    await user.save();
-    console.log("[OTP] OTP storage completed");
-
+    console.log("[OTP-DEBUG] HTTP response sent");
     return res.status(200).json({
       success: true,
       message: "Verification code sent to your email.",
     });
   } catch (error) {
-    console.error("[OTP] Forgot password error:", error.message);
+    console.error("[OTP-DEBUG] Forgot password exception:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -564,4 +608,5 @@ module.exports = {
   logoutUser,
   forgotPassword,
   resetPassword,
+  getDiagnosticStatus,
 };
