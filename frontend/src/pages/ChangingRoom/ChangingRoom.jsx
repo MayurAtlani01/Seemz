@@ -7,8 +7,11 @@ import FitAnalysis from "../../components/ChangingRoom/FitAnalysis";
 import CameraControls from "../../components/ChangingRoom/CameraControls";
 import TransitionOverlay from "../../components/ChangingRoom/TransitionOverlay";
 import ChatAssistant from "../../components/ChatAssistant/ChatAssistant";
+import BodyScanner from "../../components/ChangingRoom/BodyScanner";
 import { DEFAULT_AVATAR_PARAMS } from "../../services/changingRoom/avatarEngine";
 import agentBridge from "../../services/changingRoom/agentBridge";
+import { useAuth } from "../../context/AuthContext";
+import { updateProfile } from "../../services/profileservices";
 import { Sliders, Layers, Activity, ArrowLeft, RotateCcw, Eye, Sparkles } from "lucide-react";
 import "./ChangingRoom.css";
 
@@ -27,6 +30,7 @@ const DEFAULT_INITIAL_STATE = {
 
 function ChangingRoom() {
   const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
 
   // Load persisted configuration or defaults
   const [config, setConfig] = useState(() => {
@@ -42,6 +46,91 @@ function ChangingRoom() {
   const [activeCameraView, setActiveCameraView] = useState("front");
   const [isAutoRotate, setIsAutoRotate] = useState(false);
   const [isTensionMode, setIsTensionMode] = useState(false);
+  const [showBodyScanner, setShowBodyScanner] = useState(false);
+
+  // Load saved body profile from user context if available
+  useEffect(() => {
+    if (user?.bodyProfile?.avatarParams) {
+      setConfig((prev) => ({
+        ...prev,
+        body: {
+          category: user.bodyProfile.gender || "men",
+          height: user.bodyProfile.avatarParams.height ?? 50,
+          weight: user.bodyProfile.avatarParams.weight ?? 50,
+          muscle: user.bodyProfile.avatarParams.muscle ?? 50,
+          proportions: user.bodyProfile.avatarParams.proportions ?? 50,
+          measurements: {
+            gender: user.bodyProfile.gender || "men",
+            height: user.bodyProfile.height ?? 175,
+            shoulderWidth: user.bodyProfile.shoulderWidth ?? 44,
+            chest: user.bodyProfile.chest ?? 96,
+            waist: user.bodyProfile.waist ?? 80,
+            hip: user.bodyProfile.hip ?? 94,
+            armLength: user.bodyProfile.armLength ?? 60,
+            inseam: user.bodyProfile.inseam ?? 80,
+            torsoLength: user.bodyProfile.torsoLength ?? 65,
+          }
+        }
+      }));
+    }
+  }, [user]);
+
+  const handleSaveBodyScan = async (scannedProfile) => {
+    const newBodyState = {
+      category: scannedProfile.gender,
+      height: scannedProfile.avatarParams.height,
+      weight: scannedProfile.avatarParams.weight,
+      muscle: scannedProfile.avatarParams.muscle,
+      proportions: scannedProfile.avatarParams.proportions,
+      measurements: {
+        gender: scannedProfile.gender,
+        height: scannedProfile.height,
+        shoulderWidth: scannedProfile.shoulderWidth,
+        chest: scannedProfile.chest,
+        waist: scannedProfile.waist,
+        hip: scannedProfile.hip,
+        armLength: scannedProfile.armLength,
+        inseam: scannedProfile.inseam,
+        torsoLength: scannedProfile.torsoLength,
+      }
+    };
+
+    setConfig((prev) => ({
+      ...prev,
+      body: newBodyState
+    }));
+
+    try {
+      const updatedConfig = { ...config, body: newBodyState };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConfig));
+    } catch (err) {
+      console.error("Failed to save config to localStorage:", err);
+    }
+
+    if (user) {
+      try {
+        await updateProfile({
+          bodyProfile: {
+            gender: scannedProfile.gender,
+            height: scannedProfile.height,
+            shoulderWidth: scannedProfile.shoulderWidth,
+            chest: scannedProfile.chest,
+            waist: scannedProfile.waist,
+            hip: scannedProfile.hip,
+            armLength: scannedProfile.armLength,
+            inseam: scannedProfile.inseam,
+            torsoLength: scannedProfile.torsoLength,
+            avatarParams: scannedProfile.avatarParams
+          }
+        });
+        if (refreshUser) {
+          await refreshUser();
+        }
+      } catch (err) {
+        console.error("Failed to save body profile to backend:", err);
+      }
+    }
+  };
 
   // Mobile Drawer Tab: 'garment', 'fit', 'body', or null (closed)
   const [activeMobileTab, setActiveMobileTab] = useState("garment");
@@ -149,6 +238,7 @@ function ChangingRoom() {
               bodyParams={config.body}
               onUpdateBody={handleUpdateBody}
               onClose={() => setShowBodyPanelDesktop(false)}
+              onStartBodyScan={() => setShowBodyScanner(true)}
             />
           </aside>
         )}
@@ -239,12 +329,24 @@ function ChangingRoom() {
                   onUpdateBody={handleUpdateBody}
                   onClose={() => setActiveMobileTab(null)}
                   isMobileModal={true}
+                  onStartBodyScan={() => {
+                    setActiveMobileTab(null);
+                    setShowBodyScanner(true);
+                  }}
                 />
               )}
             </div>
           </div>
         )}
       </div>
+
+      {showBodyScanner && (
+        <BodyScanner
+          initialGender={config.body.category || "men"}
+          onClose={() => setShowBodyScanner(false)}
+          onSave={handleSaveBodyScan}
+        />
+      )}
 
       {/* Seemz AI assistant */}
       <ChatAssistant />

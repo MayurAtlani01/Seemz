@@ -9,7 +9,8 @@ const getProfile = async (req, res) => {
                 email: req.user.email,
                 role: req.user.role,
                 phone: req.user.phone,
-                profilePic: req.user.profilePic
+                profilePic: req.user.profilePic,
+                bodyProfile: req.user.bodyProfile
             }
         });
 
@@ -25,11 +26,12 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
 
-        const { name, phone, profilePic } = req.body;
+        const { name, phone, profilePic, bodyProfile } = req.body;
 
         if (name) req.user.name = name;
-        if (phone) req.user.phone = phone;
-        if (profilePic) req.user.profilePic = profilePic;
+        if (phone !== undefined) req.user.phone = phone;
+        if (profilePic !== undefined) req.user.profilePic = profilePic;
+        if (bodyProfile) req.user.bodyProfile = bodyProfile;
 
         await req.user.save();
 
@@ -40,7 +42,8 @@ const updateProfile = async (req, res) => {
                 name: req.user.name,
                 email: req.user.email,
                 phone: req.user.phone,
-                profilePic: req.user.profilePic
+                profilePic: req.user.profilePic,
+                bodyProfile: req.user.bodyProfile
             }
         });
 

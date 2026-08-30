@@ -235,3 +235,94 @@
   color: rgba(255, 255, 255, 0.35);
   text-align: center;
 }
+
+/* ================= BODY SCAN TRIGGER & DASHBOARD ================= */
+
+.scan-section {
+  margin: 6px 0;
+}
+
+.body-scan-trigger-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 12px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.body-scan-trigger-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
+}
+
+.body-scan-trigger-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.body-scan-trigger-btn:hover svg {
+  transform: rotate(-15deg) scale(1.1);
+}
+
+/* Scanned Measurements Overview Dashboard */
+.scanned-measurements-overview {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scanned-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 8px 4px;
+  border-radius: 4px;
+}
+
+.metric-name {
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.metric-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: monospace;
+}
+
+.overview-subtext {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  font-style: italic;
+  display: block;
+}

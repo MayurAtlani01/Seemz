@@ -1,6 +1,6 @@
 import React from "react";
 import { AVATAR_PRESETS, DEFAULT_AVATAR_PARAMS } from "../../services/changingRoom/avatarEngine";
-import { Sliders, Sparkles, X, RotateCcw, User } from "lucide-react";
+import { Sliders, Sparkles, X, RotateCcw, User, Camera } from "lucide-react";
 import "./MeasurementPanel.css";
 
 const MeasurementPanel = ({
@@ -8,6 +8,7 @@ const MeasurementPanel = ({
   onUpdateBody,
   onClose,
   isMobileModal = false,
+  onStartBodyScan,
 }) => {
   const currentParams = { ...DEFAULT_AVATAR_PARAMS, ...bodyParams };
   const currentCategory = currentParams.category || "men";
@@ -103,6 +104,44 @@ const MeasurementPanel = ({
           ))}
         </div>
       </div>
+
+      {/* 2b. AI Body Scan Trigger */}
+      <div className="measurement-section scan-section">
+        <button
+          type="button"
+          className="body-scan-trigger-btn"
+          onClick={onStartBodyScan}
+        >
+          <Camera size={14} />
+          <span>START AI BODY SCAN</span>
+        </button>
+      </div>
+
+      {/* Active Body Scan Measurements Overview */}
+      {bodyParams.measurements && (
+        <div className="scanned-measurements-overview">
+          <label className="section-label">ACTIVE MEASUREMENT SCAN</label>
+          <div className="scanned-metrics-grid">
+            <div className="metric-item">
+              <span className="metric-name">Chest</span>
+              <span className="metric-val">~{Math.round(bodyParams.measurements.chest * 0.393701)}″</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-name">Waist</span>
+              <span className="metric-val">~{Math.round(bodyParams.measurements.waist * 0.393701)}″</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-name">Hips</span>
+              <span className="metric-val">~{Math.round(bodyParams.measurements.hip * 0.393701)}″</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-name">Shoulders</span>
+              <span className="metric-val">~{Math.round(bodyParams.measurements.shoulderWidth * 0.393701)}″</span>
+            </div>
+          </div>
+          <span className="overview-subtext">Estimated measurements applied to 3D model</span>
+        </div>
+      )}
 
       {/* 3. 4 Clean Body Parameters */}
       <div className="measurement-section sliders-section">

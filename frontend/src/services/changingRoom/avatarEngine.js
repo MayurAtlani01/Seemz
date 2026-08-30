@@ -215,3 +215,53 @@ export function applyAvatarParamsToMesh(mesh, params) {
     }
   });
 }
+
+/**
+ * Maps raw physical measurements in cm to Seemz avatar 0-100 percentages.
+ * @param {Object} measurements - { height, shoulderWidth, chest, waist, hip, armLength, inseam, torsoLength }
+ * @param {string} category - 'men' or 'women'
+ * @returns {Object} Mapped avatar params
+ */
+export function mapMeasurementsToAvatarParams(measurements, category = "men") {
+  const isMan = category === "men";
+
+  // Height: cm to 0-100
+  // Men: 160cm to 200cm. Women: 150cm to 190cm.
+  const hMin = isMan ? 160 : 150;
+  const hMax = isMan ? 200 : 190;
+  const rawHeight = measurements.height || (isMan ? 180 : 170);
+  const heightVal = Math.max(0, Math.min(100, ((rawHeight - hMin) / (hMax - hMin)) * 100));
+
+  // Weight: related to Waist-to-Height Ratio (WhtR)
+  // Normal WhtR is ~0.45.
+  // We'll scale weight based on waist size relative to height.
+  // For waist: 60cm to 120cm
+  const rawWaist = measurements.waist || (isMan ? 80 : 66);
+  const wMin = isMan ? 70 : 58;
+  const wMax = isMan ? 115 : 98;
+  const weightVal = Math.max(0, Math.min(100, ((rawWaist - wMin) / (wMax - wMin)) * 100));
+
+  // Muscle: Broad shoulders relative to waist (V-taper)
+  // ratio = shoulderWidth / waist
+  const rawShoulders = measurements.shoulderWidth || (isMan ? 45 : 38);
+  const ratio = rawShoulders / rawWaist;
+  const rMin = isMan ? 0.48 : 0.52;
+  const rMax = isMan ? 0.65 : 0.68;
+  const muscleVal = Math.max(0, Math.min(100, ((ratio - rMin) / (rMax - rMin)) * 100));
+
+  // Proportions: Chest relative to Hip
+  const rawChest = measurements.chest || (isMan ? 98 : 86);
+  const rawHip = measurements.hip || (isMan ? 96 : 92);
+  const propRatio = rawChest / rawHip;
+  const pMin = isMan ? 0.94 : 0.88;
+  const pMax = isMan ? 1.12 : 1.05;
+  const proportionsVal = Math.max(0, Math.min(100, ((propRatio - pMin) / (pMax - pMin)) * 100));
+
+  return {
+    category,
+    height: Math.round(heightVal),
+    weight: Math.round(weightVal),
+    muscle: Math.round(muscleVal),
+    proportions: Math.round(proportionsVal),
+  };
+}

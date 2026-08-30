@@ -51,6 +51,23 @@ const userSchema = new mongoose.Schema({
     profilePic: {
     type: String,
     default: ""
+    },
+    bodyProfile: {
+        gender: { type: String, enum: ["men", "women"], default: "men" },
+        height: { type: Number, default: 175 },
+        shoulderWidth: { type: Number, default: 44 },
+        chest: { type: Number, default: 96 },
+        waist: { type: Number, default: 80 },
+        hip: { type: Number, default: 94 },
+        armLength: { type: Number, default: 60 },
+        inseam: { type: Number, default: 80 },
+        torsoLength: { type: Number, default: 65 },
+        avatarParams: {
+            height: { type: Number, default: 50 },
+            weight: { type: Number, default: 50 },
+            muscle: { type: Number, default: 50 },
+            proportions: { type: Number, default: 50 }
+        }
     }
 }, {
     timestamps: true
