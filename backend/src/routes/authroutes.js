@@ -10,9 +10,11 @@ const {
   forgotPassword,
   resetPassword,
   getDiagnosticStatus,
+  testEmailDelivery,
 } = require("../controllers/user.controller");
 
 router.get("/diagnostic-status", getDiagnosticStatus);
+router.post("/test-email", testEmailDelivery);
 router.post("/register", registerUser);
 router.post("/verify-register-otp", verifyRegisterOTP);
 router.post("/resend-register-otp", resendRegisterOTP);

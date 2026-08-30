@@ -26,6 +26,26 @@ const getDiagnosticStatus = async (req, res) => {
   });
 };
 
+// SAFE DIAGNOSTIC TEST EMAIL DISPATCH
+const testEmailDelivery = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, message: "Email is required" });
+  }
+  try {
+    const result = await sendEmail({
+      to: email.trim(),
+      subject: "Seemz - Delivery Test",
+      text: "This is an automated test verifying cloud email delivery for Seemz Atelier.",
+      html: generateOtpEmailHtml({ name: "Client", otp: "123456", purpose: "delivery testing" }),
+      actionName: "diagnostic_test",
+    });
+    return res.status(200).json({ success: true, result });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
 // REGISTER CONTROLLER
 const registerUser = async (req, res) => {
   console.log("[OTP-DEBUG] Registration endpoint reached");
@@ -609,4 +629,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   getDiagnosticStatus,
+  testEmailDelivery,
 };
