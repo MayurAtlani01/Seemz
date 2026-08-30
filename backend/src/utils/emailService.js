@@ -1,6 +1,12 @@
 const nodemailer = require("nodemailer");
 const https = require("https");
+const dns = require("dns");
 
+
+
+
+
+dns.setDefaultResultOrder("ipv4first");
 // Safe email address masking for logs (e.g., client@domain.com -> c****t@domain.com)
 const maskEmail = (email) => {
   if (!email || typeof email !== "string") return "unknown";
@@ -128,28 +134,49 @@ const sendViaBrevo = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
 };
 
 // STRATEGY 3: Custom or Standard SMTP Transport (Nodemailer)
-const sendViaNodemailer = async ({ host, port, secure, service, user, pass, to, subject, text, html }) => {
+const sendViaNodemailer = async ({
+  host,
+  port,
+  secure,
+  service,
+  user,
+  pass,
+  to,
+  subject,
+  text,
+  html
+}) => {
   const transportOpts = service
     ? {
-        service,
-        auth: { user, pass },
-        connectionTimeout: 6500,
-        greetingTimeout: 6500,
-        socketTimeout: 6500,
-        tls: { rejectUnauthorized: false },
-      }
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      family: 4,
+      auth: { user, pass },
+      connectionTimeout: 6500,
+      greetingTimeout: 6500,
+      socketTimeout: 6500,
+      tls: {
+        rejectUnauthorized: false,
+        servername: "smtp.gmail.com",
+      },
+    }
     : {
-        host,
-        port,
-        secure,
-        auth: { user, pass },
-        connectionTimeout: 6500,
-        greetingTimeout: 6500,
-        socketTimeout: 6500,
-        tls: { rejectUnauthorized: false },
-      };
+      host,
+      port,
+      secure,
+      family: 4,
+      auth: { user, pass },
+      connectionTimeout: 6500,
+      greetingTimeout: 6500,
+      socketTimeout: 6500,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    };
 
   const transporter = nodemailer.createTransport(transportOpts);
+
   const info = await transporter.sendMail({
     from: `"Seemz Atelier" <${user}>`,
     to,
@@ -158,7 +185,10 @@ const sendViaNodemailer = async ({ host, port, secure, service, user, pass, to, 
     html: html || undefined,
   });
 
-  return { provider: service || `${host}:${port}`, messageId: info.messageId };
+  return {
+    provider: service || `${host}:${port}`,
+    messageId: info.messageId
+  };
 };
 
 // MAIN RESILIENT DISPATCHER
@@ -253,14 +283,14 @@ const sendEmail = async ({ to, subject, text, html, actionName = "OTP" }) => {
       } catch (err) {
         const isNetworkOrPortBlock = err.code === "ETIMEDOUT" || err.code === "ECONNREFUSED" || err.code === "ESOCKETTIMEDOUT";
         const isAuthError = err.code === "EAUTH" || (err.response && err.response.includes("535"));
-        
+
         let diagnosis = err.message;
         if (isNetworkOrPortBlock) {
           diagnosis = `Network socket timeout (${err.code}). Cloud hosting outbound SMTP ports (465/587) may be blocked. Recommend setting RESEND_API_KEY (HTTPS port 443).`;
         } else if (isAuthError) {
           diagnosis = `SMTP Authentication failed (EAUTH). Check EMAIL_USER & EMAIL_PASS (Google App Password).`;
         }
-        
+
         console.error(`[OTP] Email delivery failed: ${diagnosis}`);
         lastError = new Error(diagnosis);
       }
