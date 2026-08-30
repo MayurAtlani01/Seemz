@@ -19,6 +19,7 @@ import Men from "../pages/Men/Men";
 import Women from "../pages/Women/Women";
 import NewArrivals from "../pages/NewArrivals/NewArrivals";
 import AdminProducts from "../pages/Admin/AdminProducts";
+import AdminOrders from "../pages/Admin/AdminOrders";
 import AdminRoute from "../components/AdminRoute/AdminRoute";
 import ChangingRoom from "../pages/ChangingRoom/ChangingRoom";
 
@@ -108,6 +109,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/orders",
+        element: (
+          <AdminRoute>
+            <AdminOrders />
           </AdminRoute>
         ),
       },

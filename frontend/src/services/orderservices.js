@@ -15,8 +15,32 @@ const placeOrder = async (addressId) => {
   return response.data;
 };
 
+const getAllOrdersAdmin = async () => {
+  const response = await API.get("/orders/admin/all");
+  return response.data;
+};
+
+const cancelOrderAdmin = async (id) => {
+  const response = await API.put(`/orders/admin/${id}/cancel`);
+  return response.data;
+};
+
+const deliverOrderAdmin = async (id) => {
+  const response = await API.put(`/orders/admin/${id}/deliver`);
+  return response.data;
+};
+
+const cancelMyOrder = async (id) => {
+  const response = await API.put(`/orders/my/${id}/cancel`);
+  return response.data;
+};
+
 export {
   getMyOrders,
   getOrderById,
   placeOrder,
+  getAllOrdersAdmin,
+  cancelOrderAdmin,
+  deliverOrderAdmin,
+  cancelMyOrder,
 };

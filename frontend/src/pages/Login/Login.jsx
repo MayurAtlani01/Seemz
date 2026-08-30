@@ -45,9 +45,23 @@ function Login() {
       }
     } catch (error) {
       console.error(error);
-      setErrorMessage(
-        error.response?.data?.message || "Invalid email or password. Please try again."
-      );
+      const isUnverified = error.response?.data?.isVerified === false;
+      if (isUnverified) {
+        setErrorMessage(error.response?.data?.message || "Account not verified. Redirecting to verification...");
+        setTimeout(() => {
+          navigate("/register", {
+            state: {
+              email: error.response.data.email || email.trim(),
+              name: error.response.data.name || "",
+              step: "otp",
+            },
+          });
+        }, 1500);
+      } else {
+        setErrorMessage(
+          error.response?.data?.message || "Invalid email or password. Please try again."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }

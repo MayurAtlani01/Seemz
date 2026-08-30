@@ -170,9 +170,14 @@ const Navbar = () => {
                   </NavLink>
 
                   {isAdmin && (
-                    <NavLink to="/admin/products" className="dropdown-item admin-link" onClick={() => setDropdownOpen(false)}>
-                      <Shield size={15} /> Admin Products
-                    </NavLink>
+                    <>
+                      <NavLink to="/admin/products" className="dropdown-item admin-link" onClick={() => setDropdownOpen(false)}>
+                        <Shield size={15} /> Admin Products
+                      </NavLink>
+                      <NavLink to="/admin/orders" className="dropdown-item admin-link" onClick={() => setDropdownOpen(false)}>
+                        <Package size={15} /> Admin Orders
+                      </NavLink>
+                    </>
                   )}
 
                   <button type="button" className="dropdown-item logout-item" onClick={handleLogout}>
@@ -263,9 +268,14 @@ const Navbar = () => {
               <NavLink to="/orders" onClick={closeMenu}>MY ORDERS</NavLink>
               <NavLink to="/profile" onClick={closeMenu}>MY ACCOUNT</NavLink>
               {isAdmin && (
-                <NavLink to="/admin/products" onClick={closeMenu} className="mobile-admin-link">
-                  ADMIN PRODUCT PANEL
-                </NavLink>
+                <>
+                  <NavLink to="/admin/products" onClick={closeMenu} className="mobile-admin-link">
+                    ADMIN PRODUCT PANEL
+                  </NavLink>
+                  <NavLink to="/admin/orders" onClick={closeMenu} className="mobile-admin-link">
+                    ADMIN ORDER PANEL
+                  </NavLink>
+                </>
               )}
               <button
                 type="button"

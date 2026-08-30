@@ -7,6 +7,7 @@ const cartRoute = require("./routes/cartroutes")
 const wishlistRoutes = require("./routes/wishlistroutes");
 const addressRoutes = require("./routes/addressroutes");
 const orderRoutes = require("./routes/orderroutes");
+const chatRoute = require("./routes/chatroutes");
 const cors = require("cors");
 
 const app = express();
@@ -53,5 +54,6 @@ app.use("/api/cart",cartRoute);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/chat", chatRoute);
 
 module.exports=app

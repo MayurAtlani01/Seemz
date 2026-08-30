@@ -149,8 +149,175 @@ const getSingleOrder = async (req, res) => {
   }
 };
 
+const getAllOrdersAdmin = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("user", "name email")
+      .populate("items.product")
+      .populate("address")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const cancelOrderAdmin = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Order is already cancelled",
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    // Restore stock for each item in the cancelled order
+    for (const item of order.items) {
+      if (item.product) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("user", "name email")
+      .populate("items.product")
+      .populate("address");
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order: populatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deliverOrderAdmin = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.orderStatus === "Delivered" || order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: `Order cannot be marked as Delivered when it is already ${order.orderStatus}`,
+      });
+    }
+
+    order.orderStatus = "Delivered";
+    await order.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("user", "name email")
+      .populate("items.product")
+      .populate("address");
+
+    res.status(200).json({
+      success: true,
+      message: "Order marked as Delivered successfully",
+      order: populatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const cancelMyOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // SECURITY CHECK: Verify authenticated user ownership
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Access Denied. You are not authorized to cancel this order.",
+      });
+    }
+
+    // VALIDATION: Check active statuses (only allow Pending/Confirmed)
+    if (order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot cancel order at this stage. Current status is ${order.orderStatus}.`,
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    // Restore stock for each item in the cancelled order
+    for (const item of order.items) {
+      if (item.product) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate("items.product")
+      .populate("address");
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order: populatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   placeOrder,
   getMyOrders,
   getSingleOrder,
+  getAllOrdersAdmin,
+  cancelOrderAdmin,
+  deliverOrderAdmin,
+  cancelMyOrder,
 };

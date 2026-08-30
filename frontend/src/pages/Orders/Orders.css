@@ -375,6 +375,36 @@
   font-size: 12px;
 }
 
+.order-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.order-cancel-btn {
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.order-cancel-btn:hover:not(:disabled) {
+  background: #ff6b6b;
+  color: #ffffff;
+  border-color: #ff6b6b;
+}
+
+.order-cancel-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 768px) {

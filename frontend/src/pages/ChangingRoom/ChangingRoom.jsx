@@ -6,6 +6,7 @@ import GarmentControls from "../../components/ChangingRoom/GarmentControls";
 import FitAnalysis from "../../components/ChangingRoom/FitAnalysis";
 import CameraControls from "../../components/ChangingRoom/CameraControls";
 import TransitionOverlay from "../../components/ChangingRoom/TransitionOverlay";
+import ChatAssistant from "../../components/ChatAssistant/ChatAssistant";
 import { DEFAULT_AVATAR_PARAMS } from "../../services/changingRoom/avatarEngine";
 import agentBridge from "../../services/changingRoom/agentBridge";
 import { Sliders, Layers, Activity, ArrowLeft, RotateCcw, Eye, Sparkles } from "lucide-react";
@@ -244,6 +245,9 @@ function ChangingRoom() {
           </div>
         )}
       </div>
+
+      {/* Seemz AI assistant */}
+      <ChatAssistant />
     </div>
   );
 }

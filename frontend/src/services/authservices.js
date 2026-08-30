@@ -20,9 +20,21 @@ const resetPassword = async (resetData) => {
   return response.data;
 };
 
+const verifyRegisterOTP = async (email, otp) => {
+  const response = await API.post("/auth/verify-register-otp", { email, otp });
+  return response.data;
+};
+
+const resendRegisterOTP = async (email) => {
+  const response = await API.post("/auth/resend-register-otp", { email });
+  return response.data;
+};
+
 export {
   registerUser,
   loginUser,
   forgotPassword,
   resetPassword,
+  verifyRegisterOTP,
+  resendRegisterOTP,
 };

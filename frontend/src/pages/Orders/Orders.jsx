@@ -2,7 +2,7 @@ import "./Orders.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Package, ArrowLeft, ArrowRight, MapPin, CreditCard, Clock, ShieldCheck } from "lucide-react";
-import { getMyOrders } from "../../services/orderservices";
+import { getMyOrders, cancelMyOrder } from "../../services/orderservices";
 import { useAuth } from "../../context/AuthContext";
 import imgFallback from "../../assets/images/product1.jpg";
 
@@ -12,6 +12,30 @@ function Orders() {
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancelLoadingId, setCancelLoadingId] = useState(null);
+
+  const handleCancelMyOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel your order? This will restore the items to stock and cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setCancelLoadingId(orderId);
+      const data = await cancelMyOrder(orderId);
+      if (data?.success) {
+        // Update local order status in list
+        setOrders((prev) =>
+          prev.map((o) => (o._id === orderId ? { ...o, orderStatus: "Cancelled" } : o))
+        );
+        alert("Your order has been cancelled successfully.");
+      }
+    } catch (err) {
+      console.error("Order self-cancellation failure:", err);
+      alert(err.response?.data?.message || "Failed to cancel your order. Please try again.");
+    } finally {
+      setCancelLoadingId(null);
+    }
+  };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -194,9 +218,21 @@ function Orders() {
                     <span>SEEMZ Authenticity Guaranteed</span>
                   </div>
 
-                  <div className="order-total-info">
-                    <span>Grand Total:</span>
-                    <strong>{formatPrice(ord.totalAmount)}</strong>
+                  <div className="order-footer-actions">
+                    {["Pending", "Confirmed"].includes(ord.orderStatus) && (
+                      <button
+                        type="button"
+                        onClick={() => handleCancelMyOrder(ord._id)}
+                        className="order-cancel-btn"
+                        disabled={cancelLoadingId === ord._id}
+                      >
+                        {cancelLoadingId === ord._id ? "Cancelling..." : "Cancel Order"}
+                      </button>
+                    )}
+                    <div className="order-total-info">
+                      <span>Grand Total:</span>
+                      <strong>{formatPrice(ord.totalAmount)}</strong>
+                    </div>
                   </div>
                 </div>
               </div>
