@@ -2,11 +2,8 @@ const nodemailer = require("nodemailer");
 const https = require("https");
 const dns = require("dns");
 
-
-
-
-
 dns.setDefaultResultOrder("ipv4first");
+
 // Safe email address masking for logs (e.g., client@domain.com -> c****t@domain.com)
 const maskEmail = (email) => {
   if (!email || typeof email !== "string") return "unknown";
@@ -16,19 +13,12 @@ const maskEmail = (email) => {
   return `${local[0]}***${local[local.length - 1]}@${domain}`;
 };
 
-// Safe error message sanitizer (strips passwords, tokens, API keys)
-const sanitizeErrorMessage = (msg) => {
-  if (!msg || typeof msg !== "string") return "Unknown error";
-  return msg
-    .replace(/(password|pass|secret|key|token|auth)=[^&\s]+/gi, "$1=[REDACTED]")
-    .replace(/[a-zA-Z0-9_-]{24,}/g, "[REDACTED_SECRET]");
-};
-
 // STRATEGY 1: Resend HTTPS REST API (Port 443 - Immune to cloud SMTP port blocks)
 const sendViaResend = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
   return new Promise((resolve, reject) => {
+    const sender = fromEmail || process.env.EMAIL_FROM || process.env.RESEND_FROM || "Seemz Atelier <onboarding@resend.dev>";
     const payload = JSON.stringify({
-      from: fromEmail || process.env.EMAIL_FROM || "Seemz Atelier <onboarding@resend.dev>",
+      from: sender,
       to: [toEmail],
       subject,
       text,
@@ -60,7 +50,7 @@ const sendViaResend = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
             const parsed = JSON.parse(data);
             errorMsg = parsed.message || parsed.name || errorMsg;
           } catch {
-            errorMsg = data.substring(0, 100) || errorMsg;
+            errorMsg = data.substring(0, 150) || errorMsg;
           }
           reject(new Error(`Resend API Error (${errorMsg})`));
         }
@@ -115,7 +105,7 @@ const sendViaBrevo = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
             const parsed = JSON.parse(data);
             errorMsg = parsed.message || errorMsg;
           } catch {
-            errorMsg = data.substring(0, 100) || errorMsg;
+            errorMsg = data.substring(0, 150) || errorMsg;
           }
           reject(new Error(`Brevo API Error (${errorMsg})`));
         }
@@ -133,7 +123,7 @@ const sendViaBrevo = ({ apiKey, fromEmail, toEmail, subject, text, html }) => {
   });
 };
 
-// STRATEGY 3: Custom or Standard SMTP Transport (Nodemailer)
+// STRATEGY 3: Custom or Standard SMTP Transport (Nodemailer for localhost)
 const sendViaNodemailer = async ({
   host,
   port,
@@ -148,32 +138,32 @@ const sendViaNodemailer = async ({
 }) => {
   const transportOpts = service
     ? {
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      family: 4,
-      auth: { user, pass },
-      connectionTimeout: 6500,
-      greetingTimeout: 6500,
-      socketTimeout: 6500,
-      tls: {
-        rejectUnauthorized: false,
-        servername: "smtp.gmail.com",
-      },
-    }
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        family: 4,
+        auth: { user, pass },
+        connectionTimeout: 6500,
+        greetingTimeout: 6500,
+        socketTimeout: 6500,
+        tls: {
+          rejectUnauthorized: false,
+          servername: "smtp.gmail.com",
+        },
+      }
     : {
-      host,
-      port,
-      secure,
-      family: 4,
-      auth: { user, pass },
-      connectionTimeout: 6500,
-      greetingTimeout: 6500,
-      socketTimeout: 6500,
-      tls: {
-        rejectUnauthorized: false,
-      },
-    };
+        host,
+        port,
+        secure,
+        family: 4,
+        auth: { user, pass },
+        connectionTimeout: 6500,
+        greetingTimeout: 6500,
+        socketTimeout: 6500,
+        tls: {
+          rejectUnauthorized: false,
+        },
+      };
 
   const transporter = nodemailer.createTransport(transportOpts);
 
@@ -187,7 +177,7 @@ const sendViaNodemailer = async ({
 
   return {
     provider: service || `${host}:${port}`,
-    messageId: info.messageId
+    messageId: info.messageId,
   };
 };
 
@@ -231,78 +221,45 @@ const sendEmail = async ({ to, subject, text, html, actionName = "OTP" }) => {
 
   // Delivery function executing configured strategies
   const executeDelivery = async () => {
-    let lastError = null;
-
     // 1. Resend REST API (HTTPS port 443 - highest priority for cloud environments)
     if (resendApiKey) {
-      try {
-        console.log(`[OTP] Email delivery started (Provider: Resend HTTPS API, Recipient: ${maskedTo})`);
-        const result = await sendViaResend({ apiKey: resendApiKey, toEmail: to, subject, text, html });
-        console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
-        return result;
-      } catch (err) {
-        console.warn(`[OTP] Resend HTTP delivery failed: ${err.message}`);
-        lastError = err;
-      }
+      console.log(`[OTP] Email delivery started (Provider: Resend HTTPS API, Recipient: ${maskedTo})`);
+      const result = await sendViaResend({ apiKey: resendApiKey, toEmail: to, subject, text, html });
+      console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
+      return result;
     }
 
     // 2. Brevo REST API (HTTPS port 443)
     if (brevoApiKey) {
-      try {
-        console.log(`[OTP] Email delivery started (Provider: Brevo HTTPS API, Recipient: ${maskedTo})`);
-        const result = await sendViaBrevo({ apiKey: brevoApiKey, toEmail: to, subject, text, html });
-        console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
-        return result;
-      } catch (err) {
-        console.warn(`[OTP] Brevo HTTP delivery failed: ${err.message}`);
-        lastError = err;
-      }
+      console.log(`[OTP] Email delivery started (Provider: Brevo HTTPS API, Recipient: ${maskedTo})`);
+      const result = await sendViaBrevo({ apiKey: brevoApiKey, toEmail: to, subject, text, html });
+      console.log(`[OTP] Email delivery completed successfully via ${result.provider}`);
+      return result;
     }
 
     // 3. Custom SMTP Server (if configured)
     if (smtpHost && smtpUser && smtpPass) {
-      try {
-        console.log(`[OTP] Email delivery started (Provider: Custom SMTP ${smtpHost}:${smtpPort}, Recipient: ${maskedTo})`);
-        const result = await sendViaNodemailer({ host: smtpHost, port: smtpPort, secure: smtpSecure, user: smtpUser, pass: smtpPass, to, subject, text, html });
-        console.log(`[OTP] Email delivery completed successfully via Custom SMTP`);
-        return result;
-      } catch (err) {
-        const safeReason = err.code || err.name || err.message;
-        console.warn(`[OTP] Custom SMTP failed (${safeReason})`);
-        lastError = err;
-      }
+      console.log(`[OTP] Email delivery started (Provider: Custom SMTP ${smtpHost}:${smtpPort}, Recipient: ${maskedTo})`);
+      const result = await sendViaNodemailer({ host: smtpHost, port: smtpPort, secure: smtpSecure, user: smtpUser, pass: smtpPass, to, subject, text, html });
+      console.log(`[OTP] Email delivery completed successfully via Custom SMTP`);
+      return result;
     }
 
-    // 4. Standard Gmail SMTP
+    // 4. Standard Gmail SMTP (localhost fallback)
     if (smtpUser && smtpPass) {
-      try {
-        console.log(`[OTP] Email delivery started (Provider: Gmail SMTP, Recipient: ${maskedTo})`);
-        const result = await sendViaNodemailer({ service: "gmail", user: smtpUser, pass: smtpPass, to, subject, text, html });
-        console.log(`[OTP] Email delivery completed successfully via Gmail SMTP`);
-        return result;
-      } catch (err) {
-        const isNetworkOrPortBlock = err.code === "ETIMEDOUT" || err.code === "ECONNREFUSED" || err.code === "ESOCKETTIMEDOUT";
-        const isAuthError = err.code === "EAUTH" || (err.response && err.response.includes("535"));
-
-        let diagnosis = err.message;
-        if (isNetworkOrPortBlock) {
-          diagnosis = `Network socket timeout (${err.code}). Cloud hosting outbound SMTP ports (465/587) may be blocked. Recommend setting RESEND_API_KEY (HTTPS port 443).`;
-        } else if (isAuthError) {
-          diagnosis = `SMTP Authentication failed (EAUTH). Check EMAIL_USER & EMAIL_PASS (Google App Password).`;
-        }
-
-        console.error(`[OTP] Email delivery failed: ${diagnosis}`);
-        lastError = new Error(diagnosis);
-      }
+      console.log(`[OTP] Email delivery started (Provider: Gmail SMTP, Recipient: ${maskedTo})`);
+      const result = await sendViaNodemailer({ service: "gmail", user: smtpUser, pass: smtpPass, to, subject, text, html });
+      console.log(`[OTP] Email delivery completed successfully via Gmail SMTP`);
+      return result;
     }
 
-    throw lastError || new Error("All configured email transports failed.");
+    throw new Error("No configured email transports available.");
   };
 
   // Hard timeout guard (8000ms max) ensuring request NEVER hangs
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new Error("Email delivery timed out after 8000ms. Outbound cloud SMTP connection took too long."));
+      reject(new Error("Email delivery timed out after 8000ms."));
     }, 8000);
   });
 
