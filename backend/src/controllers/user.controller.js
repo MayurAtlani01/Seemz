@@ -3,9 +3,61 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const nodemailer = require("nodemailer");
+const https = require("https");
 
-// HELPER: Resilient Mail Delivery with Cloud Fallbacks & Safe Diagnostics
+// HELPER: Send via Resend HTTPS REST API (Port 443 - zero cloud SMTP port blocks)
+const sendViaResend = (apiKey, fromEmail, toEmail, subject, text) => {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      from: fromEmail || "Seemz Atelier <onboarding@resend.dev>",
+      to: [toEmail],
+      subject: subject,
+      text: text,
+    });
+
+    const options = {
+      hostname: "api.resend.com",
+      port: 443,
+      path: "/emails",
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey.trim()}`,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(payload),
+      },
+      timeout: 7000,
+    };
+
+    const req = https.request(options, (res) => {
+      let data = "";
+      res.on("data", (chunk) => { data += chunk; });
+      res.on("end", () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(true);
+        } else {
+          reject(new Error(`Resend API HTTP ${res.statusCode}: ${data}`));
+        }
+      });
+    });
+
+    req.on("error", (e) => reject(e));
+    req.on("timeout", () => {
+      req.destroy();
+      reject(new Error("Resend HTTPS API request timed out (7000ms)"));
+    });
+
+    req.write(payload);
+    req.end();
+  });
+};
+
+// HELPER: Resilient Mail Delivery with Hard Overall Timeout & Safe Diagnostics
 const sendMailHelper = async ({ to, subject, text, actionName = "OTP" }) => {
+  const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
+  const smtpHost = (process.env.SMTP_HOST || "").trim();
+  const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
+  const smtpSecure = process.env.SMTP_SECURE === "true" || smtpPort === 465;
+
   const smtpUser = (
     process.env.EMAIL_USER ||
     process.env.SMTP_USER ||
@@ -24,80 +76,73 @@ const sendMailHelper = async ({ to, subject, text, actionName = "OTP" }) => {
     ""
   ).trim();
 
-  console.log(`[OTP] Request received for: ${to} (Action: ${actionName})`);
-  console.log(`[OTP] Email configuration present: ${Boolean(smtpUser && smtpPass)} (USER length: ${smtpUser.length}, PASS length: ${smtpPass.length})`);
+  // Internal execution promise
+  const executeDelivery = async () => {
+    // Strategy 1: Resend HTTP API (if configured)
+    if (resendApiKey) {
+      const fromEmail = process.env.EMAIL_FROM || process.env.RESEND_FROM || "Seemz Atelier <onboarding@resend.dev>";
+      return await sendViaResend(resendApiKey, fromEmail, to, subject, text);
+    }
 
-  if (!smtpUser || !smtpPass) {
-    const missingVarMsg = "Missing EMAIL_USER or EMAIL_PASS in server environment variables.";
-    console.error(`[OTP] CRITICAL ERROR: ${missingVarMsg}`);
-    throw new Error(missingVarMsg);
-  }
+    // Strategy 2: Custom SMTP Server (if SMTP_HOST provided)
+    if (smtpHost && smtpUser && smtpPass) {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpSecure,
+        auth: { user: smtpUser, pass: smtpPass },
+        connectionTimeout: 7000,
+        greetingTimeout: 7000,
+        socketTimeout: 7000,
+        tls: { rejectUnauthorized: false },
+      });
 
-  // Multi-tier transports:
-  // Tier 1: Gmail service predefined configuration
-  // Tier 2: Direct SSL Port 465
-  // Tier 3: Direct TLS Port 587
-  const transportConfigs = [
-    {
-      service: "gmail",
-      auth: { user: smtpUser, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-    },
-    {
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: { user: smtpUser, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-    },
-    {
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: { user: smtpUser, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
-    },
-  ];
-
-  let lastError = null;
-  for (let i = 0; i < transportConfigs.length; i++) {
-    try {
-      console.log(`[OTP] Attempting email delivery (tier ${i + 1}/${transportConfigs.length})...`);
-      const transporter = nodemailer.createTransport(transportConfigs[i]);
-      await transporter.sendMail({
+      return await transporter.sendMail({
         from: `"Seemz Atelier" <${smtpUser}>`,
         to,
         subject,
         text,
       });
-      console.log(`[OTP] Email delivery completed successfully to: ${to}`);
-      return true;
-    } catch (err) {
-      console.warn(`[OTP] Transport tier ${i + 1} failed: ${err.name} - ${err.message}`);
-      lastError = err;
     }
-  }
 
-  console.error(`[OTP] All email delivery tiers failed for ${to}:`, lastError?.message);
-  throw lastError || new Error("Failed to deliver email through all SMTP transports.");
+    // Strategy 3: Standard Direct Gmail SMTP
+    if (smtpUser && smtpPass) {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: { user: smtpUser, pass: smtpPass },
+        connectionTimeout: 7000,
+        greetingTimeout: 7000,
+        socketTimeout: 7000,
+        tls: { rejectUnauthorized: false },
+      });
+
+      return await transporter.sendMail({
+        from: `"Seemz Atelier" <${smtpUser}>`,
+        to,
+        subject,
+        text,
+      });
+    }
+
+    throw new Error("No valid email transport configuration found (EMAIL_USER/EMAIL_PASS or RESEND_API_KEY).");
+  };
+
+  // Hard overall timeout guard (8500ms max) to ensure requests never hang indefinitely
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Email delivery timed out after 8500ms"));
+    }, 8500);
+  });
+
+  return await Promise.race([executeDelivery(), timeoutPromise]);
 };
 
-// HELPER: Send OTP Email
+// HELPER: Send Registration Verification Email
 const sendVerificationEmail = async (email, name, otp) => {
   return sendMailHelper({
     to: email,
     subject: "Welcome to Seemz - Verify Your Account",
-    text: `
-Hello ${name},
+    text: `Hello ${name},
 
 Thank you for registering with Seemz Atelier.
 
@@ -106,14 +151,14 @@ Your One-Time Password (OTP) is: ${otp}
 This OTP is valid for 10 minutes.
 
 Regards,
-Seemz Atelier
-`,
+Seemz Atelier`,
     actionName: "register_verification",
   });
 };
 
 // REGISTER CONTROLLER
 const registerUser = async (req, res) => {
+  console.log("[AUTH] Registration request received");
   try {
     const { name, email, password } = req.body;
 
@@ -124,9 +169,10 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail });
 
-    // Generate secure 6-digit OTP
+    console.log("[OTP] Generation started");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
@@ -136,77 +182,79 @@ const registerUser = async (req, res) => {
 
     if (existingUser) {
       if (existingUser.isVerified) {
+        console.log("[AUTH] Verification failed: User already exists");
         return res.status(400).json({
           success: false,
           message: "User already exists",
         });
       } else {
-        // Reuse unverified user account: update details and send a new OTP
+        // Reuse unverified user record
         const hashedPassword = await bcrypt.hash(password, 10);
-        existingUser.name = name;
+        existingUser.name = name.trim();
         existingUser.password = hashedPassword;
         existingUser.otp = hashedOtp;
-        existingUser.otpExpire = Date.now() + 10 * 60 * 1000;
+        existingUser.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
         existingUser.otpAttempts = 0;
-        existingUser.otpLastSent = Date.now();
+        existingUser.otpLastSent = new Date();
 
-        // Attempt email send before saving
+        console.log("[OTP] Email delivery started");
         try {
-          await sendVerificationEmail(email, name, otp);
+          await sendVerificationEmail(normalizedEmail, name.trim(), otp);
+          console.log("[OTP] Email delivery completed");
         } catch (mailErr) {
-          console.error("Email delivery failed during unverified reuse:", mailErr);
-          return res.status(500).json({
+          console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
+          return res.status(503).json({
             success: false,
-            message: "Failed to send verification email. Please check your email configuration.",
+            message: "Unable to send verification code. Please try again.",
           });
         }
 
         await existingUser.save();
+        console.log("[OTP] OTP storage completed");
 
         return res.status(200).json({
           success: true,
-          message: "Verification OTP sent to your email",
-          email,
+          message: "Verification code sent to your email.",
+          email: normalizedEmail,
         });
       }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Build the user model instance without saving yet
     const user = new User({
-      name,
-      email,
+      name: name.trim(),
+      email: normalizedEmail,
       password: hashedPassword,
       isVerified: false,
       otp: hashedOtp,
-      otpExpire: Date.now() + 10 * 60 * 1000,
+      otpExpire: new Date(Date.now() + 10 * 60 * 1000),
       otpAttempts: 0,
-      otpLastSent: Date.now(),
+      otpLastSent: new Date(),
     });
 
-    // Attempt email send first
+    console.log("[OTP] Email delivery started");
     try {
-      await sendVerificationEmail(email, name, otp);
+      await sendVerificationEmail(normalizedEmail, name.trim(), otp);
+      console.log("[OTP] Email delivery completed");
     } catch (mailErr) {
-      console.error("Email delivery failed for new user:", mailErr);
-      return res.status(500).json({
+      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
+      return res.status(503).json({
         success: false,
-        message: "Failed to send verification email. Please check your email configuration.",
+        message: "Unable to send verification code. Please try again.",
       });
     }
 
-    // Save user to database only if email sends successfully
     await user.save();
+    console.log("[OTP] OTP storage completed");
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Registration successful. Please check your email for the verification code.",
-      email,
+      email: normalizedEmail,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("[AUTH] Registration error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -215,19 +263,23 @@ const registerUser = async (req, res) => {
 
 // VERIFY REGISTER OTP CONTROLLER
 const verifyRegisterOTP = async (req, res) => {
+  console.log("[OTP] Verification request received");
   try {
     const { email, otp } = req.body;
 
     if (!email || !otp) {
+      console.log("[AUTH] Verification failed: Missing email or OTP");
       return res.status(400).json({
         success: false,
         message: "Email and OTP are required",
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      console.log("[AUTH] Verification failed: User not found");
       return res.status(400).json({
         success: false,
         message: "User not found",
@@ -235,6 +287,7 @@ const verifyRegisterOTP = async (req, res) => {
     }
 
     if (user.isVerified) {
+      console.log("[AUTH] Verification failed: Account already verified");
       return res.status(400).json({
         success: false,
         message: "Account is already verified",
@@ -242,13 +295,15 @@ const verifyRegisterOTP = async (req, res) => {
     }
 
     if (!user.otp || !user.otpExpire) {
+      console.log("[AUTH] Verification failed: No active OTP record found");
       return res.status(400).json({
         success: false,
         message: "No active verification code found. Please request a new OTP.",
       });
     }
 
-    if (user.otpExpire < Date.now()) {
+    if (new Date(user.otpExpire).getTime() < Date.now()) {
+      console.log("[AUTH] Verification failed: Verification code expired");
       return res.status(400).json({
         success: false,
         message: "Verification code has expired. Please request a new OTP.",
@@ -256,17 +311,17 @@ const verifyRegisterOTP = async (req, res) => {
     }
 
     if (user.otpAttempts >= 5) {
+      console.log("[AUTH] Verification failed: Too many failed attempts");
       return res.status(400).json({
         success: false,
         message: "Too many failed attempts. Verification code has been invalidated. Please request a new OTP.",
       });
     }
 
-    const isMatch = await bcrypt.compare(otp, user.otp);
+    const isMatch = await bcrypt.compare(otp.trim(), user.otp);
 
     if (!isMatch) {
-      user.otpAttempts += 1;
-      // Invalidate OTP on 5th failed attempt
+      user.otpAttempts = (user.otpAttempts || 0) + 1;
       if (user.otpAttempts >= 5) {
         user.otp = null;
         user.otpExpire = null;
@@ -274,6 +329,7 @@ const verifyRegisterOTP = async (req, res) => {
       await user.save();
 
       const remaining = 5 - user.otpAttempts;
+      console.log(`[AUTH] Verification failed: Invalid OTP code (Attempts remaining: ${remaining})`);
       return res.status(400).json({
         success: false,
         message: remaining > 0
@@ -282,20 +338,21 @@ const verifyRegisterOTP = async (req, res) => {
       });
     }
 
-    // Success: Verify user and clear OTP fields
+    // Verification Success
     user.isVerified = true;
     user.otp = null;
     user.otpExpire = null;
     user.otpAttempts = 0;
     await user.save();
 
-    res.status(200).json({
+    console.log("[OTP] Verification completed");
+    return res.status(200).json({
       success: true,
       message: "Account verified successfully. You can now log in.",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("[AUTH] OTP verification error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -304,6 +361,7 @@ const verifyRegisterOTP = async (req, res) => {
 
 // RESEND REGISTER OTP CONTROLLER
 const resendRegisterOTP = async (req, res) => {
+  console.log("[AUTH] Resend OTP request received");
   try {
     const { email } = req.body;
 
@@ -314,9 +372,11 @@ const resendRegisterOTP = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      console.log("[AUTH] Verification failed: User not found for resend");
       return res.status(400).json({
         success: false,
         message: "User not found",
@@ -324,22 +384,23 @@ const resendRegisterOTP = async (req, res) => {
     }
 
     if (user.isVerified) {
+      console.log("[AUTH] Verification failed: User already verified");
       return res.status(400).json({
         success: false,
         message: "Account is already verified",
       });
     }
 
-    // Enforce 60-second cooldown on resends
-    if (user.otpLastSent && Date.now() - user.otpLastSent.getTime() < 60 * 1000) {
-      const timeRemaining = Math.ceil((60 * 1000 - (Date.now() - user.otpLastSent.getTime())) / 1000);
+    // 60-second cooldown enforcement
+    if (user.otpLastSent && Date.now() - new Date(user.otpLastSent).getTime() < 60 * 1000) {
+      const timeRemaining = Math.ceil((60 * 1000 - (Date.now() - new Date(user.otpLastSent).getTime())) / 1000);
       return res.status(429).json({
         success: false,
         message: `Please wait ${timeRemaining} seconds before requesting another code.`,
       });
     }
 
-    // Generate new OTP
+    console.log("[OTP] Generation started");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
@@ -348,30 +409,32 @@ const resendRegisterOTP = async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
-    user.otpExpire = Date.now() + 10 * 60 * 1000;
+    user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
     user.otpAttempts = 0;
-    user.otpLastSent = Date.now();
+    user.otpLastSent = new Date();
 
-    // Attempt email send before saving
+    console.log("[OTP] Email delivery started");
     try {
-      await sendVerificationEmail(email, user.name, otp);
+      await sendVerificationEmail(normalizedEmail, user.name, otp);
+      console.log("[OTP] Email delivery completed");
     } catch (mailErr) {
-      console.error("Email delivery failed on resend:", mailErr);
-      return res.status(500).json({
+      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
+      return res.status(503).json({
         success: false,
-        message: "Failed to send verification email. Please check your email configuration.",
+        message: "Unable to send verification code. Please try again.",
       });
     }
 
     await user.save();
+    console.log("[OTP] OTP storage completed");
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Verification code resent successfully.",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("[AUTH] Resend OTP error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -380,6 +443,7 @@ const resendRegisterOTP = async (req, res) => {
 
 // LOGIN CONTROLLER
 const loginUser = async (req, res) => {
+  console.log("[AUTH] Login request received");
   try {
     const { email, password } = req.body;
 
@@ -390,17 +454,19 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      console.log("[AUTH] Login failed: User does not exist");
       return res.status(400).json({
         success: false,
-        message: "User does not exist",
+        message: "Invalid Credentials",
       });
     }
 
-    // Verify account activation status
     if (!user.isVerified) {
+      console.log("[AUTH] Login blocked: User account unverified");
       return res.status(400).json({
         success: false,
         isVerified: false,
@@ -411,8 +477,8 @@ const loginUser = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
+      console.log("[AUTH] Login failed: Password mismatch");
       return res.status(400).json({
         success: false,
         message: "Invalid Credentials",
@@ -420,14 +486,18 @@ const loginUser = async (req, res) => {
     }
 
     const jwtSecret = (process.env.JWT_SECRET || "").trim();
+    if (!jwtSecret) {
+      console.error("[AUTH] CRITICAL: JWT_SECRET environment variable is missing");
+      return res.status(500).json({
+        success: false,
+        message: "Server authentication configuration error.",
+      });
+    }
+
     const token = jwt.sign(
-      {
-        id: user._id,
-      },
+      { id: user._id },
       jwtSecret,
-      {
-        expiresIn: "7d",
-      }
+      { expiresIn: "7d" }
     );
 
     const isProduction =
@@ -438,13 +508,14 @@ const loginUser = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction ? true : false,
+      secure: Boolean(isProduction),
       sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
 
-    res.status(200).json({
+    console.log("[AUTH] Login successful");
+    return res.status(200).json({
       success: true,
       message: "Login Successful",
       token,
@@ -456,8 +527,8 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
+    console.error("[AUTH] Login error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -475,17 +546,17 @@ const logoutUser = async (req, res) => {
 
     res.clearCookie("token", {
       httpOnly: true,
-      secure: isProduction ? true : false,
+      secure: Boolean(isProduction),
       sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Logged Out Successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -494,6 +565,7 @@ const logoutUser = async (req, res) => {
 
 // PASSWORD RESET CONTROLLER - FORGOT
 const forgotPassword = async (req, res) => {
+  console.log("[AUTH] Forgot password request received");
   try {
     const { email } = req.body;
 
@@ -504,15 +576,18 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      console.log("[AUTH] Verification failed: User does not exist for password reset");
       return res.status(400).json({
         success: false,
         message: "User does not exist",
       });
     }
 
+    console.log("[OTP] Generation started");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
@@ -521,15 +596,14 @@ const forgotPassword = async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
-    user.otpExpire = Date.now() + 10 * 60 * 1000;
-    await user.save();
+    user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
 
+    console.log("[OTP] Email delivery started");
     try {
       await sendMailHelper({
-        to: email,
+        to: normalizedEmail,
         subject: "Seemz Password Reset OTP",
-        text: `
-Hello ${user.name},
+        text: `Hello ${user.name},
 
 We received a request to reset your Seemz account password.
 
@@ -540,26 +614,28 @@ This OTP is valid for 10 minutes.
 If you did not request a password reset, please ignore this email.
 
 Regards,
-Seemz Atelier
-`,
+Seemz Atelier`,
         actionName: "forgot_password",
       });
-    } catch (error) {
-      console.error(`[OTP] Forgot password email error:`, error.message);
-      return res.status(500).json({
+      console.log("[OTP] Email delivery completed");
+    } catch (mailErr) {
+      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
+      return res.status(503).json({
         success: false,
-        message: "Failed to send verification email. Please check server email configuration or try again.",
+        message: "Unable to send verification code. Please try again.",
       });
     }
 
-    console.log(`[OTP] Response sent: 200 OK for ${email}`);
-    res.status(200).json({
+    await user.save();
+    console.log("[OTP] OTP storage completed");
+
+    return res.status(200).json({
       success: true,
-      message: "OTP sent successfully",
+      message: "Verification code sent to your email.",
     });
   } catch (error) {
-    console.error(`[OTP] Unhandled error in forgotPassword:`, error);
-    res.status(500).json({
+    console.error("[AUTH] Forgot password error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -568,6 +644,7 @@ Seemz Atelier
 
 // VERIFY AND RESET CONTROLLER
 const resetPassword = async (req, res) => {
+  console.log("[AUTH] Password reset verification request received");
   try {
     const { email, otp, newPassword } = req.body;
 
@@ -578,9 +655,11 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      console.log("[AUTH] Verification failed: User not found during reset");
       return res.status(400).json({
         success: false,
         message: "User does not exist",
@@ -588,41 +667,44 @@ const resetPassword = async (req, res) => {
     }
 
     if (!user.otp || !user.otpExpire) {
+      console.log("[AUTH] Verification failed: Invalid OTP or session expired");
       return res.status(400).json({
         success: false,
         message: "Invalid OTP or session expired",
       });
     }
 
-    const isMatch = await bcrypt.compare(otp, user.otp);
-    if (!isMatch) {
+    if (new Date(user.otpExpire).getTime() < Date.now()) {
+      console.log("[AUTH] Verification failed: Password reset OTP expired");
       return res.status(400).json({
         success: false,
-        message: "Invalid OTP",
+        message: "Verification code has expired. Please request a new one.",
       });
     }
 
-    if (user.otpExpire < Date.now()) {
+    const isMatch = await bcrypt.compare(otp.trim(), user.otp);
+    if (!isMatch) {
+      console.log("[AUTH] Verification failed: Invalid OTP for password reset");
       return res.status(400).json({
         success: false,
-        message: "OTP Expired",
+        message: "Invalid verification code",
       });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     user.password = hashedPassword;
     user.otp = null;
     user.otpExpire = null;
     await user.save();
 
-    res.status(200).json({
+    console.log("[AUTH] Password reset completed successfully");
+    return res.status(200).json({
       success: true,
       message: "Password Reset Successfully",
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
+    console.error("[AUTH] Reset password error:", error.message);
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
