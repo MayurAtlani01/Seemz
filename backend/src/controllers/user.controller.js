@@ -2,163 +2,11 @@ const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
-const nodemailer = require("nodemailer");
-const https = require("https");
-
-// HELPER: Send via Resend HTTPS REST API (Port 443 - zero cloud SMTP port blocks)
-const sendViaResend = (apiKey, fromEmail, toEmail, subject, text) => {
-  return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({
-      from: fromEmail || "Seemz Atelier <onboarding@resend.dev>",
-      to: [toEmail],
-      subject: subject,
-      text: text,
-    });
-
-    const options = {
-      hostname: "api.resend.com",
-      port: 443,
-      path: "/emails",
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey.trim()}`,
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(payload),
-      },
-      timeout: 7000,
-    };
-
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", (chunk) => { data += chunk; });
-      res.on("end", () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(true);
-        } else {
-          reject(new Error(`Resend API HTTP ${res.statusCode}: ${data}`));
-        }
-      });
-    });
-
-    req.on("error", (e) => reject(e));
-    req.on("timeout", () => {
-      req.destroy();
-      reject(new Error("Resend HTTPS API request timed out (7000ms)"));
-    });
-
-    req.write(payload);
-    req.end();
-  });
-};
-
-// HELPER: Resilient Mail Delivery with Hard Overall Timeout & Safe Diagnostics
-const sendMailHelper = async ({ to, subject, text, actionName = "OTP" }) => {
-  const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
-  const smtpHost = (process.env.SMTP_HOST || "").trim();
-  const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
-  const smtpSecure = process.env.SMTP_SECURE === "true" || smtpPort === 465;
-
-  const smtpUser = (
-    process.env.EMAIL_USER ||
-    process.env.SMTP_USER ||
-    process.env.MAIL_USER ||
-    process.env.GMAIL_USER ||
-    process.env.EMAIL ||
-    ""
-  ).trim();
-
-  const smtpPass = (
-    process.env.EMAIL_PASS ||
-    process.env.SMTP_PASS ||
-    process.env.MAIL_PASS ||
-    process.env.GMAIL_PASS ||
-    process.env.EMAIL_PASSWORD ||
-    ""
-  ).trim();
-
-  // Internal execution promise
-  const executeDelivery = async () => {
-    // Strategy 1: Resend HTTP API (if configured)
-    if (resendApiKey) {
-      const fromEmail = process.env.EMAIL_FROM || process.env.RESEND_FROM || "Seemz Atelier <onboarding@resend.dev>";
-      return await sendViaResend(resendApiKey, fromEmail, to, subject, text);
-    }
-
-    // Strategy 2: Custom SMTP Server (if SMTP_HOST provided)
-    if (smtpHost && smtpUser && smtpPass) {
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpSecure,
-        auth: { user: smtpUser, pass: smtpPass },
-        connectionTimeout: 7000,
-        greetingTimeout: 7000,
-        socketTimeout: 7000,
-        tls: { rejectUnauthorized: false },
-      });
-
-      return await transporter.sendMail({
-        from: `"Seemz Atelier" <${smtpUser}>`,
-        to,
-        subject,
-        text,
-      });
-    }
-
-    // Strategy 3: Standard Direct Gmail SMTP
-    if (smtpUser && smtpPass) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user: smtpUser, pass: smtpPass },
-        connectionTimeout: 7000,
-        greetingTimeout: 7000,
-        socketTimeout: 7000,
-        tls: { rejectUnauthorized: false },
-      });
-
-      return await transporter.sendMail({
-        from: `"Seemz Atelier" <${smtpUser}>`,
-        to,
-        subject,
-        text,
-      });
-    }
-
-    throw new Error("No valid email transport configuration found (EMAIL_USER/EMAIL_PASS or RESEND_API_KEY).");
-  };
-
-  // Hard overall timeout guard (8500ms max) to ensure requests never hang indefinitely
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error("Email delivery timed out after 8500ms"));
-    }, 8500);
-  });
-
-  return await Promise.race([executeDelivery(), timeoutPromise]);
-};
-
-// HELPER: Send Registration Verification Email
-const sendVerificationEmail = async (email, name, otp) => {
-  return sendMailHelper({
-    to: email,
-    subject: "Welcome to Seemz - Verify Your Account",
-    text: `Hello ${name},
-
-Thank you for registering with Seemz Atelier.
-
-Your One-Time Password (OTP) is: ${otp}
-
-This OTP is valid for 10 minutes.
-
-Regards,
-Seemz Atelier`,
-    actionName: "register_verification",
-  });
-};
+const { sendEmail, generateOtpEmailHtml, maskEmail } = require("../utils/emailService");
 
 // REGISTER CONTROLLER
 const registerUser = async (req, res) => {
-  console.log("[AUTH] Registration request received");
+  console.log("[OTP] Registration request received");
   try {
     const { name, email, password } = req.body;
 
@@ -172,17 +20,18 @@ const registerUser = async (req, res) => {
     const normalizedEmail = email.trim().toLowerCase();
     const existingUser = await User.findOne({ email: normalizedEmail });
 
-    console.log("[OTP] Generation started");
+    // Generate secure 6-digit OTP
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
+    console.log("[OTP] OTP generated");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     if (existingUser) {
       if (existingUser.isVerified) {
-        console.log("[AUTH] Verification failed: User already exists");
+        console.log(`[AUTH] Verification failed: User already exists (${maskEmail(normalizedEmail)})`);
         return res.status(400).json({
           success: false,
           message: "User already exists",
@@ -197,12 +46,15 @@ const registerUser = async (req, res) => {
         existingUser.otpAttempts = 0;
         existingUser.otpLastSent = new Date();
 
-        console.log("[OTP] Email delivery started");
         try {
-          await sendVerificationEmail(normalizedEmail, name.trim(), otp);
-          console.log("[OTP] Email delivery completed");
+          await sendEmail({
+            to: normalizedEmail,
+            subject: "Welcome to Seemz - Verify Your Account",
+            text: `Hello ${name.trim()},\n\nThank you for registering with Seemz Atelier.\n\nYour One-Time Password (OTP) is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nSeemz Atelier`,
+            html: generateOtpEmailHtml({ name: name.trim(), otp, purpose: "account registration" }),
+            actionName: "registration",
+          });
         } catch (mailErr) {
-          console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
           return res.status(503).json({
             success: false,
             message: "Unable to send verification code. Please try again.",
@@ -232,12 +84,15 @@ const registerUser = async (req, res) => {
       otpLastSent: new Date(),
     });
 
-    console.log("[OTP] Email delivery started");
     try {
-      await sendVerificationEmail(normalizedEmail, name.trim(), otp);
-      console.log("[OTP] Email delivery completed");
+      await sendEmail({
+        to: normalizedEmail,
+        subject: "Welcome to Seemz - Verify Your Account",
+        text: `Hello ${name.trim()},\n\nThank you for registering with Seemz Atelier.\n\nYour One-Time Password (OTP) is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nSeemz Atelier`,
+        html: generateOtpEmailHtml({ name: name.trim(), otp, purpose: "account registration" }),
+        actionName: "registration",
+      });
     } catch (mailErr) {
-      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
@@ -253,7 +108,7 @@ const registerUser = async (req, res) => {
       email: normalizedEmail,
     });
   } catch (error) {
-    console.error("[AUTH] Registration error:", error.message);
+    console.error("[OTP] Registration error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -345,13 +200,13 @@ const verifyRegisterOTP = async (req, res) => {
     user.otpAttempts = 0;
     await user.save();
 
-    console.log("[OTP] Verification completed");
+    console.log("[OTP] Email delivery completed / Verification completed");
     return res.status(200).json({
       success: true,
       message: "Account verified successfully. You can now log in.",
     });
   } catch (error) {
-    console.error("[AUTH] OTP verification error:", error.message);
+    console.error("[OTP] Verification error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -361,7 +216,7 @@ const verifyRegisterOTP = async (req, res) => {
 
 // RESEND REGISTER OTP CONTROLLER
 const resendRegisterOTP = async (req, res) => {
-  console.log("[AUTH] Resend OTP request received");
+  console.log("[OTP] Resend OTP request received");
   try {
     const { email } = req.body;
 
@@ -400,12 +255,12 @@ const resendRegisterOTP = async (req, res) => {
       });
     }
 
-    console.log("[OTP] Generation started");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
+    console.log("[OTP] OTP generated");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
@@ -413,12 +268,15 @@ const resendRegisterOTP = async (req, res) => {
     user.otpAttempts = 0;
     user.otpLastSent = new Date();
 
-    console.log("[OTP] Email delivery started");
     try {
-      await sendVerificationEmail(normalizedEmail, user.name, otp);
-      console.log("[OTP] Email delivery completed");
+      await sendEmail({
+        to: normalizedEmail,
+        subject: "Seemz - Your New Verification Code",
+        text: `Hello ${user.name},\n\nYour new One-Time Password (OTP) is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nRegards,\nSeemz Atelier`,
+        html: generateOtpEmailHtml({ name: user.name, otp, purpose: "account verification" }),
+        actionName: "resend_otp",
+      });
     } catch (mailErr) {
-      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
@@ -433,7 +291,7 @@ const resendRegisterOTP = async (req, res) => {
       message: "Verification code resent successfully.",
     });
   } catch (error) {
-    console.error("[AUTH] Resend OTP error:", error.message);
+    console.error("[OTP] Resend OTP error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -565,7 +423,7 @@ const logoutUser = async (req, res) => {
 
 // PASSWORD RESET CONTROLLER - FORGOT
 const forgotPassword = async (req, res) => {
-  console.log("[AUTH] Forgot password request received");
+  console.log("[OTP] Forgot password request received");
   try {
     const { email } = req.body;
 
@@ -587,39 +445,26 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    console.log("[OTP] Generation started");
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
+    console.log("[OTP] OTP generated");
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     user.otp = hashedOtp;
     user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
 
-    console.log("[OTP] Email delivery started");
     try {
-      await sendMailHelper({
+      await sendEmail({
         to: normalizedEmail,
         subject: "Seemz Password Reset OTP",
-        text: `Hello ${user.name},
-
-We received a request to reset your Seemz account password.
-
-Your One-Time Password (OTP) is: ${otp}
-
-This OTP is valid for 10 minutes.
-
-If you did not request a password reset, please ignore this email.
-
-Regards,
-Seemz Atelier`,
+        text: `Hello ${user.name},\n\nWe received a request to reset your Seemz account password.\n\nYour One-Time Password (OTP) is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\nRegards,\nSeemz Atelier`,
+        html: generateOtpEmailHtml({ name: user.name, otp, purpose: "password reset" }),
         actionName: "forgot_password",
       });
-      console.log("[OTP] Email delivery completed");
     } catch (mailErr) {
-      console.error(`[OTP] Email delivery failed: ${mailErr.message}`);
       return res.status(503).json({
         success: false,
         message: "Unable to send verification code. Please try again.",
@@ -634,7 +479,7 @@ Seemz Atelier`,
       message: "Verification code sent to your email.",
     });
   } catch (error) {
-    console.error("[AUTH] Forgot password error:", error.message);
+    console.error("[OTP] Forgot password error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error",
