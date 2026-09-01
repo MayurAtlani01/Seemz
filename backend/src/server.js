@@ -1,7 +1,7 @@
 require("dotenv").config();
 const app = require("./app");
 const connectDB = require("./config/db");
-const { verifySmtpConnection } = require("./utils/emailService");
+const { verifyEmailConfig } = require("./services/emailService");
 
 // Handle uncaught errors gracefully without silent process hangs
 process.on("unhandledRejection", (reason) => {
@@ -14,8 +14,8 @@ process.on("uncaughtException", (error) => {
 
 connectDB()
   .then(async () => {
-    // 1. Verify SMTP connection on startup (non-blocking, won't crash server)
-    verifySmtpConnection().catch(() => {});
+    // 1. Verify Email Provider configuration on startup
+    verifyEmailConfig().catch(() => {});
 
     // 2. Run any schema migrations
     try {

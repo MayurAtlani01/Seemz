@@ -2,26 +2,24 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const otpService = require("../services/otpService");
-const { sendEmail, generateOtpEmailHtml, getSmtpConfig } = require("../utils/emailService");
+const { sendEmail, generateOtpEmailHtml, getEmailConfig } = require("../services/emailService");
 
 // DIAGNOSTIC STATUS CONTROLLER (Safe environment verification)
 const getDiagnosticStatus = async (req, res) => {
-  const { host, port } = getSmtpConfig();
+  const { provider, from, isConfigured } = getEmailConfig();
   return res.status(200).json({
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     nodeEnv: process.env.NODE_ENV || "development",
-    emailProvider: "Nodemailer SMTP",
-    smtpTarget: `${host}:${port}`,
+    emailProvider: provider,
+    emailReady: isConfigured,
+    sender: from,
     envCheck: {
       MONGO_URI: Boolean(process.env.MONGO_URI),
       JWT_SECRET: Boolean(process.env.JWT_SECRET),
       CLIENT_URL: Boolean(process.env.CLIENT_URL),
-      SMTP_HOST: Boolean(process.env.SMTP_HOST),
-      SMTP_PORT: Boolean(process.env.SMTP_PORT),
-      SMTP_USER: Boolean(process.env.SMTP_USER || process.env.EMAIL_USER),
-      SMTP_PASS: Boolean(process.env.SMTP_PASS || process.env.EMAIL_PASS),
+      RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
       EMAIL_FROM: Boolean(process.env.EMAIL_FROM),
     },
   });
@@ -36,9 +34,9 @@ const testEmailDelivery = async (req, res) => {
   try {
     const result = await sendEmail({
       to: email.trim(),
-      subject: "Seemz - SMTP Test",
-      text: "This is a direct SMTP test verifying email delivery from Seemz Atelier.",
-      html: generateOtpEmailHtml({ name: "Client", otp: "123456", purpose: "SMTP testing" }),
+      subject: "Seemz - Test Verification Dispatch",
+      text: "This is a direct test verifying email delivery from Seemz Atelier via Resend HTTPS API.",
+      html: generateOtpEmailHtml({ name: "Client", otp: "123456", purpose: "email service verification" }),
     });
     return res.status(200).json({ success: true, result });
   } catch (err) {

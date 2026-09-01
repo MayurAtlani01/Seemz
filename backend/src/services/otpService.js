@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const otpGenerator = require("otp-generator");
 const User = require("../models/user.model");
-const { sendEmail, generateOtpEmailHtml, maskEmail } = require("../utils/emailService");
+const { sendEmail, generateOtpEmailHtml, maskEmail } = require("./emailService");
 
 const OTP_EXPIRY_MINUTES = 10;
 const OTP_COOLDOWN_SECONDS = 60;
