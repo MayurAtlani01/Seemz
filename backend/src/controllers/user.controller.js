@@ -6,7 +6,7 @@ const { sendEmail, generateOtpEmailHtml, getEmailConfig } = require("../services
 
 // DIAGNOSTIC STATUS CONTROLLER (Safe environment verification)
 const getDiagnosticStatus = async (req, res) => {
-  const { provider, from, isConfigured } = getEmailConfig();
+  const { provider, from, isConfigured, host, port } = getEmailConfig();
   return res.status(200).json({
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -14,12 +14,17 @@ const getDiagnosticStatus = async (req, res) => {
     nodeEnv: process.env.NODE_ENV || "development",
     emailProvider: provider,
     emailReady: isConfigured,
+    smtpHost: host,
+    smtpPort: port,
     sender: from,
     envCheck: {
       MONGO_URI: Boolean(process.env.MONGO_URI),
       JWT_SECRET: Boolean(process.env.JWT_SECRET),
       CLIENT_URL: Boolean(process.env.CLIENT_URL),
-      RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
+      EMAIL_USER: Boolean(process.env.EMAIL_USER),
+      EMAIL_PASS: Boolean(process.env.EMAIL_PASS),
+      EMAIL_HOST: Boolean(process.env.EMAIL_HOST),
+      EMAIL_PORT: Boolean(process.env.EMAIL_PORT),
       EMAIL_FROM: Boolean(process.env.EMAIL_FROM),
     },
   });
@@ -34,8 +39,8 @@ const testEmailDelivery = async (req, res) => {
   try {
     const result = await sendEmail({
       to: email.trim(),
-      subject: "Seemz - Test Verification Dispatch",
-      text: "This is a direct test verifying email delivery from Seemz Atelier via Resend HTTPS API.",
+      subject: "SEEMZ Atelier — Security Verification Code",
+      text: "Hello Client,\n\nThis is a test verifying email delivery from SEEMZ Atelier.\n\nYour verification code is: 123456\n\nValid for 10 minutes.\nFor your security, never share this code with anyone.\n\n© 2026 SEEMZ Atelier. All rights reserved.",
       html: generateOtpEmailHtml({ name: "Client", otp: "123456", purpose: "email service verification" }),
     });
     return res.status(200).json({ success: true, result });

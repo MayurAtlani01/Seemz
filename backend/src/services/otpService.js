@@ -65,8 +65,8 @@ const sendRegistrationOtp = async ({ name, email, password }) => {
   try {
     await sendEmail({
       to: normalizedEmail,
-      subject: "Welcome to Seemz - Verify Your Account",
-      text: `Hello ${name.trim()},\n\nThank you for registering with Seemz Atelier.\n\nYour One-Time Password (OTP) is: ${rawOtp}\n\nThis OTP is valid for ${OTP_EXPIRY_MINUTES} minutes.\n\nRegards,\nSeemz Atelier`,
+      subject: "SEEMZ Atelier — Security Verification Code",
+      text: `Hello ${name.trim()},\n\nWe received a request to verify your SEEMZ account.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request this code, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: name.trim(),
         otp: rawOtp,
@@ -191,12 +191,12 @@ const resendRegistrationOtp = async ({ email }) => {
   try {
     await sendEmail({
       to: normalizedEmail,
-      subject: "Seemz - Your New Verification Code",
-      text: `Hello ${user.name},\n\nYour new One-Time Password (OTP) is: ${rawOtp}\n\nThis OTP is valid for ${OTP_EXPIRY_MINUTES} minutes.\n\nRegards,\nSeemz Atelier`,
+      subject: "SEEMZ Atelier — Security Verification Code",
+      text: `Hello ${user.name},\n\nWe received a request for a new verification code for your SEEMZ account.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request this code, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: user.name,
         otp: rawOtp,
-        purpose: "account verification",
+        purpose: "resend verification",
       }),
     });
   } catch (mailError) {
@@ -236,8 +236,8 @@ const sendForgotPasswordOtp = async ({ email }) => {
   try {
     await sendEmail({
       to: normalizedEmail,
-      subject: "Seemz Password Reset OTP",
-      text: `Hello ${user.name},\n\nWe received a request to reset your Seemz account password.\n\nYour One-Time Password (OTP) is: ${rawOtp}\n\nThis OTP is valid for ${OTP_EXPIRY_MINUTES} minutes.\n\nIf you did not request a password reset, please ignore this email.\n\nRegards,\nSeemz Atelier`,
+      subject: "SEEMZ Atelier — Password Reset Verification",
+      text: `Hello ${user.name},\n\nWe received a request to reset your SEEMZ account password.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request a password reset, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: user.name,
         otp: rawOtp,
