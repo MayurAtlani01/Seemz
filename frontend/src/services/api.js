@@ -39,7 +39,7 @@ export const getAuthToken = () => {
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
-  timeout: 18000, // 18 seconds timeout guard
+  timeout: 30000, // 30 seconds timeout guard
 });
 
 API.interceptors.request.use(
