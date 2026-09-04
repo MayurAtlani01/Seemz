@@ -1,0 +1,78 @@
+/* =====================================================
+   SEEMZ PRODUCT COLOR STUDIO
+===================================================== */
+
+.product-color-studio {
+  margin-bottom: 24px;
+}
+
+.color-studio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.studio-kicker {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+}
+
+.selected-color-name {
+  font-size: 12px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.color-swatches-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.swatch-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.swatch-pill-btn:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: #111111;
+}
+
+.swatch-pill-btn.active {
+  border-color: #ffffff;
+  background: #141414;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.06);
+}
+
+.swatch-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.swatch-label {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+.swatch-pill-btn.active .swatch-label {
+  color: #ffffff;
+  font-weight: 500;
+}

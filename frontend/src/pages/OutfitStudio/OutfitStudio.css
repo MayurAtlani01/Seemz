@@ -1,0 +1,938 @@
+/* =====================================================
+   SEEMZ DIGITAL OUTFIT ASSEMBLY STUDIO
+===================================================== */
+
+.outfit-studio-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  color: #ffffff;
+  padding-top: 110px;
+  padding-bottom: 140px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ================= TOP HERO ================= */
+
+.studio-top-hero {
+  width: 92%;
+  max-width: 1600px;
+  margin: 0 auto 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.studio-hero-content {
+  max-width: 900px;
+}
+
+.studio-badge-kicker {
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.studio-main-heading {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 52px;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1.08;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.studio-intro-text {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ================= MAIN WORKSPACE (DUAL-FLANK) ================= */
+
+.studio-workspace {
+  width: 92%;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px 1fr 420px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ================= LEFT FLANK: SLOTS SIDEBAR ================= */
+
+.studio-slots-sidebar {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 100px;
+}
+
+.slots-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-kicker {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}
+
+.studio-reset-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s ease;
+}
+
+.studio-reset-btn:hover {
+  color: #ffffff;
+}
+
+.slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slot-card-btn {
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-card-btn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: #121212;
+}
+
+.slot-card-btn.active {
+  border-color: #ffffff;
+  background: #161616;
+}
+
+.slot-thumb-box {
+  width: 54px;
+  height: 68px;
+  background: #080808;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.empty-slot-icon {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.slot-card-details {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.slot-name {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 2px;
+}
+
+.slot-piece-name {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-piece-price {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.slot-empty-prompt {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+.slot-remove-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 6px;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-remove-btn:hover {
+  color: #ffffff;
+}
+
+/* ================= CENTER STAGE: VISUAL MANNEQUIN ================= */
+
+.studio-center-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stage-pedestal-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 680px;
+  background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.04) 0%, #050505 75%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 60px;
+  overflow: hidden;
+}
+
+.pedestal-ambient-light {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.mannequin-composition-box {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 340px;
+}
+
+.empty-wireframe-stand {
+  width: 140px;
+  height: 240px;
+  margin: 0 auto 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 60px 60px 0 0;
+  position: relative;
+}
+
+.empty-wireframe-stand::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.stage-empty-state h3 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.stage-empty-state p {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Composition Layers Stack */
+.composition-layers-stack {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.layer-item {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0c0c0c;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.layer-item:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.layer-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+
+.layer-outerwear {
+  width: 280px;
+  height: 150px;
+  z-index: 5;
+}
+
+.layer-outerwear img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layer-top {
+  width: 250px;
+  height: 140px;
+  z-index: 4;
+}
+
+.layer-top img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layer-bottom {
+  width: 240px;
+  height: 150px;
+  z-index: 3;
+}
+
+.layer-bottom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layer-shoes {
+  width: 200px;
+  height: 100px;
+  z-index: 2;
+}
+
+.layer-shoes img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layer-accessories {
+  width: 170px;
+  height: 80px;
+  z-index: 6;
+}
+
+.layer-accessories img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pedestal-base-plate {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+  white-space: nowrap;
+}
+
+.pedestal-base-plate span {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ================= RIGHT FLANK: GARMENT DRAWER ================= */
+
+.studio-drawer-sidebar {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 740px;
+  position: sticky;
+  top: 100px;
+}
+
+.drawer-sidebar-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.drawer-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-kicker {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 4px;
+}
+
+.drawer-slot-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1;
+}
+
+.drawer-item-count {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Currently Equipped Preview */
+.current-slot-preview-card {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.csp-img-box {
+  width: 60px;
+  height: 80px;
+  background: #080808;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.csp-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.csp-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.csp-active-badge {
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.csp-name {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csp-price {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.csp-sizes-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.csp-size-label {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.csp-size-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.csp-size-btn {
+  padding: 2px 8px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.csp-size-btn.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* Garments Scroll Grid */
+.drawer-garments-scroll {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.drawer-garments-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.drawer-garments-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.drawer-garments-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.drawer-garment-card {
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-garment-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.drawer-garment-card.is-equipped {
+  border-color: #ffffff;
+  background: #141414;
+}
+
+.dgc-image-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #080808;
+  overflow: hidden;
+}
+
+.dgc-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.drawer-garment-card:hover .dgc-image-box img {
+  transform: scale(1.03);
+}
+
+.dgc-equipped-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ffffff;
+  color: #000000;
+  padding: 3px 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dgc-details {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.dgc-brand {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 2px;
+}
+
+.dgc-title {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dgc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dgc-price {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.dgc-equip-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dgc-equip-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* ================= BOTTOM ACTION DOCK ================= */
+
+.studio-action-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(8, 8, 8, 0.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 0;
+  z-index: 100;
+}
+
+.dock-container {
+  width: 92%;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.dock-ensemble-summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.dock-kicker {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 6px;
+}
+
+.dock-pieces-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dock-slot-pill {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dock-slot-pill strong {
+  color: #ffffff;
+}
+
+.dock-slot-pill.is-missing {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.dock-slot-pill:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.dock-financials-cta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.dock-price-stack {
+  text-align: right;
+}
+
+.dock-pieces-count {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dock-grand-total {
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.dock-add-bag-btn {
+  background: #f5f5f5;
+  color: #050505;
+  border: 1px solid #f5f5f5;
+  padding: 14px 32px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.dock-add-bag-btn:hover:not(:disabled) {
+  background: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.dock-add-bag-btn.success {
+  background: #ffffff;
+  color: #000000;
+}
+
+.dock-add-bag-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Toast */
+.studio-toast-banner {
+  position: fixed;
+  bottom: 90px;
+  right: 40px;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 24px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #ffffff;
+  z-index: 200;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  animation: toastFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+  .studio-workspace {
+    grid-template-columns: 280px 1fr 340px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .studio-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-slots-sidebar {
+    position: static;
+  }
+
+  .slots-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .studio-drawer-sidebar {
+    position: static;
+    height: auto;
+    max-height: 600px;
+  }
+
+  .dock-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dock-financials-cta {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .studio-main-heading {
+    font-size: 36px;
+  }
+
+  .slots-list {
+    grid-template-columns: 1fr;
+  }
+
+  .drawer-garments-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dock-pieces-pills {
+    display: none;
+  }
+
+  .dock-financials-cta {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dock-add-bag-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

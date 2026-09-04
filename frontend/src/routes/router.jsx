@@ -18,16 +18,12 @@ import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import Men from "../pages/Men/Men";
 import Women from "../pages/Women/Women";
 import NewArrivals from "../pages/NewArrivals/NewArrivals";
+import OutfitStudio from "../pages/OutfitStudio/OutfitStudio";
 import AdminProducts from "../pages/Admin/AdminProducts";
 import AdminOrders from "../pages/Admin/AdminOrders";
 import AdminRoute from "../components/AdminRoute/AdminRoute";
-import ChangingRoom from "../pages/ChangingRoom/ChangingRoom";
 
 const router = createBrowserRouter([
-  {
-    path: "/changing-room",
-    element: <ChangingRoom />,
-  },
   {
     path: "/login",
     element: <Login />,
@@ -71,6 +67,14 @@ const router = createBrowserRouter([
       {
         path: "products/:id",
         element: <ProductDetails />,
+      },
+      {
+        path: "studio",
+        element: <OutfitStudio />,
+      },
+      {
+        path: "outfit-builder",
+        element: <OutfitStudio />,
       },
       {
         path: "cart",

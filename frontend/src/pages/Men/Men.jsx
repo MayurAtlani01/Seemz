@@ -138,15 +138,25 @@ function Men() {
           <div className="men-hero-buttons">
             <PrimaryButton text="Shop Now" to="/products" />
 
-            <Link to="/about" className="hero-link">
-              Discover More →
-            </Link>
+            <a
+              href="#men-collection"
+              className="men-hero-link hero-link"
+              onClick={(e) => {
+                e.preventDefault();
+                const section = document.getElementById("men-collection");
+                if (section) {
+                  section.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+            >
+              Discover More <span className="arrow">→</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="section">
+      <section className="section" id="men-collection">
         <div className="section-heading">
           <div>
             <span>NEW SEASON</span>

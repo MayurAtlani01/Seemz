@@ -3,8 +3,9 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
+import PageTransition from "../components/PageTransition/PageTransition";
 import ChatAssistant from '../components/ChatAssistant/ChatAssistant';
-import BodyScanner from '../components/ChangingRoom/BodyScanner';
+import BodyScanner from '../components/BodyScanner/BodyScanner';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile } from '../services/profileservices';
 import { Camera } from 'lucide-react';
@@ -12,22 +13,17 @@ import './Mainlayout.css';
 
 function Mainlayout() {
   const [showBodyScanner, setShowBodyScanner] = useState(false);
-  const [scannerInitialStep, setScannerInitialStep] = useState("setup");
   const { user, refreshUser } = useAuth();
 
-  const handleOpenScanner = (step = "setup") => {
-    setScannerInitialStep(step);
+  const handleOpenScanner = () => {
     setShowBodyScanner(true);
   };
 
   const handleSaveBodyScan = async (scannedProfile) => {
-    // 1. Update LocalStorage config structure
+    // 1. Update LocalStorage profile structure
     const newBodyState = {
-      category: scannedProfile.gender,
-      height: scannedProfile.avatarParams.height,
-      weight: scannedProfile.avatarParams.weight,
-      muscle: scannedProfile.avatarParams.muscle,
-      proportions: scannedProfile.avatarParams.proportions,
+      gender: scannedProfile.gender,
+      height: scannedProfile.height,
       measurements: {
         gender: scannedProfile.gender,
         height: scannedProfile.height,
@@ -38,22 +34,14 @@ function Mainlayout() {
         armLength: scannedProfile.armLength,
         inseam: scannedProfile.inseam,
         torsoLength: scannedProfile.torsoLength,
-      }
+      },
+      confidenceScore: scannedProfile.confidenceScore,
+      avatarParams: scannedProfile.avatarParams
     };
 
     try {
-      // Keep other config variables intact if they exist
-      const existing = localStorage.getItem("seemz_changing_room_config_v1");
-      let parsed = {};
-      if (existing) {
-        try {
-          parsed = JSON.parse(existing);
-        } catch (e) {}
-      }
-      localStorage.setItem("seemz_changing_room_config_v1", JSON.stringify({
-        ...parsed,
-        body: newBodyState
-      }));
+      localStorage.setItem("seemz_body_profile_v1", JSON.stringify(newBodyState));
+      localStorage.setItem("seemz_changing_room_config_v1", JSON.stringify({ body: newBodyState }));
     } catch (err) {
       console.error("Failed to save body scan configuration:", err);
     }
@@ -88,10 +76,11 @@ function Mainlayout() {
     <>
       <ScrollToTop/>
       <Navbar/>
-      <Outlet context={{ 
-        onStartBodyScan: () => handleOpenScanner("setup"),
-        onStartLiveTryOn: () => handleOpenScanner("live_tryon")
-      }} />
+      <PageTransition>
+        <Outlet context={{ 
+          onStartBodyScan: handleOpenScanner
+        }} />
+      </PageTransition>
       <Footer/>
       <ChatAssistant/>
 
@@ -99,7 +88,7 @@ function Mainlayout() {
       <button 
         type="button" 
         className="seemz-floating-scan-btn"
-        onClick={() => handleOpenScanner("setup")}
+        onClick={handleOpenScanner}
         title="Start AI Body Scan"
       >
         <Camera size={16} />
@@ -110,7 +99,6 @@ function Mainlayout() {
       {showBodyScanner && (
         <BodyScanner
           initialGender={user?.bodyProfile?.gender || "men"}
-          initialStep={scannerInitialStep}
           onClose={() => setShowBodyScanner(false)}
           onSave={handleSaveBodyScan}
         />

@@ -20,25 +20,26 @@ const connectDB = async () => {
             } catch (e) {
                 console.warn("[DB] Custom DNS configuration error:", e.message);
             }
+        } else {
+            try {
+                dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
+            } catch (e) {
+                // Ignore if not supported
+            }
         }
         await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
         console.log("[DB] MongoDB Connected Successfully");
     } catch (error) {
-        const isDnsError = error.message.includes("querySrv") || error.message.includes("ENOTFOUND") || error.message.includes("ECONNREFUSED");
-        if (isDnsError) {
-            console.warn("[DB] Native DNS SRV resolution failed. Attempting fallback DNS (8.8.8.8)...");
-            try {
-                dns.setServers(["8.8.8.8", "8.8.4.4"]);
-                await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
-                console.log("[DB] MongoDB Connected Successfully (via fallback DNS)");
-                return;
-            } catch (fallbackError) {
-                console.error("[DB] Fallback MongoDB Connection Error:", fallbackError.message);
-                process.exit(1);
-            }
+        console.warn("[DB] MongoDB primary connect failed:", error.message, "- Retrying with alternate DNS...");
+        try {
+            dns.setServers(["8.8.8.8", "1.1.1.1"]);
+            await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
+            console.log("[DB] MongoDB Connected Successfully (via fallback DNS)");
+            return;
+        } catch (fallbackError) {
+            console.error("[DB] MongoDB Connection Error:", fallbackError.message);
+            process.exit(1);
         }
-        console.error("[DB] MongoDB Connection Error:", error.message);
-        process.exit(1);
     }
 };
 

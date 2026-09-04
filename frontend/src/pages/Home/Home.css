@@ -5,7 +5,6 @@
     --white:#F5F5F5;
     --grey:#9A9A9A;
     --line:#262626;
-    --gold:#C7A86B;
 }
 
 *{
@@ -61,7 +60,9 @@ button{
     height: 100%;
     object-fit: cover;
     object-position: 65% center;
-    filter: none;
+    transform: translateZ(0);
+    will-change: transform;
+    pointer-events: none;
 }
 
 /* Content */
@@ -820,125 +821,6 @@ button{
 }
 }
 
-/* ================= 3D CHANGING ROOM BANNER ================= */
-.home-changing-room-banner {
-    position: relative;
-    width: 92%;
-    max-width: 1280px;
-    margin: 80px auto;
-    padding: 70px 40px;
-    background: radial-gradient(circle at 80% 50%, rgba(30, 32, 38, 0.6) 0%, rgba(10, 11, 14, 0.95) 70%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-}
-
-.changing-room-banner-backdrop {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.changing-room-banner-content {
-    position: relative;
-    z-index: 2;
-    max-width: 620px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.banner-exclusive-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    width: fit-content;
-}
-
-.banner-exclusive-pill .pill-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-}
-
-.banner-exclusive-pill span {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: #ffffff;
-}
-
-.home-changing-room-banner h2 {
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 38px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    color: #ffffff;
-    margin: 0;
-    line-height: 1.15;
-}
-
-.home-changing-room-banner p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.65);
-    letter-spacing: 0.5px;
-}
-
-.changing-room-cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    background: #ffffff;
-    color: #000000;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding: 16px 28px;
-    border-radius: 4px;
-    width: fit-content;
-    margin-top: 8px;
-    transition: all 0.3s ease;
-}
-
-.changing-room-cta-btn:hover {
-    background: #e0e0e0;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-}
-
-.changing-room-cta-btn .cta-arrow {
-    transition: transform 0.2s ease;
-}
-
-.changing-room-cta-btn:hover .cta-arrow {
-    transform: translateX(4px);
-}
-
-@media(max-width: 768px) {
-    .home-changing-room-banner {
-        padding: 40px 20px;
-        margin: 50px auto;
-    }
-    .home-changing-room-banner h2 {
-        font-size: 28px;
-    }
-    .home-changing-room-banner p {
-        font-size: 13px;
-    }
-}
-
 /* =====================================================
                AI BODY SCANNER HOMEPAGE BANNER
 ======================================================*/
@@ -997,8 +879,7 @@ button{
     margin-top: 8px;
 }
 
-.atelier-scan-home-btn,
-.atelier-tryon-home-btn {
+.atelier-scan-home-btn {
     font-family: "Inter", sans-serif;
     font-size: 11px;
     font-weight: 700;
@@ -1006,13 +887,10 @@ button{
     padding: 16px 28px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.atelier-scan-home-btn {
     background: #ffffff;
     color: #000000;
     border: 1px solid #ffffff;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .atelier-scan-home-btn:hover {
@@ -1020,19 +898,6 @@ button{
     color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
-}
-
-.atelier-tryon-home-btn {
-    background: transparent;
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.atelier-tryon-home-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
 }
 
 @media(max-width: 768px) {
@@ -1051,8 +916,7 @@ button{
         flex-direction: column;
         width: 100%;
     }
-    .atelier-scan-home-btn,
-    .atelier-tryon-home-btn {
+    .atelier-scan-home-btn {
         width: 100%;
     }
 }

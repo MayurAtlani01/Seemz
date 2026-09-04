@@ -33,7 +33,7 @@ const categories = [
 
 function Home() {
   const navigate = useNavigate();
-  const { onStartBodyScan, onStartLiveTryOn } = useOutletContext();
+  const { onStartBodyScan } = useOutletContext();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -132,6 +132,7 @@ function Home() {
           muted
           loop
           playsInline
+          preload="auto"
         />
 
         <div className="hero-content">
@@ -219,10 +220,10 @@ function Home() {
       {/* ================= AI BODY SCANNER SECTION ================= */}
       <section className="atelier-scanner-home">
         <div className="atelier-scanner-home-content">
-          <p className="atelier-eyebrow">SEEMZ ATELIER EXPERIENCE</p>
-          <h2>AI Body Scan & Live Try-On</h2>
+          <p className="atelier-eyebrow">SMART FIT TECHNOLOGY</p>
+          <h2>AI Body Scanner</h2>
           <p className="atelier-desc">
-            Calibrate your personal morphology using our premium on-device camera scanner, or launch experimental real-time garment tracking directly on your body.
+            Scan your body with your device camera for instant size recommendations and accurate measurements.
           </p>
           <div className="atelier-home-btn-group">
             <button 
@@ -230,14 +231,7 @@ function Home() {
               className="atelier-scan-home-btn"
               onClick={onStartBodyScan}
             >
-              START BODY SCAN
-            </button>
-            <button 
-              type="button" 
-              className="atelier-tryon-home-btn"
-              onClick={onStartLiveTryOn}
-            >
-              LIVE TRY-ON (BETA)
+              TRY BODY SCANNER
             </button>
           </div>
         </div>
@@ -257,53 +251,32 @@ function Home() {
         </div>
 
         <div className="category-grid">
-
           {categories.map((item, index) => (
-
-            <div className="category-card" key={index}>
-
+            <Link to={item.link} className="category-card" key={index}>
               <video
                 className="category-video"
                 src={item.video}
-                autoPlay
                 muted
                 loop
                 playsInline
+                preload="metadata"
+                onMouseEnter={(e) => {
+                  try { e.currentTarget.play(); } catch (_) {}
+                }}
+                onMouseLeave={(e) => {
+                  try { e.currentTarget.pause(); } catch (_) {}
+                }}
               />
-
               <div className="category-overlay">
-
                 <h3>{item.title}</h3>
-
               </div>
-
-            </div>
-
+            </Link>
           ))}
-
         </div>
 
       </section>
 
-      {/* ================= 3D CHANGING ROOM ATELIER BANNER ================= */}
-      <section className="home-changing-room-banner">
-        <div className="changing-room-banner-backdrop" />
-        <div className="changing-room-banner-content">
-          <div className="banner-exclusive-pill">
-            <span className="pill-dot" />
-            <span>EXCLUSIVE 3D ATELIER</span>
-          </div>
-          <h2>THE 3D CHANGING ROOM</h2>
-          <p>
-            Enter our independent digital fashion laboratory. Shape personalized 3D proportions,
-            test procedural material physics, and visualize bespoke fits.
-          </p>
-          <Link to="/changing-room" className="changing-room-cta-btn">
-            <span>ENTER 3D FITTING ROOM</span>
-            <span className="cta-arrow">→</span>
-          </Link>
-        </div>
-      </section>
+
 
       {/* ================= BRAND STORY ================= */}
 
@@ -335,7 +308,7 @@ function Home() {
         </h2>
 
         <p>
-          Receive exclusive launches and limited collections.
+          Subscribe for new arrivals, private drops, and style updates.
         </p>
 
         <form>

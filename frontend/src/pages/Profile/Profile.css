@@ -1,472 +1,888 @@
 /* =====================================================
-   PROFILE PAGE (SEEMZ LUXURY EDITORIAL)
+   SEEMZ ATELIER // PRIVATE CLIENT SUITE (PROFILE)
+   Harmonized with SEEMZ Luxury Fashion Visual Language
 ===================================================== */
 
 .profile-page {
   width: 100%;
   min-height: 100vh;
   background: #050505;
-  color: #ffffff;
-  padding: 120px 0 100px;
+  color: #f5f5f5;
+  padding: 120px 0 120px;
+  font-family: "Inter", sans-serif;
+  position: relative;
 }
 
-.profile-container {
+/* =====================================================
+   HERO BANNER
+===================================================== */
+
+.profile-hero {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 40px 0 50px;
+  background: linear-gradient(180deg, rgba(14, 14, 14, 0.6) 0%, rgba(5, 5, 5, 0.9) 100%);
+}
+
+.profile-hero-inner {
   width: 90%;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 50px;
-  align-items: start;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
 }
 
-/* ================= SIDEBAR ================= */
+.profile-hero-tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
 
-.profile-sidebar {
+.profile-hero-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.05;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.title-serif {
+  font-style: italic;
+  color: #f5f5f5;
+}
+
+.profile-hero-subtitle {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 580px;
+  letter-spacing: 0.2px;
+}
+
+/* Luxury Monogram Emblem */
+.profile-monogram-box {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
-.profile-user-card {
-  background: #0a0a0a;
-  border: 1px solid #1c1c1c;
-  padding: 36px 24px;
-  text-align: center;
-}
-
-.profile-avatar {
+.profile-monogram-seal {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: radial-gradient(circle at 35% 30%, #1c1c1c 0%, #0c0c0c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.03), inset 0 0 12px rgba(255, 255, 255, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  transition: transform 0.4s ease, border-color 0.4s ease;
 }
 
-.profile-role-badge {
-  display: inline-block;
-  font-size: 9px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #888888;
-  font-weight: 600;
-  margin-bottom: 12px;
+.profile-monogram-seal:hover {
+  transform: scale(1.04);
+  border-color: #ffffff;
 }
 
-.profile-user-card h2 {
+.seal-letters {
   font-family: "Cormorant Garamond", serif;
-  font-size: 30px;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.profile-email {
-  font-size: 13px;
-  color: #777777;
-  word-break: break-all;
-  margin-bottom: 4px;
-}
-
-.profile-phone {
-  font-size: 12px;
-  color: #666666;
-}
-
-.profile-nav-menu {
-  background: #0a0a0a;
-  border: 1px solid #1c1c1c;
-  display: flex;
-  flex-direction: column;
-}
-
-.profile-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 24px;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: all 0.25s ease;
-}
-
-.profile-nav-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-  color: #ffffff;
-}
-
-.admin-nav-item {
-  color: #C7A86B;
-}
-
-.nav-badge {
-  margin-left: auto;
-  font-size: 11px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 10px;
-  color: #ffffff;
-}
-
-.profile-logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 24px;
-  background: none;
-  border: none;
-  color: #ef4444;
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  transition: background 0.25s;
-}
-
-.profile-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.08);
-}
-
-/* ================= CONTENT ================= */
-
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-/* Metrics */
-
-.profile-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.metric-card {
-  background: #0a0a0a;
-  border: 1px solid #1c1c1c;
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.metric-label {
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #777777;
+  font-size: 26px;
   font-weight: 600;
-  margin-bottom: 10px;
+  letter-spacing: 2px;
+  color: #ffffff;
 }
 
-.metric-val {
+.profile-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+.tier-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* =====================================================
+   ATELIER LEDGER STRIP (Horizontal stats, luxury style)
+===================================================== */
+
+.profile-ledger-strip {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #080808;
+}
+
+.profile-ledger-inner {
+  width: 90%;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 1.2fr;
+}
+
+.ledger-cell {
+  padding: 28px 24px;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ledger-cell:first-child {
+  padding-left: 0;
+}
+
+.ledger-cell.quick-actions-cell {
+  border-right: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-right: 0;
+}
+
+.ledger-num {
   font-family: "Cormorant Garamond", serif;
   font-size: 38px;
   font-weight: 500;
   color: #ffffff;
-  margin-bottom: 8px;
-}
-
-.metric-link {
-  font-size: 12px;
-  color: #ffffff;
-  text-decoration: none;
-  letter-spacing: 0.5px;
-  transition: color 0.2s;
-}
-
-.metric-link:hover {
-  color: #C7A86B;
-}
-
-.metric-sub {
-  font-size: 11px;
-  color: #666666;
-}
-
-/* Section Cards */
-
-.profile-section-card {
-  background: #0a0a0a;
-  border: 1px solid #1c1c1c;
-  padding: 36px 30px;
-}
-
-.section-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.section-eyebrow {
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #888888;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 4px;
-}
-
-.section-card-header h3 {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 26px;
-  font-weight: 500;
-}
-
-.edit-details-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  padding: 6px 14px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-}
-
-.edit-details-btn:hover {
-  border-color: #ffffff;
-}
-
-.profile-alert {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #4ade80;
-  padding: 10px 14px;
-  font-size: 12px;
-  margin-bottom: 20px;
-}
-
-.details-read-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.read-item label {
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #777777;
-  display: block;
+  line-height: 1;
   margin-bottom: 6px;
 }
 
-.read-item p {
-  font-size: 15px;
-  color: #ffffff;
-  font-weight: 400;
-}
-
-/* Edit Form */
-
-.profile-edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 10px;
-}
-
-.cancel-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  padding: 10px 20px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
+.ledger-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
-.save-btn {
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid #ffffff;
-  padding: 10px 24px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+.ledger-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.2px;
 }
 
-.save-btn:hover {
+.ledger-action-link {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.5px;
+  transition: color 0.25s ease;
+}
+
+.ledger-action-link:hover {
+  color: #ffffff;
+}
+
+/* Quick Action Pills */
+.ledger-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
   background: transparent;
-  color: #ffffff;
-}
-
-/* Orders */
-
-.orders-empty {
-  text-align: center;
-  padding: 40px 20px;
-  color: #777777;
-}
-
-.orders-empty svg {
-  margin-bottom: 12px;
-}
-
-.orders-empty p {
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.shop-orders-btn {
-  display: inline-block;
-  background: #ffffff;
-  color: #000000;
-  padding: 10px 24px;
+  color: #f5f5f5;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.shop-orders-btn:hover {
-  background: transparent;
+.ledger-pill-btn:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ledger-pill-btn.admin-pill {
+  border-color: rgba(199, 168, 107, 0.4);
+  color: #c7a86b;
+}
+
+.ledger-pill-btn.admin-pill:hover {
+  border-color: #c7a86b;
+  background: rgba(199, 168, 107, 0.1);
+}
+
+.ledger-pill-btn.signout-pill {
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.ledger-pill-btn.signout-pill:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* =====================================================
+   NAVIGATION TABS
+===================================================== */
+
+.profile-nav-tabs-wrap {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #050505;
+}
+
+.profile-nav-tabs {
+  width: 90%;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  gap: 36px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 18px 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
   color: #ffffff;
-  box-shadow: inset 0 0 0 1px #ffffff;
 }
 
-.orders-list {
+.tab-btn.active {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.profile-container {
+  width: 90%;
+  max-width: 1300px;
+  margin: 50px auto 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 70px;
 }
 
-.order-card {
-  background: #111111;
-  border: 1px solid #1f1f1f;
-  padding: 20px;
+/* Section Eyebrow & Headers */
+.section-eyebrow {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 6px;
 }
 
-.order-header-row {
+/* =====================================================
+   1. CLIENT DOSSIER SECTION
+===================================================== */
+
+.profile-dossier-section {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 44px 44px 48px;
+}
+
+.dossier-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 14px;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding-bottom: 22px;
+  margin-bottom: 36px;
 }
 
-.order-id {
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  font-weight: 600;
+.dossier-heading-group h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 32px;
+  font-weight: 400;
   color: #ffffff;
-  display: block;
+  letter-spacing: -0.3px;
 }
 
-.order-date {
-  font-size: 11px;
-  color: #777777;
-}
-
-.order-status {
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.08);
+.profile-atelier-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  margin-bottom: 28px;
 }
 
-.order-items-preview {
+/* Dossier Read Grid */
+.dossier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 40px;
+}
+
+.dossier-item {
+  padding: 24px 28px;
+  background: #060606;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  transition: border-color 0.25s ease;
+}
+
+.dossier-item:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.item-kicker {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.item-val {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  word-break: break-all;
+}
+
+.item-val.primary-val {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 26px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.item-val.tier-val {
+  color: #ffffff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Dossier Edit Form */
+.dossier-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.edit-fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.edit-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 14px;
-  font-size: 13px;
-  color: #aaaaaa;
 }
 
-.order-item-row {
+.edit-field label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.edit-field input {
+  background: #060606;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  color: #ffffff;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.5px;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.edit-field input:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+}
+
+.edit-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* SEEMZ Buttons */
+.seemz-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: #f5f5f5;
+  color: #000000;
+  border: 1px solid #f5f5f5;
+  border-radius: 2px;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s ease;
+}
+
+.seemz-primary-btn:hover {
+  background: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.seemz-outline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.seemz-outline-btn:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.seemz-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid transparent;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.seemz-ghost-btn:hover {
+  color: #ffffff;
+}
+
+/* =====================================================
+   2. ACQUISITION ARCHIVE SECTION
+===================================================== */
+
+.profile-archive-section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.archive-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding-bottom: 18px;
 }
 
-.order-footer-row {
+.archive-heading-group h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+
+.archive-count-tag {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+/* Empty State */
+.archive-empty-state {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 80px 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.archive-empty-state svg {
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+}
+
+.archive-empty-state h3 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.archive-empty-state p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.archive-loading-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Acquisition Cards (Luxury fashion receipt style) */
+.archive-orders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.acquisition-card {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 28px 32px;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.acquisition-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.card-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 20px;
+}
+
+.ref-info,
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ref-kicker {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+}
+
+.ref-code {
+  font-family: "Inter", monospace;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.date-val {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.acquisition-status-pill {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.acquisition-status-pill.delivered {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.acquisition-status-pill.processing {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #e5e5e5;
+}
+
+.acquisition-status-pill.shipped {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+/* Garments Line Items */
+.card-garments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 20px;
+}
+
+.garment-item-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
 }
 
-.payment-badge {
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: #888888;
+.garment-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-/* Loading */
+.garment-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f5f5f5;
+  letter-spacing: 0.3px;
+}
+
+.garment-meta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.garment-price {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Financial Footer */
+.card-bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-method-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.total-due-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.total-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.total-value {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* =====================================================
+   LOADING BOX
+===================================================== */
 
 .profile-loading-box {
   text-align: center;
-  padding: 140px 20px;
-  color: #888888;
-  letter-spacing: 2px;
+  padding: 160px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-loading-kicker {
+  font-size: 10px;
+  letter-spacing: 5px;
   text-transform: uppercase;
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
 }
 
-/* ================= RESPONSIVE ================= */
+.profile-loading-box p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+}
 
-@media (max-width: 992px) {
-  .profile-container {
-    grid-template-columns: 1fr;
-    gap: 36px;
+/* =====================================================
+   RESPONSIVE MEDIA QUERIES
+===================================================== */
+
+@media (max-width: 1100px) {
+  .profile-ledger-inner {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .profile-metrics-grid {
-    grid-template-columns: 1fr 1fr;
+  .ledger-cell {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .ledger-cell:nth-child(2) {
+    border-right: none;
+  }
+
+  .ledger-cell.quick-actions-cell {
+    border-bottom: none;
+    justify-content: flex-start;
+    padding-left: 0;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 868px) {
   .profile-page {
-    padding: 90px 0 70px;
+    padding-top: 100px;
   }
 
-  .profile-metrics-grid {
+  .profile-hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .profile-monogram-box {
+    align-items: flex-start;
+  }
+
+  .profile-hero-title {
+    font-size: 46px;
+  }
+
+  .dossier-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .edit-fields-row {
     grid-template-columns: 1fr;
   }
 
-  .details-read-grid {
+  .profile-dossier-section {
+    padding: 30px 22px;
+  }
+
+  .card-top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .status-badge-wrap {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 580px) {
+  .profile-ledger-inner {
     grid-template-columns: 1fr;
   }
 
-  .profile-section-card {
-    padding: 24px 18px;
+  .ledger-cell {
+    border-right: none;
+    padding: 20px 0;
+  }
+
+  .profile-nav-tabs {
+    gap: 20px;
+  }
+
+  .tab-btn {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .card-bottom-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .total-due-info {
+    width: 100%;
+    justify-content: space-between;
   }
 }

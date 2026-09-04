@@ -1,0 +1,331 @@
+/* =====================================================
+   COMPLETE THE LOOK — SEEMZ EDITORIAL ENSEMBLE
+===================================================== */
+
+.complete-the-look-section {
+  width: 100%;
+  margin-top: 80px;
+  padding-top: 60px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ctl-header {
+  margin-bottom: 36px;
+}
+
+.ctl-title-group {
+  margin-bottom: 8px;
+}
+
+.ctl-kicker {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.ctl-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 36px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+}
+
+.ctl-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 640px;
+}
+
+/* ================= ENSEMBLE GRID ================= */
+
+.ctl-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.ctl-card {
+  position: relative;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctl-card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.ctl-card.is-anchor {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #0e0e0e;
+}
+
+.ctl-card.selected {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Checkbox Toggle */
+.ctl-select-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.ctl-checkbox {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  transition: all 0.2s ease;
+}
+
+.ctl-checkbox.checked {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Image Wrapper */
+.ctl-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #111111;
+  display: block;
+}
+
+.ctl-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctl-card:hover .ctl-img-wrapper img {
+  transform: scale(1.03);
+}
+
+.ctl-anchor-tag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 9px;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 2px;
+  padding: 3px 8px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Card Info */
+.ctl-card-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ctl-card-brand {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 4px;
+}
+
+.ctl-card-name-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ctl-card-name {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  transition: color 0.2s ease;
+}
+
+.ctl-card:hover .ctl-card-name {
+  color: #f5f5f5;
+}
+
+.ctl-card-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ctl-card-price {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.ctl-card-cat {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ================= ACTION BAR ================= */
+
+.ctl-action-bar {
+  background: #080808;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ctl-ledger {
+  display: flex;
+  flex-direction: column;
+}
+
+.ctl-ledger-label {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 4px;
+}
+
+.ctl-ledger-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.ctl-ledger-price {
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.ctl-ledger-taxes {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ctl-add-btn {
+  background: #f5f5f5;
+  color: #050505;
+  border: 1px solid #f5f5f5;
+  padding: 15px 32px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctl-add-btn:hover:not(:disabled) {
+  background: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.ctl-add-btn.added {
+  background: #ffffff;
+  color: #000000;
+}
+
+.ctl-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ctl-error-msg {
+  color: #ef4444;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1024px) {
+  .ctl-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .ctl-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctl-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .ctl-ledger {
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .ctl-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

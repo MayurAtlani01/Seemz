@@ -75,18 +75,46 @@
 .women-hero-buttons{
     display:flex;
     align-items:center;
-    gap:28px;
+    gap:20px;
+    flex-wrap:wrap;
 }
 
 .women-hero-link{
-    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    color:#ffffff;
     text-decoration:none;
-    letter-spacing:2px;
-    transition:.35s;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    font-size:12px;
+    font-weight:500;
+    padding:13px 28px;
+    border:1px solid rgba(255, 255, 255, 0.45);
+    background:rgba(255, 255, 255, 0.06);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    transition:all .35s ease;
+    cursor:pointer;
+    white-space:nowrap;
 }
 
 .women-hero-link:hover{
-    opacity:.7;
+    background:#ffffff;
+    color:#000000;
+    border-color:#ffffff;
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.women-hero-link .arrow{
+    display:inline-block;
+    transition:transform .3s ease;
+}
+
+.women-hero-link:hover .arrow{
+    transform:translateX(4px);
 }
 
 
@@ -392,7 +420,13 @@
         flex-direction:row;
         flex-wrap:wrap;
         align-items:center;
-        gap:16px;
+        gap:14px;
+    }
+
+    .women-hero-link{
+        padding:12px 22px;
+        font-size:11px;
+        letter-spacing:2px;
     }
 
     .women-section{

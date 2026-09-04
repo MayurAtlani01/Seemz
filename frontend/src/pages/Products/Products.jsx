@@ -1,7 +1,7 @@
 import "./Products.css";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, X, ArrowUpDown } from "lucide-react";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getAllProducts } from "../../services/productservices";
 import imgFallback from "../../assets/images/product1.jpg";
@@ -11,6 +11,7 @@ const CATEGORIES = ["All", "Men", "Women", "New Arrivals"];
 function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "All";
+  const initialQuery = searchParams.get("q") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,13 +20,35 @@ function Products() {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [activeSubCategory, setActiveSubCategory] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
 
-  // Sync URL search params
+  const searchInputRef = useRef(null);
+  const searchContainerRef = useRef(null);
+
+  // Sync URL search params and auto-focus if requested
   useEffect(() => {
     const cat = searchParams.get("category");
     if (cat && CATEGORIES.includes(cat)) {
       setActiveCategory(cat);
+    } else if (!cat) {
+      setActiveCategory("All");
+    }
+
+    const q = searchParams.get("q");
+    if (q !== null && q !== undefined) {
+      setSearchQuery(q);
+    }
+
+    const shouldFocus = searchParams.get("search") === "open" || searchParams.get("focus") === "search";
+    if (shouldFocus) {
+      // Focus search input and scroll gently into view
+      const timer = setTimeout(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+          searchInputRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 80);
+      return () => clearTimeout(timer);
     }
   }, [searchParams]);
 
@@ -58,7 +81,7 @@ function Products() {
     products.forEach((p) => {
       if (
         activeCategory === "All" ||
-        (activeCategory === "New Arrivals") ||
+        activeCategory === "New Arrivals" ||
         p.category?.toLowerCase() === activeCategory.toLowerCase()
       ) {
         if (p.subCategory) subs.add(p.subCategory);
@@ -67,7 +90,7 @@ function Products() {
     return ["All", ...Array.from(subs)];
   }, [products, activeCategory]);
 
-  // Filter and sort products
+  // Comprehensive, case-insensitive, multi-token, partial search and filter
   const filteredProducts = useMemo(() => {
     let list = [...products];
 
@@ -87,7 +110,6 @@ function Products() {
           p.category?.toLowerCase() === "womens"
       );
     } else if (activeCategory === "New Arrivals") {
-      // Sort newest or recent 30 days
       list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     }
 
@@ -99,15 +121,26 @@ function Products() {
     }
 
     // Search query filter
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.name?.toLowerCase().includes(q) ||
-          p.brand?.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q) ||
-          p.subCategory?.toLowerCase().includes(q)
-      );
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      const tokens = query.split(/\s+/).filter(Boolean);
+
+      list = list.filter((p) => {
+        const name = (p.name || p.title || "").toLowerCase();
+        const brand = (p.brand || "").toLowerCase();
+        const cat = (p.category || "").toLowerCase();
+        const subCat = (p.subCategory || "").toLowerCase();
+        const desc = (p.description || "").toLowerCase();
+        const color = (p.color || "").toLowerCase();
+        const colors = Array.isArray(p.colors) ? p.colors.join(" ").toLowerCase() : "";
+        const tags = Array.isArray(p.tags) ? p.tags.join(" ").toLowerCase() : "";
+        const fabric = (p.fabric || p.material || "").toLowerCase();
+
+        const combined = `${name} ${brand} ${cat} ${subCat} ${desc} ${color} ${colors} ${tags} ${fabric}`;
+
+        // Match if direct phrase matches or if every search token exists in product fields
+        return combined.includes(query) || tokens.every((token) => combined.includes(token));
+      });
     }
 
     // Sort order
@@ -125,12 +158,46 @@ function Products() {
   const handleCategoryChange = (cat) => {
     setActiveCategory(cat);
     setActiveSubCategory("All");
+    const newParams = new URLSearchParams(searchParams);
     if (cat === "All") {
-      searchParams.delete("category");
-      setSearchParams(searchParams);
+      newParams.delete("category");
     } else {
-      setSearchParams({ category: cat });
+      newParams.set("category", cat);
     }
+    setSearchParams(newParams);
+  };
+
+  const handleSearchChange = (val) => {
+    setSearchQuery(val);
+    const newParams = new URLSearchParams(searchParams);
+    if (val.trim()) {
+      newParams.set("q", val);
+    } else {
+      newParams.delete("q");
+    }
+    newParams.delete("search");
+    newParams.delete("focus");
+    setSearchParams(newParams, { replace: true });
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("q");
+    newParams.delete("search");
+    newParams.delete("focus");
+    setSearchParams(newParams, { replace: true });
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const resetAllFilters = () => {
+    setSearchQuery("");
+    setActiveCategory("All");
+    setActiveSubCategory("All");
+    setSortBy("newest");
+    setSearchParams({}, { replace: true });
   };
 
   const formatPrice = (price) => {
@@ -147,6 +214,8 @@ function Products() {
     return product.image || imgFallback;
   };
 
+  const isSearchActive = Boolean(searchQuery.trim());
+
   return (
     <main className="products-page">
       {/* Header */}
@@ -157,6 +226,52 @@ function Products() {
           Timeless silhouettes, meticulous tailoring, and understated luxury.
         </p>
       </header>
+
+      {/* Prominent Search Bar Section */}
+      <section className="products-search-section" ref={searchContainerRef}>
+        <div className="products-search-bar-wrap">
+          <div className="products-search-input-box">
+            <Search size={18} className="search-box-icon" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Search collections, garments, silhouettes, fabrics..."
+              className="products-search-input"
+              aria-label="Search collections and products"
+              autoComplete="off"
+            />
+            {isSearchActive && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={handleClearSearch}
+                aria-label="Clear search text"
+                title="Clear search"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          {isSearchActive && (
+            <div className="search-active-pill">
+              <span>
+                Search results for: <strong>"{searchQuery.trim()}"</strong>
+              </span>
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="pill-clear-btn"
+                aria-label="Reset search filter"
+              >
+                Clear <X size={12} />
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Filter and Control Bar */}
       <div className="products-filter-bar">
@@ -176,7 +291,9 @@ function Products() {
         {/* Sort & Count */}
         <div className="products-meta-controls">
           <span className="product-count-label">
-            {filteredProducts.length} {filteredProducts.length === 1 ? "Product" : "Products"}
+            {filteredProducts.length}{" "}
+            {filteredProducts.length === 1 ? "Product" : "Products"}
+            {isSearchActive && " found"}
           </span>
 
           <div className="sort-wrapper">
@@ -241,22 +358,32 @@ function Products() {
         {/* Empty State */}
         {!loading && !error && filteredProducts.length === 0 && (
           <div className="products-state-box">
-            <p className="state-title">No products found in this category.</p>
-            <p className="state-desc">
-              Try adjusting your selected filters or explore our other collections.
+            <div className="state-icon-wrap">
+              <Search size={32} strokeWidth={1.3} />
+            </div>
+            <p className="state-title">
+              {isSearchActive
+                ? `No products found matching "${searchQuery.trim()}"`
+                : "No products found in this category"}
             </p>
-            <button
-              className="state-btn"
-              onClick={() => {
-                setActiveCategory("All");
-                setActiveSubCategory("All");
-                setSearchQuery("");
-                searchParams.delete("category");
-                setSearchParams(searchParams);
-              }}
-            >
-              View All Products
-            </button>
+            <p className="state-desc">
+              {isSearchActive
+                ? "Check your spelling, try broader keywords (e.g. 'shirt', 'jacket', 'wool'), or reset your filters to explore all pieces."
+                : "Try adjusting your selected category or explore our latest arrivals."}
+            </p>
+            <div className="state-btn-group">
+              {isSearchActive && (
+                <button className="state-btn" onClick={handleClearSearch}>
+                  Clear Search
+                </button>
+              )}
+              <button
+                className={`state-btn ${isSearchActive ? "outline" : ""}`}
+                onClick={resetAllFilters}
+              >
+                View All Collections
+              </button>
+            </div>
           </div>
         )}
 

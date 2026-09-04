@@ -1,6 +1,7 @@
 import "./About.css";
 import AboutImage from "../../assets/images/AboutImage.jpg"
 import { useNavigate } from "react-router-dom";
+import OutfitAssembly from "../../components/OutfitAssembly/OutfitAssembly";
 
 
 
@@ -66,6 +67,9 @@ const About = () => {
         </div>
 
       </section>
+
+      {/* INTERACTIVE OUTFIT ASSEMBLY */}
+      <OutfitAssembly />
 
       {/* PHILOSOPHY */}
 

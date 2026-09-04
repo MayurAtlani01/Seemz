@@ -79,10 +79,25 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
+  const handleSearchClick = (e) => {
+    if (e) e.preventDefault();
+    closeMenu();
+    if (location.pathname === "/products") {
+      const input = document.querySelector(".products-search-input");
+      if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      navigate("/products?search=open", { replace: true });
+    } else {
+      navigate("/products?search=open");
+    }
+  };
+
   return (
     <header className="header">
       <div className="announcement-bar">
-        <p>NEW COLLECTION • FREE SHIPPING ABOVE ₹2999</p>
+        <p>NEW COLLECTION • FREE SHIPPING ON ORDERS OVER ₹2,999</p>
       </div>
 
       <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
@@ -93,22 +108,23 @@ const Navbar = () => {
         <ul className="nav-links">
           <li><NavLink to="/">HOME</NavLink></li>
           <li><NavLink to="/products">COLLECTIONS</NavLink></li>
+          <li><NavLink to="/studio">STUDIO</NavLink></li>
           <li><NavLink to="/men">MEN</NavLink></li>
           <li><NavLink to="/women">WOMEN</NavLink></li>
           <li><NavLink to="/new">NEW ARRIVALS</NavLink></li>
-          <li>
-            <NavLink to="/changing-room" className="nav-changing-room-link">
-              <span>CHANGING ROOM</span>
-              <span className="exclusive-badge">EXCLUSIVE</span>
-            </NavLink>
-          </li>
           <li><NavLink to="/about">ABOUT</NavLink></li>
         </ul>
 
         <div className="nav-icons">
-          <NavLink to="/products" className="nav-icon-btn" aria-label="Search Products">
+          <button
+            type="button"
+            className="nav-icon-btn search-nav-btn"
+            onClick={handleSearchClick}
+            aria-label="Search Collections"
+            title="Search Collections"
+          >
             <Search size={20} strokeWidth={1.7} />
-          </NavLink>
+          </button>
 
           <NavLink to="/wishlist" className="nav-icon-btn wishlist-nav-link" aria-label="Wishlist">
             <Heart size={20} strokeWidth={1.7} />
@@ -218,9 +234,9 @@ const Navbar = () => {
       >
         <div className="mobile-menu-top-bar">
           <div className="mobile-menu-brand">
-            <span>SEEMZ ATELIER</span>
+            <span>SEEMZ</span>
             {isAuthenticated && (
-              <p className="mobile-welcome-user">Client: {user?.name}</p>
+              <p className="mobile-welcome-user">Hello, {user?.name}</p>
             )}
           </div>
           <button
@@ -233,15 +249,24 @@ const Navbar = () => {
           </button>
         </div>
 
+        <div className="mobile-search-wrapper">
+          <button
+            type="button"
+            className="mobile-search-btn"
+            onClick={handleSearchClick}
+            aria-label="Search Collections"
+          >
+            <Search size={16} strokeWidth={1.8} />
+            <span>Search collections & styles...</span>
+          </button>
+        </div>
+
         <nav className="mobile-nav-list">
           <NavLink to="/" onClick={closeMenu}>HOME</NavLink>
+          <NavLink to="/studio" onClick={closeMenu}>STUDIO (OUTFIT BUILDER)</NavLink>
           <NavLink to="/men" onClick={closeMenu}>MEN</NavLink>
           <NavLink to="/women" onClick={closeMenu}>WOMEN</NavLink>
           <NavLink to="/new" onClick={closeMenu}>NEW ARRIVALS</NavLink>
-          <NavLink to="/changing-room" onClick={closeMenu} className="mobile-changing-room-link">
-            <span>CHANGING ROOM</span>
-            <span className="exclusive-badge">EXCLUSIVE</span>
-          </NavLink>
           <NavLink to="/products" onClick={closeMenu}>COLLECTIONS</NavLink>
           <NavLink to="/about" onClick={closeMenu}>ABOUT</NavLink>
 

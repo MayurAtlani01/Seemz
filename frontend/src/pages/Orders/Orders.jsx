@@ -15,7 +15,7 @@ function Orders() {
   const [cancelLoadingId, setCancelLoadingId] = useState(null);
 
   const handleCancelMyOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to cancel your order? This will restore the items to stock and cannot be undone.")) {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
       return;
     }
 
@@ -27,11 +27,11 @@ function Orders() {
         setOrders((prev) =>
           prev.map((o) => (o._id === orderId ? { ...o, orderStatus: "Cancelled" } : o))
         );
-        alert("Your order has been cancelled successfully.");
+        alert("Your order has been cancelled.");
       }
     } catch (err) {
       console.error("Order self-cancellation failure:", err);
-      alert(err.response?.data?.message || "Failed to cancel your order. Please try again.");
+      alert(err.response?.data?.message || "Could not cancel your order. Please try again.");
     } finally {
       setCancelLoadingId(null);
     }
@@ -73,7 +73,7 @@ function Orders() {
     return (
       <main className="orders-page">
         <div className="orders-loading-box">
-          <p>Retrieving your order archives...</p>
+          <p>Loading your orders...</p>
         </div>
       </main>
     );
@@ -86,9 +86,9 @@ function Orders() {
           <div className="orders-icon-circle">
             <Package size={40} strokeWidth={1} />
           </div>
-          <span className="orders-eyebrow">NO PURCHASES YET</span>
+          <span className="orders-eyebrow">NO ORDERS YET</span>
           <h1>Order History</h1>
-          <p>You have not placed any orders yet. Discover our curated collections today.</p>
+          <p>You have not placed any orders yet. Discover our latest collections today.</p>
           <Link to="/products" className="orders-btn-primary">
             Explore Collections <ArrowRight size={16} />
           </Link>
@@ -100,9 +100,9 @@ function Orders() {
   return (
     <main className="orders-page">
       <header className="orders-header">
-        <span className="orders-eyebrow">PURCHASE ARCHIVES</span>
+        <span className="orders-eyebrow">ORDER HISTORY</span>
         <h1>My Orders</h1>
-        <p>{orders.length} {orders.length === 1 ? "Verified Order" : "Verified Orders"}</p>
+        <p>{orders.length} {orders.length === 1 ? "Order" : "Orders"}</p>
       </header>
 
       <div className="orders-container">
@@ -194,19 +194,19 @@ function Orders() {
                   <div className="order-summary-box">
                     <div className="order-section-title">
                       <CreditCard size={14} />
-                      <span>Payment & Fulfillment</span>
+                      <span>Payment & Status</span>
                     </div>
                     <div className="order-detail-row">
                       <span>Payment Mode:</span>
                       <strong>{ord.paymentMethod || "Cash on Delivery (COD)"}</strong>
                     </div>
                     <div className="order-detail-row">
-                      <span>Fulfillment Status:</span>
+                      <span>Order Status:</span>
                       <strong>{ord.orderStatus || "Processing"}</strong>
                     </div>
                     <div className="order-detail-row">
-                      <span>Express Shipping:</span>
-                      <strong>Complimentary</strong>
+                      <span>Shipping:</span>
+                      <strong>Free</strong>
                     </div>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ function Orders() {
                       </button>
                     )}
                     <div className="order-total-info">
-                      <span>Grand Total:</span>
+                      <span>Total:</span>
                       <strong>{formatPrice(ord.totalAmount)}</strong>
                     </div>
                   </div>

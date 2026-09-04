@@ -1,7 +1,7 @@
 import "./Wishlist.css";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Trash2, ArrowRight, Check } from "lucide-react";
+import { Heart, ShoppingBag, Trash2, ArrowRight, Check, AlertCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import imgFallback from "../../assets/images/product1.jpg";
 
@@ -19,9 +19,10 @@ function Wishlist() {
 
   const [addingId, setAddingId] = useState(null);
   const [addedMap, setAddedMap] = useState({});
+  const [renderError, setRenderError] = useState(null);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && typeof fetchWishlist === "function") {
       fetchWishlist();
     }
   }, [isAuthenticated, fetchWishlist]);
@@ -34,10 +35,11 @@ function Wishlist() {
   };
 
   const handleAddToCart = async (product) => {
+    if (!product) return;
     const prodId = product._id || product.id;
     try {
       setAddingId(prodId);
-      const res = await addToCart(prodId, 1, product.sizes?.[0] || "");
+      const res = await addToCart(prodId, 1, Array.isArray(product.sizes) && product.sizes[0] ? product.sizes[0] : "M");
       if (res?.success) {
         setAddedMap((prev) => ({ ...prev, [prodId]: true }));
         setTimeout(() => {
@@ -52,8 +54,18 @@ function Wishlist() {
   };
 
   const handleRemove = async (productId) => {
-    await toggleWishlist(productId);
+    if (!productId) return;
+    try {
+      await toggleWishlist(productId);
+    } catch (err) {
+      console.error("Wishlist remove error:", err);
+    }
   };
+
+  // Safely extract valid product objects (ignoring nulls, undefined, or string IDs)
+  const validItems = Array.isArray(wishlistItems)
+    ? wishlistItems.filter((p) => p && typeof p === "object" && (p._id || p.id))
+    : [];
 
   // 1. Not Authenticated State
   if (!isAuthenticated) {
@@ -63,18 +75,17 @@ function Wishlist() {
           <div className="wishlist-auth-icon">
             <Heart size={36} strokeWidth={1.2} />
           </div>
-          <span className="wishlist-eyebrow">SEEMZ ATELIER</span>
-          <h1>Your Personal Wishlist</h1>
+          <span className="wishlist-eyebrow">SEEMZ</span>
+          <h1>Your Wishlist</h1>
           <p>
-            Sign in to save your favorite luxury silhouettes, receive availability
-            alerts, and access your curated wishlist across all devices.
+            Sign in to save your favorite items and access your wishlist on any device.
           </p>
           <div className="wishlist-auth-actions">
             <Link to="/login" className="wishlist-btn-primary">
-              Sign In to Account
+              Sign In
             </Link>
             <Link to="/register" className="wishlist-btn-secondary">
-              Create New Account
+              Create Account
             </Link>
           </div>
         </div>
@@ -83,11 +94,11 @@ function Wishlist() {
   }
 
   // 2. Loading State
-  if (wishlistLoading && wishlistItems.length === 0) {
+  if (wishlistLoading && validItems.length === 0) {
     return (
       <main className="wishlist-page">
         <header className="wishlist-header">
-          <span className="wishlist-eyebrow">SAVED PIECES</span>
+          <span className="wishlist-eyebrow">SAVED ITEMS</span>
           <h1>My Wishlist</h1>
         </header>
         <div className="wishlist-grid">
@@ -106,21 +117,20 @@ function Wishlist() {
   }
 
   // 3. Authenticated - Empty Wishlist
-  if (wishlistItems.length === 0) {
+  if (validItems.length === 0) {
     return (
       <main className="wishlist-page">
         <div className="wishlist-empty-box">
           <div className="wishlist-empty-icon">
             <Heart size={42} strokeWidth={1} />
           </div>
-          <span className="wishlist-eyebrow">YOUR COLLECTION IS EMPTY</span>
-          <h1>No Saved Pieces Yet</h1>
+          <span className="wishlist-eyebrow">YOUR WISHLIST IS EMPTY</span>
+          <h1>No Saved Items Yet</h1>
           <p>
-            Explore our curated collections of contemporary luxury menswear,
-            womenswear, and seasonal arrivals to create your personal wardrobe.
+            Explore our collections and save your favorite pieces here.
           </p>
           <Link to="/products" className="wishlist-btn-primary">
-            Explore The Collection <ArrowRight size={16} />
+            Start Shopping <ArrowRight size={16} />
           </Link>
         </div>
       </main>
@@ -131,16 +141,19 @@ function Wishlist() {
   return (
     <main className="wishlist-page">
       <header className="wishlist-header">
-        <span className="wishlist-eyebrow">CURATED SELECTION</span>
+        <span className="wishlist-eyebrow">SAVED ITEMS</span>
         <h1>My Wishlist</h1>
         <p className="wishlist-count">
-          {wishlistItems.length} {wishlistItems.length === 1 ? "Saved Piece" : "Saved Pieces"}
+          {validItems.length} {validItems.length === 1 ? "Saved Item" : "Saved Items"}
         </p>
       </header>
 
       <div className="wishlist-grid">
-        {wishlistItems.map((product) => {
-          const prodId = product._id || product.id;
+        {validItems.map((product, idx) => {
+          const prodId = product._id || product.id || String(idx);
+          const name = product.name || "SEEMZ Atelier Piece";
+          const category = product.subCategory || product.category || "SEEMZ";
+          const price = formatPrice(product.price);
           const img =
             Array.isArray(product.images) && product.images.length > 0
               ? product.images[0]
@@ -150,7 +163,7 @@ function Wishlist() {
             <div key={prodId} className="wishlist-card">
               <div className="wishlist-image-wrap">
                 <Link to={`/products/${prodId}`}>
-                  <img src={img} alt={product.name} />
+                  <img src={img} alt={name} />
                 </Link>
                 <button
                   type="button"
@@ -164,15 +177,15 @@ function Wishlist() {
 
               <div className="wishlist-card-details">
                 <span className="wishlist-card-category">
-                  {product.subCategory || product.category || "SEEMZ"}
+                  {category}
                 </span>
 
                 <Link to={`/products/${prodId}`} className="wishlist-card-title">
-                  {product.name}
+                  {name}
                 </Link>
 
                 <span className="wishlist-card-price">
-                  {formatPrice(product.price)}
+                  {price}
                 </span>
 
                 <div className="wishlist-card-actions">

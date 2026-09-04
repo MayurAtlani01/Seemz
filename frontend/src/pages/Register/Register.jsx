@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { registerUser, verifyRegisterOTP, resendRegisterOTP } from "../../services/authservices";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
-import fashionImage from "../../assets/fashion.jpg";
+import { Eye, EyeOff, ArrowLeft, Mail, Lock, User, KeyRound, AlertCircle, CheckCircle2, RotateCcw, ShieldCheck } from "lucide-react";
+import editorialImg from "../../assets/images/editorialImg.jpg";
 import "./Register.css";
 
 function Register() {
@@ -49,7 +49,7 @@ function Register() {
     setSuccessMessage("");
 
     if (!name.trim() || !email.trim() || !password) {
-      setErrorMessage("Please fill in all required fields.");
+      setErrorMessage("Please complete all required fields.");
       return;
     }
 
@@ -73,7 +73,7 @@ function Register() {
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message ||
-          "Registration failed. Please check your details and try again."
+          "Registration failed. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -94,7 +94,7 @@ function Register() {
 
     try {
       const data = await verifyRegisterOTP(email.trim(), otp.trim());
-      setSuccessMessage(data?.message || "Account activated! Welcome to Seemz.");
+      setSuccessMessage(data?.message || "Account verified successfully.");
       if (data?.token) {
         localStorage.setItem("token", data.token);
         if (data?.user) {
@@ -109,7 +109,7 @@ function Register() {
           navigate("/login", {
             state: { justRegistered: true },
           });
-        }, 1500);
+        }, 1400);
       }
     } catch (error) {
       setErrorMessage(
@@ -128,12 +128,12 @@ function Register() {
 
     try {
       const data = await resendRegisterOTP(email.trim());
-      setSuccessMessage(data?.message || "Verification code resent successfully.");
+      setSuccessMessage(data?.message || "Verification code resent.");
       setResendCooldown(60);
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message ||
-          "Could not resend code. Please try again later."
+          "Could not resend code. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -141,196 +141,237 @@ function Register() {
   }
 
   return (
-    <main className="register-page">
-      {/* LEFT EDITORIAL COLUMN */}
-      <section className="image-section" aria-hidden="true">
+    <main className="auth-portal-page">
+      {/* LEFT EDITORIAL IMAGE (ORIGINAL COLOR) */}
+      <section className="auth-editorial-panel" aria-hidden="true">
         <img
-          src={fashionImage}
-          alt="SEEMZ Essence of Luxury"
+          src={editorialImg}
+          alt="SEEMZ Collection"
+          className="editorial-media-img"
         />
-        <div className="image-overlay" />
+        <div className="editorial-ambient-overlay" />
 
-        <div className="hero-content">
-          <h2 className="hero-title">
-            ESSENCE
-            <span>OF LUXURY</span>
-          </h2>
+        <div className="editorial-panel-header">
+          <span className="editorial-tag">ATELIER PRIVILEGES • 2026</span>
+          <span className="editorial-edition">BESPOKE MEMBERSHIP</span>
+        </div>
 
-          <div className="hero-footer">
-            <div className="line" />
-            <div>
-              <h3>SEEMZ ATELIER</h3>
-              <p>Discover pieces crafted for the modern individual.</p>
-            </div>
+        <div className="editorial-panel-content">
+          <span className="editorial-subheading">JOIN THE HOUSE</span>
+          <h1 className="editorial-headline">
+            Essence of
+            <br />
+            <em>Modern Luxury</em>
+          </h1>
+
+          <div className="editorial-quote-box">
+            <div className="quote-accent-line" />
+            <p className="quote-text">
+              "Crafted silhouettes. Tailored precision. An uncompromising commitment to timeless elegance."
+            </p>
+          </div>
+        </div>
+
+        <div className="editorial-panel-footer">
+          <div className="perk-pill">
+            <ShieldCheck size={14} />
+            <span>Complimentary Global Priority Dispatch</span>
           </div>
         </div>
       </section>
 
-      {/* RIGHT FORM COLUMN */}
-      <section className="form-section">
-        <div className="form-container">
-          <span className="brand-tag">SEEMZ CLIENTELE</span>
-          <Link to="/" className="logo">SEEMZ</Link>
+      {/* RIGHT AUTH FORM STAGE */}
+      <section className="auth-stage-panel">
+        <div className="auth-stage-inner">
+          {/* Top Bar Navigation */}
+          <div className="auth-top-nav">
+            <Link to="/" className="auth-back-link">
+              <ArrowLeft size={14} />
+              <span>Back to Store</span>
+            </Link>
+            <Link to="/" className="auth-brand-logo">
+              SEEMZ
+            </Link>
+          </div>
 
-          {step === "form" ? (
-            <>
-              <h2 className="title">Create Account</h2>
-              <p className="subtitle">Join our private clientele for bespoke releases and collections.</p>
-            </>
-          ) : (
-            <>
-              <h2 className="title">Verify Email</h2>
-              <p className="subtitle">Enter the 6-digit authentication code sent to {email}.</p>
-            </>
-          )}
-
-          {successMessage && (
-            <div className="auth-alert success" role="status">
-              <CheckCircle2 size={16} />
-              <span>{successMessage}</span>
+          {/* Form Card Container */}
+          <div className="auth-form-card">
+            {/* Mode Switcher Tabs */}
+            <div className="auth-mode-switcher">
+              <Link to="/login" className="auth-switch-tab">
+                Sign In
+              </Link>
+              <button
+                type="button"
+                className="auth-switch-tab active"
+                aria-current="page"
+              >
+                Create Account
+              </button>
             </div>
-          )}
 
-          {errorMessage && (
-            <div className="auth-alert error" role="alert">
-              <AlertCircle size={16} />
-              <span>{errorMessage}</span>
+            <div className="auth-card-header">
+              <h2 className="auth-card-title">
+                {step === "form" ? "Create Account" : "Verify Email"}
+              </h2>
             </div>
-          )}
 
-          {step === "form" ? (
-            /* STEP 1: Registration Form */
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="input-group">
-                <label htmlFor="reg-name">Full Name</label>
-                <input
-                  id="reg-name"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="Alexander Vance"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
+            {/* SEEMZ LIGHT-YELLOW ALERTS */}
+            {successMessage && (
+              <div className="auth-alert success" role="status">
+                <CheckCircle2 size={16} />
+                <span>{successMessage}</span>
               </div>
+            )}
 
-              <div className="input-group">
-                <label htmlFor="reg-email">Email Address</label>
-                <input
-                  id="reg-email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="client@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+            {errorMessage && (
+              <div className="auth-alert error" role="alert">
+                <AlertCircle size={16} />
+                <span>{errorMessage}</span>
               </div>
+            )}
 
-              <div className="input-group">
-                <label htmlFor="reg-password">Password</label>
-                <div className="password-input-wrapper">
-                  <input
-                    id="reg-password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    placeholder="Min. 6 characters"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    minLength={6}
-                    required
-                  />
+            {step === "form" ? (
+              /* STEP 1: Registration Form */
+              <form onSubmit={handleSubmit} className="auth-form" noValidate>
+                <div className="auth-field-group">
+                  <label htmlFor="reg-name" className="auth-label">
+                    Full Name
+                  </label>
+                  <div className="auth-input-container">
+                    <User size={16} className="auth-field-icon" />
+                    <input
+                      id="reg-name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Your Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="auth-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="auth-field-group">
+                  <label htmlFor="reg-email" className="auth-label">
+                    Email
+                  </label>
+                  <div className="auth-input-container">
+                    <Mail size={16} className="auth-field-icon" />
+                    <input
+                      id="reg-email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="auth-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="auth-field-group">
+                  <label htmlFor="reg-password" className="auth-label">
+                    Password
+                  </label>
+                  <div className="auth-input-container">
+                    <Lock size={16} className="auth-field-icon" />
+                    <input
+                      id="reg-password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      placeholder="Minimum 6 characters"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      minLength={6}
+                      required
+                      className="auth-input password-input"
+                    />
+                    <button
+                      type="button"
+                      className="auth-visibility-btn"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="auth-action-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
+                </button>
+
+                <div className="auth-footer-prompt">
+                  <span>Already have an account?</span>
+                  <Link to="/login" className="auth-inline-link">
+                    Sign In
+                  </Link>
+                </div>
+              </form>
+            ) : (
+              /* STEP 2: OTP Verification Form */
+              <form onSubmit={handleVerifyOTP} className="auth-form" noValidate>
+                <div className="auth-field-group">
+                  <label htmlFor="otp-input" className="auth-label">
+                    Verification Code
+                  </label>
+                  <div className="auth-input-container">
+                    <KeyRound size={16} className="auth-field-icon" />
+                    <input
+                      id="otp-input"
+                      type="text"
+                      maxLength={6}
+                      placeholder="••••••"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                      required
+                      autoFocus
+                      className="auth-input otp-digit-input"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="auth-action-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "VERIFYING..." : "VERIFY & CONTINUE"}
+                </button>
+
+                <div className="auth-otp-actions-bar">
                   <button
                     type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onClick={handleResendOTP}
+                    disabled={isSubmitting || resendCooldown > 0}
+                    className="otp-resend-btn"
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    <RotateCcw size={13} />
+                    <span>
+                      {resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend Code"}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setStep("form")}
+                    className="otp-edit-btn"
+                  >
+                    Change Email
                   </button>
                 </div>
-              </div>
-
-              <button
-                type="submit"
-                className="auth-submit-btn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "SENDING CODE..." : "CREATE ACCOUNT"}
-              </button>
-            </form>
-          ) : (
-            /* STEP 2: OTP Verification Form */
-            <form onSubmit={handleVerifyOTP} noValidate>
-              <div className="input-group">
-                <label htmlFor="otp-input">Verification Code (OTP)</label>
-                <input
-                  id="otp-input"
-                  type="text"
-                  maxLength={6}
-                  placeholder="Enter 6-digit OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="auth-submit-btn"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "ACTIVATING..." : "VERIFY CODE"}
-              </button>
-
-              <div className="otp-actions" style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                <button
-                  type="button"
-                  onClick={handleResendOTP}
-                  disabled={isSubmitting || resendCooldown > 0}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: resendCooldown > 0 ? "#555555" : "#ffffff",
-                    cursor: resendCooldown > 0 ? "not-allowed" : "pointer",
-                    textDecoration: "underline",
-                    fontSize: "12px",
-                    letterSpacing: "1px",
-                    textTransform: "uppercase",
-                    padding: 0
-                  }}
-                >
-                  {resendCooldown > 0 ? `Resend Code (${resendCooldown}s)` : "Resend Code"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setStep("form")}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#888888",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    fontSize: "12px",
-                    letterSpacing: "1px",
-                    textTransform: "uppercase",
-                    padding: 0
-                  }}
-                >
-                  Edit Email
-                </button>
-              </div>
-            </form>
-          )}
-
-          <p className="login-text">
-            Already a member?{" "}
-            <Link to="/login">
-              Sign In
-            </Link>
-          </p>
+              </form>
+            )}
+          </div>
         </div>
       </section>
     </main>

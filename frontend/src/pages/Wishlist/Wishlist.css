@@ -135,7 +135,7 @@
 }
 
 .wishlist-card-title:hover {
-  color: #C7A86B;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .wishlist-card-price {

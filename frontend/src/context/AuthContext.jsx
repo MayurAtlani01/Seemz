@@ -31,13 +31,20 @@ export const AuthProvider = ({ children }) => {
       setWishlistLoading(true);
       const data = await getWishlist();
       if (data?.success && data?.wishlist) {
-        const products = Array.isArray(data.wishlist.products)
+        const rawProducts = Array.isArray(data.wishlist.products)
           ? data.wishlist.products
           : [];
-        setWishlistItems(products);
-        setWishlistIds(
-          products.map((p) => (typeof p === "string" ? p : p._id || p.id))
+        const validProducts = rawProducts.filter(
+          (p) => p && typeof p === "object" && (p._id || p.id)
         );
+        const validIds = rawProducts.map((p) => {
+          if (!p) return null;
+          if (typeof p === "string") return p;
+          return p._id || p.id || null;
+        }).filter(Boolean);
+
+        setWishlistItems(validProducts);
+        setWishlistIds(validIds);
       } else {
         setWishlistIds([]);
         setWishlistItems([]);
@@ -159,15 +166,15 @@ export const AuthProvider = ({ children }) => {
         // Optimistically remove
         setWishlistIds((prev) => prev.filter((id) => String(id) !== strId));
         setWishlistItems((prev) =>
-          prev.filter((p) => String(p._id || p.id) !== strId)
+          prev.filter((p) => String(p?._id || p?.id) !== strId)
         );
 
         await removeFromWishlist(productId);
         return { success: true, wishlisted: false };
       } else {
         // Optimistically add
-        setWishlistIds((prev) => [...prev, productId]);
-        if (productObject) {
+        setWishlistIds((prev) => [...prev, strId]);
+        if (productObject && typeof productObject === "object") {
           setWishlistItems((prev) => [...prev, productObject]);
         }
 

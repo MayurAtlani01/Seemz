@@ -45,6 +45,123 @@
   margin: 0 auto;
 }
 
+/* ================= SEARCH SECTION ================= */
+
+.products-search-section {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto 36px;
+}
+
+.products-search-bar-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.products-search-input-box {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.search-box-icon {
+  position: absolute;
+  left: 18px;
+  color: #888888;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.products-search-input {
+  width: 100%;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  padding: 0 46px 0 50px;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.products-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.products-search-input:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04), 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.search-active-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #bbbbbb;
+  animation: fadeIn 0.3s ease;
+}
+
+.search-active-pill strong {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.pill-clear-btn {
+  background: none;
+  border: none;
+  color: #888888;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.pill-clear-btn:hover {
+  color: #ffffff;
+}
+
 /* ================= FILTER & CONTROLS ================= */
 
 .products-filter-bar {
@@ -235,21 +352,43 @@
 .products-state-box {
   text-align: center;
   padding: 80px 20px;
-  max-width: 500px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
+.state-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .state-title {
-  font-size: 18px;
+  font-size: 20px;
   color: #ffffff;
   margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .state-desc {
   color: #888888;
   font-size: 14px;
   line-height: 1.6;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
+}
+
+.state-btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .state-btn {
@@ -268,6 +407,18 @@
 .state-btn:hover {
   background: transparent;
   color: #ffffff;
+}
+
+.state-btn.outline {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.state-btn.outline:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -292,11 +443,29 @@
 
 @media (max-width: 768px) {
   .products-header {
-    padding: 90px 16px 36px;
+    padding: 90px 16px 28px;
   }
 
   .products-header h1 {
     font-size: 38px;
+  }
+
+  .products-search-section {
+    margin-bottom: 24px;
+  }
+
+  .products-search-input {
+    height: 48px;
+    font-size: 14px;
+    padding: 0 42px 0 46px;
+  }
+
+  .search-box-icon {
+    left: 15px;
+  }
+
+  .search-clear-btn {
+    right: 12px;
   }
 
   .products-filter-bar {
@@ -337,8 +506,23 @@
     font-size: 14px;
   }
 
+  .products-search-input {
+    height: 44px;
+    font-size: 13.5px;
+    padding: 0 38px 0 42px;
+  }
+
   .category-tabs {
     gap: 10px 16px;
+  }
+
+  .state-btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .state-btn {
+    width: 100%;
   }
 
   .products-grid {

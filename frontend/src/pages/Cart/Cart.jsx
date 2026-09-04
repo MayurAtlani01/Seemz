@@ -236,7 +236,7 @@ function Cart() {
           <div className="cart-icon-circle">
             <ShoppingBag size={36} strokeWidth={1.2} />
           </div>
-          <span className="cart-eyebrow">SEEMZ ATELIER</span>
+          <span className="cart-eyebrow">SEEMZ</span>
           <h1>Your Shopping Bag</h1>
           <p>Sign in to view your bag, access saved items, and proceed to checkout.</p>
           <div className="cart-auth-actions">
@@ -252,7 +252,7 @@ function Cart() {
     );
   }
 
-  // If order was successfully placed, show luxury confirmation screen
+  // If order was successfully placed, show confirmation screen
   if (placedOrder) {
     return (
       <main className="cart-page">
@@ -260,15 +260,15 @@ function Cart() {
           <div className="success-icon-circle">
             <CheckCircle2 size={48} strokeWidth={1.2} />
           </div>
-          <span className="cart-eyebrow">PURCHASE CONFIRMED</span>
+          <span className="cart-eyebrow">ORDER CONFIRMED</span>
           <h1>Thank You for Your Order</h1>
           <p className="order-success-lead">
-            Your order has been recorded in the SEEMZ archives and is being prepared with utmost care.
+            Your order has been placed successfully and is being prepared for shipping.
           </p>
 
           <div className="order-success-details">
             <div className="success-meta-row">
-              <span>Order Reference</span>
+              <span>Order ID</span>
               <strong>#{placedOrder._id?.slice(-8).toUpperCase()}</strong>
             </div>
             <div className="success-meta-row">
@@ -281,13 +281,13 @@ function Cart() {
             </div>
             {placedOrder.address && (
               <div className="success-address-block">
-                <span>Shipping Destination:</span>
+                <span>Shipping Address:</span>
                 <p>
                   {placedOrder.address.fullName}, {placedOrder.address.address},{" "}
                   {placedOrder.address.city}, {placedOrder.address.state} -{" "}
                   {placedOrder.address.pincode}
                 </p>
-                <p>Contact: {placedOrder.address.phone}</p>
+                <p>Phone: {placedOrder.address.phone}</p>
               </div>
             )}
           </div>
@@ -297,7 +297,7 @@ function Cart() {
               View in My Orders <ArrowRight size={16} />
             </Link>
             <Link to="/products" className="cart-btn-secondary">
-              Continue Browsing
+              Continue Shopping
             </Link>
           </div>
         </div>
@@ -333,7 +333,7 @@ function Cart() {
           </div>
           <span className="cart-eyebrow">YOUR BAG IS EMPTY</span>
           <h1>No Items In Your Bag</h1>
-          <p>Discover our latest collection of contemporary luxury silhouettes.</p>
+          <p>Discover our latest collection of modern luxury essentials.</p>
           <Link to="/products" className="cart-btn-primary">
             Start Shopping <ArrowRight size={16} />
           </Link>
@@ -346,11 +346,11 @@ function Cart() {
     <main className="cart-page">
       <header className="cart-header">
         <span className="cart-eyebrow">
-          {isCheckout ? "STEP 2 OF 2: VERIFICATION & DISPATCH" : "SEEMZ ATELIER"}
+          {isCheckout ? "CHECKOUT" : "SEEMZ"}
         </span>
-        <h1>{isCheckout ? "Express Checkout" : "Shopping Bag"}</h1>
+        <h1>{isCheckout ? "Checkout" : "Shopping Bag"}</h1>
         <p>
-          {items.length} {items.length === 1 ? "Piece" : "Pieces"} in your bespoke collection
+          {items.length} {items.length === 1 ? "item" : "items"} in your shopping bag
         </p>
       </header>
 
@@ -560,10 +560,10 @@ function Cart() {
                     <div className="payment-method-details">
                       <div className="payment-method-title">
                         <strong>Cash on Delivery (COD)</strong>
-                        <span className="cod-badge">VERIFIED</span>
+                        <span className="cod-badge">AVAILABLE</span>
                       </div>
                       <p>
-                        Pay securely in cash or via UPI at the time of luxury courier doorstep delivery.
+                        Pay securely with cash or UPI when your order is delivered to your doorstep.
                       </p>
                     </div>
                   </div>
@@ -593,8 +593,8 @@ function Cart() {
           </div>
 
           <div className="summary-row">
-            <span>Express Delivery</span>
-            <span>{shipping === 0 ? "Complimentary" : formatPrice(shipping)}</span>
+            <span>Delivery</span>
+            <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
           </div>
 
           <div className="summary-divider" />
@@ -629,18 +629,18 @@ function Cart() {
               onClick={handlePlaceOrder}
               disabled={placingOrder || !selectedAddressId}
             >
-              {placingOrder ? "Placing Order..." : "Confirm & Place Order (COD)"}
+              {placingOrder ? "Placing Order..." : "Place Order (Cash on Delivery)"}
             </button>
           )}
 
           <div className="cart-perks-box">
             <div className="perk-row">
               <Truck size={16} />
-              <span>Complimentary shipping on orders above ₹2,999</span>
+              <span>Free shipping on orders over ₹2,999</span>
             </div>
             <div className="perk-row">
               <ShieldCheck size={16} />
-              <span>100% Authentic Atelier Garments</span>
+              <span>100% Authentic Products</span>
             </div>
           </div>
         </aside>

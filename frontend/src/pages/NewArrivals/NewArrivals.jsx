@@ -175,15 +175,25 @@ function NewArrivals() {
           </p>
           <div className="new-hero-buttons">
             <PrimaryButton text="Explore Collection" to="/products" />
-            <Link to="/about" className="new-hero-link">
-              Discover More →
-            </Link>
+            <a
+              href="#new-arrivals-collection"
+              className="new-hero-link"
+              onClick={(e) => {
+                e.preventDefault();
+                const section = document.getElementById("new-arrivals-collection");
+                if (section) {
+                  section.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+            >
+              Discover More <span className="arrow">→</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* HEADING */}
-      <section className="new-heading">
+      <section className="new-heading" id="new-arrivals-collection">
         <h2>New Arrivals</h2>
         <p>
           Curated pieces inspired by modern luxury and effortless elegance.

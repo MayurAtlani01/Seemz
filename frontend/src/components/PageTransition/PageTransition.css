@@ -1,0 +1,19 @@
+/* =====================================================
+   SEEMZ CINEMATIC PAGE TRANSITIONS
+   Ultra-smooth opacity transition without CSS transform containing-block interference
+===================================================== */
+
+.seemz-page-transition {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.seemz-page-transition.fadeIn {
+  opacity: 1;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.seemz-page-transition.fadeOut {
+  opacity: 0.1;
+  transition: opacity 0.12s ease-out;
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword } from "../../services/authservices";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Mail, ArrowLeft, KeyRound, AlertCircle, CheckCircle2, Shield } from "lucide-react";
 import "./ForgotPassword.css";
 
 const ForgotPassword = () => {
@@ -25,64 +25,109 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       const data = await forgotPassword({ email: email.trim() });
-      setMessage(data?.message || "Verification code sent to your email.");
+      setMessage(data?.message || "Verification code dispatched to your email address.");
       setTimeout(() => {
         navigate("/reset-password", { state: { email: email.trim() } });
-      }, 1500);
+      }, 1400);
     } catch (err) {
-      setError(err.response?.data?.message || "Could not process request. Please check your email.");
+      setError(err.response?.data?.message || "Could not process request. Please verify your email.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="forgot-container">
-      <div className="forgot-card">
-        <Link to="/" className="logo">SEEMZ</Link>
+    <main className="auth-standalone-page">
+      <div className="standalone-ambient-bg" />
+      
+      <div className="standalone-card-wrap">
+        <div className="standalone-top-nav">
+          <Link to="/login" className="auth-back-link">
+            <ArrowLeft size={14} />
+            <span>Return to Sign In</span>
+          </Link>
+          <Link to="/" className="auth-brand-logo">
+            SEEMZ
+          </Link>
+        </div>
 
-        <h2>Forgot Password</h2>
-
-        <p className="subtitle">
-          Enter your registered email address to receive a one-time verification code.
-        </p>
-
-        {message && (
-          <div className="auth-alert success" role="status">
-            <CheckCircle2 size={16} />
-            <span>{message}</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="auth-alert error" role="alert">
-            <AlertCircle size={16} />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="input-group">
-            <label htmlFor="forgot-email">Email Address</label>
-            <input
-              id="forgot-email"
-              type="email"
-              placeholder="client@domain.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-            />
+        <div className="standalone-card">
+          <div className="standalone-header">
+            <div className="standalone-badge-icon">
+              <KeyRound size={22} strokeWidth={1.5} />
+            </div>
+            <span className="standalone-eyebrow">SECURITY RECOVERY</span>
+            <h1 className="standalone-title">Reset Password</h1>
+            <p className="standalone-subtitle">
+              Enter your registered email address. We will dispatch a 6-digit verification code to securely restore your atelier account access.
+            </p>
           </div>
 
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
-            {loading ? "SENDING CODE..." : "SEND VERIFICATION CODE"}
-          </button>
-        </form>
+          {/* LIGHT-YELLOW ALERTS */}
+          {message && (
+            <div className="auth-alert success" role="status">
+              <CheckCircle2 size={17} />
+              <div className="alert-content">
+                <strong>Code Dispatched</strong>
+                <span>{message}</span>
+              </div>
+            </div>
+          )}
 
-        <Link to="/login" className="back-link">
-          ← Back to Sign In
-        </Link>
+          {error && (
+            <div className="auth-alert error" role="alert">
+              <AlertCircle size={17} />
+              <div className="alert-content">
+                <strong>Recovery Notice</strong>
+                <span>{error}</span>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="auth-form" noValidate>
+            <div className="auth-field-group">
+              <label htmlFor="forgot-email" className="auth-label">
+                Registered Email Address
+              </label>
+              <div className="auth-input-container">
+                <Mail size={16} className="auth-field-icon" />
+                <input
+                  id="forgot-email"
+                  type="email"
+                  placeholder="name@domain.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  required
+                  className="auth-input"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="auth-action-btn"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="btn-loading-wrap">
+                  <span className="btn-spinner" />
+                  DISPATCHING CODE...
+                </span>
+              ) : (
+                "SEND VERIFICATION CODE"
+              )}
+            </button>
+          </form>
+
+          <div className="standalone-footer">
+            <div className="security-guarantee">
+              <Shield size={13} />
+              <span>Encrypted identity authentication</span>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

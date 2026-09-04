@@ -1,0 +1,567 @@
+/* ==========================================================================
+   SEEMZ ATELIER // SCROLL-DRIVEN OUTFIT ASSEMBLY SECTION
+   Visual Language: 100% harmonized with SEEMZ Luxury Fashion Editorial
+   ========================================================================== */
+
+.outfit-assembly-section {
+  position: relative;
+  /* 460vh provides ample scrub distance for the 7 layers */
+  height: 460vh;
+  background-color: #050505;
+  color: #ffffff;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ==========================================================================
+   PINNED STAGE (100VH STICKY / FIXED VIEWPORT CONTAINER)
+   ========================================================================== */
+
+.outfit-sticky-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  padding: 110px 60px 28px;
+  z-index: 20;
+}
+
+/* Ambient Studio Light Effects */
+.atelier-ambient-glow {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 750px;
+  height: 750px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 200, 215, 0.035) 0%, rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+  filter: blur(70px);
+}
+
+.atelier-rim-spotlight {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 50%, transparent 100%);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   TOP CENTERED BRAND HERO TYPOGRAPHY
+   ========================================================================== */
+
+.atelier-center-header {
+  position: relative;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
+  padding-bottom: 12px;
+}
+
+.atelier-center-header .about-tag {
+  margin-bottom: 12px;
+}
+
+.atelier-brand-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 46px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin: 0 0 8px 0;
+}
+
+.atelier-brand-subtitle {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 300;
+  max-width: 560px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ==========================================================================
+   MAIN CENTRAL STAGE (MANNEQUIN WITH FLANKING CARDS & NEGATIVE SPACE)
+   ========================================================================== */
+
+.atelier-main-stage {
+  position: relative;
+  z-index: 25;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 340px 1fr 300px;
+  align-items: center;
+  gap: 40px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+/* ==========================================================================
+   LEFT FLANK: ACTIVE GARMENT STORY CARD
+   ========================================================================== */
+
+.atelier-flank-card {
+  background: rgba(10, 10, 10, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.flank-step-kicker {
+  font-size: 10.5px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.flank-garment-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.flank-material-line {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 16px;
+  display: block;
+  font-weight: 500;
+}
+
+.flank-story-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  margin: 0;
+}
+
+/* ==========================================================================
+   RIGHT FLANK: ATELIER SEQUENCE TIMELINE
+   ========================================================================== */
+
+.atelier-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.timeline-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.timeline-idx {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: monospace;
+}
+
+.timeline-label {
+  flex: 1;
+  margin-left: 12px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: inherit;
+}
+
+.timeline-status-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.25s ease;
+}
+
+.timeline-row-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.timeline-row-btn.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  font-weight: 500;
+}
+
+.timeline-row-btn.active .timeline-status-indicator {
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.timeline-row-btn.past {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.timeline-row-btn.past .timeline-status-indicator {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.flank-progress-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress-bar-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.15s ease-out;
+}
+
+.progress-pct {
+  font-size: 9.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   CENTRAL MANNEQUIN EXHIBIT STAGE
+   ========================================================================== */
+
+.atelier-central-mannequin-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pedestal Floor Radiance */
+.pedestal-ground-radiance {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: 110px;
+  background: radial-gradient(ellipse at center, rgba(200, 200, 220, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(28px);
+  transition: opacity 0.5s ease;
+}
+
+/* Complete Lookbook Seal Badge */
+.complete-seal-badge {
+  position: absolute;
+  top: 10%;
+  right: 4%;
+  z-index: 35;
+  background: rgba(10, 10, 10, 0.88);
+  border: 1px solid rgba(199, 168, 107, 0.35);
+  border-radius: 2px;
+  padding: 12px 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.seal-text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.seal-title {
+  font-size: 10.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #F5F5F5;
+  font-weight: 600;
+}
+
+.seal-sub {
+  font-size: 9.5px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+/* SVG Stage Container */
+.mannequin-svg-stage {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  height: calc(100vh - 250px);
+  min-height: 380px;
+  max-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mannequin-svg {
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  max-height: 100%;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
+  overflow: visible;
+  display: block;
+}
+
+/* SVG Garment Layers GPU acceleration */
+.mannequin-layer {
+  will-change: transform, opacity;
+  transform-box: fill-box;
+}
+
+/* ==========================================================================
+   BOTTOM BAR: SEEMZ MINIMALIST SCROLL CUE OR COMPLETED LOOK CTA
+   ========================================================================== */
+
+.atelier-bottom-bar {
+  position: relative;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-top: 6px;
+  min-height: 64px;
+}
+
+.seemz-scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cue-text {
+  color: #A5A5A5;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.seemz-scroll-line {
+  width: 1px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.35);
+  animation: seemzScrollLinePulse 2.2s infinite ease-in-out;
+}
+
+@keyframes seemzScrollLinePulse {
+  0% {
+    transform: scaleY(0.4);
+    opacity: 0.3;
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 0.9;
+    transform-origin: top;
+  }
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.3;
+    transform-origin: bottom;
+  }
+}
+
+.atelier-complete-cta {
+  animation: ctaFadeIn 0.4s ease-out;
+}
+
+@keyframes ctaFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ========================================================================== */
+
+@media (max-width: 1150px) {
+  .outfit-sticky-stage {
+    padding: 100px 30px 20px;
+  }
+
+  .atelier-main-stage {
+    grid-template-columns: 280px 1fr 260px;
+    gap: 20px;
+  }
+
+  .flank-garment-title {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 900px) {
+  .outfit-assembly-section {
+    height: 380vh;
+  }
+
+  .outfit-sticky-stage {
+    padding: 95px 16px 16px;
+  }
+
+  .atelier-brand-title {
+    font-size: 28px;
+  }
+
+  .atelier-brand-subtitle {
+    font-size: 13px;
+  }
+
+  .atelier-main-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .atelier-central-mannequin-wrapper {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .mannequin-svg-stage {
+    height: 100%;
+    max-height: 42vh;
+    min-height: 260px;
+  }
+
+  .atelier-flank-card.left-flank {
+    padding: 14px 18px;
+    border-radius: 2px;
+  }
+
+  .flank-step-kicker {
+    margin-bottom: 4px;
+    font-size: 9.5px;
+  }
+
+  .flank-garment-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .flank-material-line {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .flank-story-text {
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  /* Right flank timeline hidden on mobile to give full focus to mannequin & story */
+  .atelier-flank-card.right-flank {
+    display: none;
+  }
+
+  .complete-seal-badge {
+    top: 4%;
+    right: 4%;
+    padding: 8px 12px;
+  }
+
+  .seal-title {
+    font-size: 9px;
+  }
+
+  .seal-sub {
+    display: none;
+  }
+
+  .seemz-scroll-line {
+    height: 28px;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION PREFERENCE (ACCESSIBILITY)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .mannequin-layer {
+    transition: opacity 0.3s ease !important;
+    transform: none !important;
+  }
+
+  .seemz-scroll-line {
+    animation: none !important;
+  }
+}

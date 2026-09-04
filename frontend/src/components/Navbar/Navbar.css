@@ -162,7 +162,7 @@ body{
 .nav-icon-btn:hover,
 .nav-icons button:hover{
     transform:translateY(-2px);
-    color:#C7A86B;
+    color:#ffffff;
 }
 
 /* Wishlist & Cart Badge */
@@ -355,7 +355,7 @@ body{
 }
 
 .mobile-login-highlight {
-    color: #C7A86B !important;
+    color: #ffffff !important;
     font-weight: 600 !important;
 }
 
@@ -405,7 +405,7 @@ body{
     }
 
     .menu-btn:hover {
-        color: #C7A86B;
+        color: #ffffff;
     }
 
     /* Backdrop */
@@ -488,6 +488,34 @@ body{
     }
 
     .mobile-close-btn:hover {
+        color: #ffffff;
+    }
+
+    /* Mobile Search Bar Trigger */
+    .mobile-search-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .mobile-search-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .mobile-search-btn:hover,
+    .mobile-search-btn:active {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.3);
         color: #ffffff;
     }
 
