@@ -21,9 +21,10 @@ const sanitizeErrorMessage = (msg) => {
 // Standardized email configuration from environment variables
 const getEmailConfig = () => {
   const host = (process.env.EMAIL_HOST || "smtp.gmail.com").trim();
-  const port = Number(process.env.EMAIL_PORT) || 587;
+  const port = Number(process.env.EMAIL_PORT) || 465;
   const user = (process.env.EMAIL_USER || "").trim();
-  const pass = (process.env.EMAIL_PASS || "").trim();
+  // Strip any accidental whitespace copied from Google App Password (e.g. "abcd efgh ijkl mnop")
+  const pass = (process.env.EMAIL_PASS || "").trim().replace(/\s+/g, "");
   const from = (process.env.EMAIL_FROM || (user ? `SEEMZ <${user}>` : "SEEMZ <no-reply@seemz.com>")).trim();
 
   return {
@@ -40,30 +41,48 @@ const getEmailConfig = () => {
 // Transporter singleton instance
 let transporterInstance = null;
 
-const getTransporter = () => {
+const createTransporterInstance = () => {
   const { host, port, user, pass, isConfigured } = getEmailConfig();
 
   if (!isConfigured) {
-    throw new Error("EMAIL_USER and EMAIL_PASS are not configured on the server. Please check your environment variables.");
+    throw new Error("EMAIL_USER and EMAIL_PASS are not configured on the server. Please check your environment variables in your deployment dashboard.");
   }
 
-  if (!transporterInstance) {
-    transporterInstance = nodemailer.createTransport({
-      host,
-      port,
-      secure: port === 465,
-      pool: true, // Keep connection warm in pool for fast dispatch
-      maxConnections: 5,
-      maxMessages: 100,
-      rateDelta: 1000,
-      rateLimit: 5,
+  const isGmail = host.includes("gmail.com") || (!process.env.EMAIL_HOST && user.includes("@gmail.com"));
+
+  if (isGmail) {
+    // Cloud-optimized Gmail transport
+    return nodemailer.createTransport({
+      service: "gmail",
       auth: {
         user,
         pass,
       },
+      connectionTimeout: 10000, // 10s connection timeout guard
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
   }
 
+  // Generic SMTP transport with direct SSL or STARTTLS
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+  });
+};
+
+const getTransporter = () => {
+  if (!transporterInstance) {
+    transporterInstance = createTransporterInstance();
+  }
   return transporterInstance;
 };
 
@@ -84,6 +103,8 @@ const verifyEmailConfig = async () => {
   } catch (err) {
     const safeError = sanitizeErrorMessage(err.message || "Transporter verification failed");
     console.error(`[EMAIL] WARNING: SMTP Transporter verification failed at startup: ${safeError}`);
+    // Reset transporter instance so next attempt creates fresh connection
+    transporterInstance = null;
     return false;
   }
 };
@@ -121,6 +142,8 @@ const sendEmail = async ({ to, subject, text, html }) => {
       provider,
     };
   } catch (err) {
+    // Reset transporter on error to clear any dead socket
+    transporterInstance = null;
     const safeError = sanitizeErrorMessage(err.message || "Email delivery failed");
     console.error(`[EMAIL] Email dispatch failed to ${maskedRecipient}: ${safeError}`);
     throw new Error(safeError);
