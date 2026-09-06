@@ -17,7 +17,7 @@
 ![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=FFFFFF)
 ![Render](https://img.shields.io/badge/Backend-Render-000000?style=flat-square&logo=render&logoColor=FFFFFF)
 
-**[Live Application](#)** &nbsp;·&nbsp; **[Frontend Repository](#)** &nbsp;·&nbsp; **[Backend Repository](#)**
+**[Live Application](#)https://seemz.vercel.app/ &nbsp;·&nbsp; **[Frontend Repository](#)https://github.com/MayurAtlani01 &nbsp;·&nbsp; **[Backend Repository](#)https://github.com/MayurAtlani01
 
 *(replace with your deployed Vercel URL, Render URL, and repository links before publishing)*
 
