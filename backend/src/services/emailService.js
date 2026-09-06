@@ -1,4 +1,10 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force IPv4 resolution first to prevent ENETUNREACH errors on networks with unrouted IPv6
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder("ipv4first");
+}
 
 // Safe email address masking for logs (e.g., client@domain.com -> c***t@domain.com)
 const maskEmail = (email) => {
@@ -56,6 +62,7 @@ const createTransporterInstance = () => {
       user,
       pass,
     },
+    family: 4, // Force IPv4 to prevent ENETUNREACH on environments without IPv6 routing
     connectionTimeout: 15000,
     greetingTimeout: 15000,
     socketTimeout: 20000,
