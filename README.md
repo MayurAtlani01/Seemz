@@ -18,8 +18,6 @@
 ![Render](https://img.shields.io/badge/Backend-Render-000000?style=flat-square&logo=render&logoColor=FFFFFF)
 
 **[Live Application](https://seemz.vercel.app/)** &nbsp;·&nbsp; **[Frontend Repository](https://github.com/MayurAtlani01)&nbsp;·&nbsp; **[Backend Repository](https://github.com/MayurAtlani01)
-
-https://seemz.vercel.app/
 </div>
 
 <br>
