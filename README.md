@@ -1,6 +1,6 @@
 <div align="center">
 
-# SEEMZ Atelier
+# SEEMZ
 
 ### Contemporary Fashion. Thoughtfully Curated.
 
@@ -792,22 +792,127 @@ The checklist below reflects manual QA performed during development. Automated t
 <br>
 
 ## Screenshots
+<div align="center">
 
-*No screenshots are included yet — add images to a `docs/screenshots/` folder and reference them below.*
+### A VISUAL LOOK AT SEEMZ 
 
-| Page | Preview |
-|---|---|
-| Homepage | *(screenshot pending)* |
-| Collections | *(screenshot pending)* |
-| Product Details | *(screenshot pending)* |
-| Shopping Bag | *(screenshot pending)* |
-| Wishlist | *(screenshot pending)* |
-| Login / Register | *(screenshot pending)* |
-| OTP Verification | *(screenshot pending)* |
-| Profile | *(screenshot pending)* |
-| Body Scanner | *(screenshot pending)* |
-| About | *(screenshot pending)* |
-| Admin | *(screenshot pending)* |
+*A fashion e-commerce experience built around design, technology, and interaction.*
+
+</div>
+
+---
+
+<details>
+<summary><strong>01 · STOREFRONT EXPERIENCE</strong></summary>
+
+### Homepage
+
+![SEEMZ Homepage](docs/screenshots/homepage.png)
+
+The main SEEMZ storefront experience, designed around a cinematic fashion-first interface.
+
+### Collections
+
+![SEEMZ Collections](docs/screenshots/collections.png)
+
+Browse the complete collection with search, category navigation, filtering, and product discovery.
+
+### Product Details
+
+![SEEMZ Product Details](docs/screenshots/product-details.png)
+
+Detailed product experience with imagery, pricing, color selection, sizing, and Smart Fit integration.
+
+### Shopping Bag
+
+![SEEMZ Shopping Bag](docs/screenshots/shopping-bag.png)
+
+A structured shopping bag experience with quantity controls, order summary, delivery information, and checkout flow.
+
+### Wishlist
+
+![SEEMZ Wishlist](docs/screenshots/wishlist.png)
+
+Save and revisit products through the authenticated wishlist experience.
+
+</details>
+
+---
+
+<details>
+<summary><strong>02 · AUTHENTICATION EXPERIENCE</strong></summary>
+
+### Sign In
+
+![SEEMZ Sign In](docs/screenshots/login.png)
+
+Premium split-screen authentication interface designed to remain consistent with the SEEMZ visual identity.
+
+### Create Account
+
+![SEEMZ Create Account](docs/screenshots/register.png)
+
+New user registration with secure account creation and verification flow.
+
+### Password Recovery
+
+![SEEMZ Password Recovery](docs/screenshots/reset-password.png)
+
+Secure password recovery flow using verification-based account restoration.
+
+</details>
+
+---
+
+<details>
+<summary><strong>03 · FASHION TECHNOLOGY</strong></summary>
+
+### Body Scanner
+
+![SEEMZ Body Scanner](docs/screenshots/body-scanner.png)
+
+SEEMZ Smart Fit — an experimental browser-based body measurement experience using camera input and pose detection.
+
+The scanner is designed to estimate measurements and assist users with finding an appropriate size.
+
+> **Note:** Measurements are automated estimates and are not professionally certified.
+
+### About / Brand Experience
+
+![SEEMZ About](docs/screenshots/about.png)
+
+An interactive brand experience designed to communicate the SEEMZ philosophy through visual storytelling and fashion-focused interactions.
+
+</details>
+
+---
+
+<details>
+<summary><strong>04 · ADMINISTRATION</strong></summary>
+
+### Product Management
+
+![SEEMZ Product Management](docs/screenshots/admin-products.png)
+
+Administrative product management interface for creating, updating, searching, categorizing, and managing the product catalogue.
+
+### Client Orders
+
+![SEEMZ Client Orders](docs/screenshots/admin-orders.png)
+
+Administrative order management interface for monitoring customer orders, statuses, totals, and order details.
+
+</details>
+
+---
+
+<div align="center">
+
+### FROM DISCOVERY TO DELIVERY.
+
+**SEEMZ brings the storefront, fashion-tech, authentication, and administration into one full-stack experience.**
+
+</div>
 
 <br>
 
@@ -842,20 +947,6 @@ Building SEEMZ involved more than wiring together CRUD screens:
 - Building a scroll-driven interactive experience as an alternative to a static content page
 - Coordinating frontend and backend work across a four-person team
 - Writing technical documentation that's honest about what is and isn't implemented
-
-<br>
-
-## Team
-
-SEEMZ was developed collaboratively by four contributors.
-
-| Contributor | Responsibility |
-|---|---|
-| _Add name_ | _Add role_ |
-| _Add name_ | _Add role_ |
-| _Add name_ | _Add role_ |
-| _Add name_ | _Add role_ |
-
 <br>
 
 ## Contributing
@@ -871,7 +962,7 @@ This project is primarily maintained by its core team. If you'd like to suggest 
 
 ## License
 
-No license has been specified yet. If you intend for this project to be reused or contributed to by others, add a `LICENSE` file (for example, MIT) to the repository root.
+MIT
 
 <br>
 
@@ -883,6 +974,8 @@ Built with React, Vite, Node.js, Express, and MongoDB, and made possible in prod
 
 <div align="center">
 
-**SEEMZ Atelier** — contemporary fashion, thoughtfully curated, and built with the same attention to detail on the backend as on the runway.
+**SEEMZ** — contemporary fashion, thoughtfully curated, and built with the same attention to detail on the backend as on the runway.
 
 </div>
+
+Mayuresh Atlani
