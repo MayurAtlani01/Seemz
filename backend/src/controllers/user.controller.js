@@ -26,6 +26,7 @@ const getDiagnosticStatus = async (req, res) => {
       EMAIL_HOST: Boolean(process.env.EMAIL_HOST),
       EMAIL_PORT: Boolean(process.env.EMAIL_PORT),
       EMAIL_FROM: Boolean(process.env.EMAIL_FROM),
+      RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
     },
   });
 };

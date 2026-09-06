@@ -26,20 +26,43 @@ const sanitizeErrorMessage = (msg) => {
 
 // Standardized email configuration from environment variables
 const getEmailConfig = () => {
+  const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
   const host = (process.env.EMAIL_HOST || "smtp.gmail.com").trim();
-  const port = Number(process.env.EMAIL_PORT) || 465;
+  const port = Number(process.env.EMAIL_PORT) || (host.includes("gmail") ? 465 : 587);
   const user = (process.env.EMAIL_USER || "").trim();
   // Strip any accidental whitespace copied from Google App Password (e.g. "abcd efgh ijkl mnop")
   const pass = (process.env.EMAIL_PASS || "").trim().replace(/\s+/g, "");
-  const from = (process.env.EMAIL_FROM || (user ? `SEEMZ <${user}>` : "SEEMZ <no-reply@seemz.com>")).trim();
+
+  // Resolve default sender
+  let defaultFrom = "SEEMZ Atelier <no-reply@seemz.com>";
+  if (resendApiKey && !user) {
+    defaultFrom = process.env.EMAIL_FROM || "SEEMZ Atelier <onboarding@resend.dev>";
+  } else if (user) {
+    defaultFrom = process.env.EMAIL_FROM || `SEEMZ Atelier <${user}>`;
+  }
+  const from = (process.env.EMAIL_FROM || defaultFrom).trim();
+
+  // If RESEND_API_KEY is configured, use Resend HTTP API (works seamlessly on Render/Vercel where raw SMTP ports are blocked)
+  if (resendApiKey) {
+    return {
+      provider: "Resend HTTP API",
+      type: "api",
+      resendApiKey,
+      from,
+      isConfigured: true,
+      host: "api.resend.com",
+      port: 443,
+    };
+  }
 
   return {
+    provider: "Nodemailer SMTP",
+    type: "smtp",
     host,
     port,
     user,
     pass,
     from,
-    provider: "Nodemailer SMTP",
     isConfigured: Boolean(user && pass),
   };
 };
@@ -48,24 +71,27 @@ const getEmailConfig = () => {
 let transporterInstance = null;
 
 const createTransporterInstance = () => {
-  const { host, port, user, pass, isConfigured } = getEmailConfig();
+  const config = getEmailConfig();
 
-  if (!isConfigured) {
+  if (!config.isConfigured || config.type !== "smtp") {
     throw new Error("EMAIL_USER and EMAIL_PASS are not configured in your deployment environment variables.");
   }
 
+  const isSecure = config.port === 465;
+
   return nodemailer.createTransport({
-    host: host || "smtp.gmail.com",
-    port: port || 465,
-    secure: port === 465,
+    host: config.host || "smtp.gmail.com",
+    port: config.port,
+    secure: isSecure,
+    requireTLS: config.port === 587,
     auth: {
-      user,
-      pass,
+      user: config.user,
+      pass: config.pass,
     },
     family: 4, // Force IPv4 to prevent ENETUNREACH on environments without IPv6 routing
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     tls: {
       // Prevents cloud proxy handshake failures on cloud platforms
       rejectUnauthorized: false,
@@ -80,66 +106,120 @@ const getTransporter = () => {
   return transporterInstance;
 };
 
-// Non-blocking Transporter Verification at Server Startup
+// Non-blocking Transporter / API Verification at Server Startup
 const verifyEmailConfig = async () => {
-  const { isConfigured, host, port, user, from, provider } = getEmailConfig();
+  const config = getEmailConfig();
 
-  if (!isConfigured) {
-    console.warn(`[EMAIL] WARNING: EMAIL_USER or EMAIL_PASS is not configured in environment variables. Email delivery will fail until SMTP credentials are provided.`);
+  if (!config.isConfigured) {
+    console.warn(`[EMAIL] WARNING: Email delivery credentials not found. Configure RESEND_API_KEY (recommended for cloud hosts like Render) or EMAIL_USER and EMAIL_PASS.`);
     return false;
+  }
+
+  if (config.type === "api") {
+    console.log(`[EMAIL] ${config.provider} initialized (Sender: "${config.from}", Status: READY)`);
+    return true;
   }
 
   try {
     const transporter = getTransporter();
     await transporter.verify();
-    console.log(`[EMAIL] ${provider} initialized (Host: ${host}:${port}, User: "${maskEmail(user)}", Sender: "${from}", Status: READY)`);
+    console.log(`[EMAIL] ${config.provider} initialized (Host: ${config.host}:${config.port}, User: "${maskEmail(config.user)}", Sender: "${config.from}", Status: READY)`);
     return true;
   } catch (err) {
     const safeError = sanitizeErrorMessage(err.message || "Transporter verification failed");
     console.error(`[EMAIL] WARNING: SMTP Transporter verification failed at startup: ${safeError}`);
+    if (safeError.toLowerCase().includes("timeout")) {
+      console.warn(
+        `[EMAIL] TIP: Cloud hosts like Render frequently block outbound SMTP ports (465/587). Add RESEND_API_KEY to your Render environment variables to send via HTTPS REST API.`
+      );
+    }
     // Reset transporter instance so next attempt creates fresh connection
     transporterInstance = null;
     return false;
   }
 };
 
-// Central Send Function using Nodemailer
+// Central Send Function (supports Resend HTTP API & Nodemailer SMTP)
 const sendEmail = async ({ to, subject, text, html }) => {
   if (!to || typeof to !== "string") {
     throw new Error("Recipient email is required");
   }
 
-  const { from, isConfigured, provider } = getEmailConfig();
-  if (!isConfigured) {
-    throw new Error("Email service is not configured on the server. Please verify EMAIL_USER and EMAIL_PASS.");
+  const config = getEmailConfig();
+  if (!config.isConfigured) {
+    throw new Error("Email service is not configured. Please verify RESEND_API_KEY or EMAIL_USER and EMAIL_PASS.");
   }
 
   const normalizedTo = to.trim();
   const maskedRecipient = maskEmail(normalizedTo);
 
-  console.log(`[EMAIL] Dispatching email to ${maskedRecipient} via ${provider} (Subject: "${subject}")`);
+  console.log(`[EMAIL] Dispatching email to ${maskedRecipient} via ${config.provider} (Subject: "${subject}")`);
 
+  // Provider 1: Resend HTTP API (HTTPS port 443 - zero SMTP port blocking on Render)
+  if (config.type === "api") {
+    try {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${config.resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: config.from,
+          to: [normalizedTo],
+          subject,
+          text: text || undefined,
+          html: html || undefined,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const errorMsg = sanitizeErrorMessage(data.message || data.error || `HTTP ${response.status} from Resend API`);
+        throw new Error(errorMsg);
+      }
+
+      console.log(`[EMAIL] Email delivered successfully to ${maskedRecipient} via Resend (Message ID: ${data.id || "N/A"})`);
+      return {
+        success: true,
+        messageId: data.id,
+        provider: config.provider,
+      };
+    } catch (err) {
+      const safeError = sanitizeErrorMessage(err.message || "Resend email dispatch failed");
+      console.error(`[EMAIL] Resend dispatch failed to ${maskedRecipient}: ${safeError}`);
+      throw new Error(safeError);
+    }
+  }
+
+  // Provider 2: Nodemailer SMTP
   try {
     const transporter = getTransporter();
     const info = await transporter.sendMail({
-      from,
+      from: config.from,
       to: normalizedTo,
       subject,
       text: text || undefined,
       html: html || undefined,
     });
 
-    console.log(`[EMAIL] Email delivered successfully to ${maskedRecipient} (Message ID: ${info.messageId || "N/A"})`);
+    console.log(`[EMAIL] Email delivered successfully to ${maskedRecipient} via SMTP (Message ID: ${info.messageId || "N/A"})`);
     return {
       success: true,
       messageId: info.messageId,
-      provider,
+      provider: config.provider,
     };
   } catch (err) {
     // Reset transporter on error to clear any dead socket
     transporterInstance = null;
     const safeError = sanitizeErrorMessage(err.message || "Email delivery failed");
     console.error(`[EMAIL] Email dispatch failed to ${maskedRecipient}: ${safeError}`);
+    if (safeError.toLowerCase().includes("timeout")) {
+      console.warn(
+        `[EMAIL] TIP: If deploying on Render/cloud hosting, outbound SMTP ports (465/587/25) are often blocked by the host. Set RESEND_API_KEY in your Render environment variables to send via HTTPS API.`
+      );
+    }
     throw new Error(safeError);
   }
 };
