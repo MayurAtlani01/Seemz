@@ -66,7 +66,7 @@ const sendRegistrationOtp = async ({ name, email, password }) => {
     await sendEmail({
       to: normalizedEmail,
       subject: "SEEMZ Atelier — Security Verification Code",
-      text: `Hello ${name.trim()},\n\nWe received a request to verify your SEEMZ account.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request this code, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
+      text: `SEEMZ ATELIER\nSECURITY / 01\n\nYOUR ACCOUNT IS ALMOST READY.\n\nHello ${name.trim()},\nUse the code below to verify your SEEMZ account.\n\nVERIFICATION CODE: [ ${rawOtp} ]\nVALID FOR ${OTP_EXPIRY_MINUTES} MINUTES\n\nSECURITY / 02\nNever share this verification code with anyone.\nIf you did not request this email, you can safely ignore it.\n\nSEEMZ ATELIER · EST. 2026\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: name.trim(),
         otp: rawOtp,
@@ -75,7 +75,10 @@ const sendRegistrationOtp = async ({ name, email, password }) => {
     });
   } catch (mailError) {
     console.error(`[OTP-SERVICE] Registration email dispatch failed for ${maskEmail(normalizedEmail)}: ${mailError.message}`);
-    throw { status: 503, message: "Unable to send verification code. Please try again." };
+    throw {
+      status: 503,
+      message: mailError.message || "Unable to send verification code. Please try again.",
+    };
   }
 
   return {
@@ -192,7 +195,7 @@ const resendRegistrationOtp = async ({ email }) => {
     await sendEmail({
       to: normalizedEmail,
       subject: "SEEMZ Atelier — Security Verification Code",
-      text: `Hello ${user.name},\n\nWe received a request for a new verification code for your SEEMZ account.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request this code, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
+      text: `SEEMZ ATELIER\nSECURITY / 01\n\nCONFIRM YOUR IDENTITY.\n\nHello ${user.name},\nUse the new verification code below to continue.\n\nVERIFICATION CODE: [ ${rawOtp} ]\nVALID FOR ${OTP_EXPIRY_MINUTES} MINUTES\n\nSECURITY / 02\nNever share this verification code with anyone.\nIf you did not request this email, you can safely ignore it.\n\nSEEMZ ATELIER · EST. 2026\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: user.name,
         otp: rawOtp,
@@ -201,7 +204,10 @@ const resendRegistrationOtp = async ({ email }) => {
     });
   } catch (mailError) {
     console.error(`[OTP-SERVICE] Resend email dispatch failed for ${maskEmail(normalizedEmail)}: ${mailError.message}`);
-    throw { status: 503, message: "Unable to send verification code. Please try again." };
+    throw {
+      status: 503,
+      message: mailError.message || "Unable to send verification code. Please try again.",
+    };
   }
 
   return {
@@ -237,7 +243,7 @@ const sendForgotPasswordOtp = async ({ email }) => {
     await sendEmail({
       to: normalizedEmail,
       subject: "SEEMZ Atelier — Password Reset Verification",
-      text: `Hello ${user.name},\n\nWe received a request to reset your SEEMZ account password.\n\nYour verification code is: ${rawOtp}\n\nValid for ${OTP_EXPIRY_MINUTES} minutes.\nFor your security, never share this code with anyone.\n\nIf you did not request a password reset, you can safely ignore this email.\n\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
+      text: `SEEMZ ATELIER\nSECURITY / 01\n\nSECURE YOUR ACCOUNT.\n\nHello ${user.name},\nUse the code below to reset your SEEMZ account password.\n\nVERIFICATION CODE: [ ${rawOtp} ]\nVALID FOR ${OTP_EXPIRY_MINUTES} MINUTES\n\nSECURITY / 02\nNever share this verification code with anyone.\nIf you did not request a password reset, you can safely ignore this email.\n\nSEEMZ ATELIER · EST. 2026\n© ${new Date().getFullYear()} SEEMZ Atelier. All rights reserved.`,
       html: generateOtpEmailHtml({
         name: user.name,
         otp: rawOtp,
@@ -246,7 +252,10 @@ const sendForgotPasswordOtp = async ({ email }) => {
     });
   } catch (mailError) {
     console.error(`[OTP-SERVICE] Forgot password email dispatch failed for ${maskEmail(normalizedEmail)}: ${mailError.message}`);
-    throw { status: 503, message: "Unable to send verification code. Please try again." };
+    throw {
+      status: 503,
+      message: mailError.message || "Unable to send verification code. Please try again.",
+    };
   }
 
   return {

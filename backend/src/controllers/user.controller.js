@@ -40,7 +40,7 @@ const testEmailDelivery = async (req, res) => {
     const result = await sendEmail({
       to: email.trim(),
       subject: "SEEMZ Atelier — Security Verification Code",
-      text: "Hello Client,\n\nThis is a test verifying email delivery from SEEMZ Atelier.\n\nYour verification code is: 123456\n\nValid for 10 minutes.\nFor your security, never share this code with anyone.\n\n© 2026 SEEMZ Atelier. All rights reserved.",
+      text: "SEEMZ ATELIER\nSECURITY / 01\n\nCONFIRM YOUR IDENTITY.\n\nHello Client,\nUse the code below to verify your SEEMZ account.\n\nVERIFICATION CODE: [ 123456 ]\nVALID FOR 10 MINUTES\n\nSECURITY / 02\nNever share this verification code with anyone.\nIf you did not request this email, you can safely ignore it.\n\nSEEMZ ATELIER · EST. 2026\n© 2026 SEEMZ Atelier. All rights reserved.",
       html: generateOtpEmailHtml({ name: "Client", otp: "123456", purpose: "email service verification" }),
     });
     return res.status(200).json({ success: true, result });

@@ -1,196 +1,4 @@
-const nodemailer = require("nodemailer");
-
-// Safe email address masking for logs (e.g., client@domain.com -> c***t@domain.com)
-const maskEmail = (email) => {
-  if (!email || typeof email !== "string") return "unknown";
-  const [local, domain] = email.trim().split("@");
-  if (!domain) return "***";
-  if (local.length <= 2) return `${local[0] || ""}***@${domain}`;
-  return `${local[0]}***${local[local.length - 1]}@${domain}`;
-};
-
-// Safe error sanitizer (strips passwords, tokens, API keys from log/error output)
-const sanitizeErrorMessage = (msg) => {
-  if (!msg || typeof msg !== "string") return "Unknown error";
-  return msg
-    .replace(/(password|pass|secret|key|token|auth|bearer)=[^&\s]+/gi, "$1=[REDACTED]")
-    .replace(/re_[a-zA-Z0-9_-]{20,}/g, "[REDACTED_KEY]")
-    .replace(/[a-zA-Z0-9_-]{28,}/g, "[REDACTED_SECRET]");
-};
-
-// Standardized email configuration from environment variables
-const getEmailConfig = () => {
-  const host = (process.env.EMAIL_HOST || "smtp.gmail.com").trim();
-  const port = Number(process.env.EMAIL_PORT) || 465;
-  const user = (process.env.EMAIL_USER || "").trim();
-  // Strip any accidental whitespace copied from Google App Password (e.g. "abcd efgh ijkl mnop")
-  const pass = (process.env.EMAIL_PASS || "").trim().replace(/\s+/g, "");
-  const from = (process.env.EMAIL_FROM || (user ? `SEEMZ <${user}>` : "SEEMZ <no-reply@seemz.com>")).trim();
-
-  return {
-    host,
-    port,
-    user,
-    pass,
-    from,
-    provider: "Nodemailer SMTP",
-    isConfigured: Boolean(user && pass),
-  };
-};
-
-// Transporter singleton instance
-let transporterInstance = null;
-
-const createTransporterInstance = () => {
-  const { host, port, user, pass, isConfigured } = getEmailConfig();
-
-  if (!isConfigured) {
-    throw new Error("EMAIL_USER and EMAIL_PASS are not configured in your deployment environment variables.");
-  }
-
-  return nodemailer.createTransport({
-    host: host || "smtp.gmail.com",
-    port: port || 465,
-    secure: port === 465,
-    auth: {
-      user,
-      pass,
-    },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-    tls: {
-      // Prevents cloud proxy handshake failures on cloud platforms
-      rejectUnauthorized: false,
-    },
-  });
-};
-
-const getTransporter = () => {
-  if (!transporterInstance) {
-    transporterInstance = createTransporterInstance();
-  }
-  return transporterInstance;
-};
-
-// Non-blocking Transporter Verification at Server Startup
-const verifyEmailConfig = async () => {
-  const { isConfigured, host, port, user, from, provider } = getEmailConfig();
-
-  if (!isConfigured) {
-    console.warn(`[EMAIL] WARNING: EMAIL_USER or EMAIL_PASS is not configured in environment variables. Email delivery will fail until SMTP credentials are provided.`);
-    return false;
-  }
-
-  try {
-    const transporter = getTransporter();
-    await transporter.verify();
-    console.log(`[EMAIL] ${provider} initialized (Host: ${host}:${port}, User: "${maskEmail(user)}", Sender: "${from}", Status: READY)`);
-    return true;
-  } catch (err) {
-    const safeError = sanitizeErrorMessage(err.message || "Transporter verification failed");
-    console.error(`[EMAIL] WARNING: SMTP Transporter verification failed at startup: ${safeError}`);
-    // Reset transporter instance so next attempt creates fresh connection
-    transporterInstance = null;
-    return false;
-  }
-};
-
-// Central Send Function using Nodemailer
-const sendEmail = async ({ to, subject, text, html }) => {
-  if (!to || typeof to !== "string") {
-    throw new Error("Recipient email is required");
-  }
-
-  const { from, isConfigured, provider } = getEmailConfig();
-  if (!isConfigured) {
-    throw new Error("Email service is not configured on the server. Please verify EMAIL_USER and EMAIL_PASS.");
-  }
-
-  const normalizedTo = to.trim();
-  const maskedRecipient = maskEmail(normalizedTo);
-
-  console.log(`[EMAIL] Dispatching email to ${maskedRecipient} via ${provider} (Subject: "${subject}")`);
-
-  try {
-    const transporter = getTransporter();
-    const info = await transporter.sendMail({
-      from,
-      to: normalizedTo,
-      subject,
-      text: text || undefined,
-      html: html || undefined,
-    });
-
-    console.log(`[EMAIL] Email delivered successfully to ${maskedRecipient} (Message ID: ${info.messageId || "N/A"})`);
-    return {
-      success: true,
-      messageId: info.messageId,
-      provider,
-    };
-  } catch (err) {
-    // Reset transporter on error to clear any dead socket
-    transporterInstance = null;
-    const safeError = sanitizeErrorMessage(err.message || "Email delivery failed");
-    console.error(`[EMAIL] Email dispatch failed to ${maskedRecipient}: ${safeError}`);
-    throw new Error(safeError);
-  }
-};
-
-// Helper: Context messages and editorial headlines based on authentication action
-const getEmailContext = (purpose = "") => {
-  const normalized = (purpose || "").toLowerCase();
-
-  if (normalized.includes("password") || normalized.includes("reset") || normalized.includes("forgot")) {
-    return {
-      sectionIndex: "SECURITY / 01",
-      sectionBadge: "AUTHENTICATION / RESET",
-      headlineLead: "SECURE YOUR",
-      headlineAccent: "ACCOUNT.",
-      instruction: "Use the code below to reset your SEEMZ account password.",
-    };
-  }
-
-  if (normalized.includes("resend")) {
-    return {
-      sectionIndex: "SECURITY / 01",
-      sectionBadge: "SECURITY / RE-ISSUE",
-      headlineLead: "CONFIRM YOUR",
-      headlineAccent: "IDENTITY.",
-      instruction: "Use the new verification code below to continue.",
-    };
-  }
-
-  if (normalized.includes("registration") || normalized.includes("register")) {
-    return {
-      sectionIndex: "SECURITY / 01",
-      sectionBadge: "REGISTRATION / VERIFICATION",
-      headlineLead: "YOUR ACCOUNT IS",
-      headlineAccent: "ALMOST READY.",
-      instruction: "Use the code below to verify your SEEMZ account.",
-    };
-  }
-
-  return {
-    sectionIndex: "SECURITY / 01",
-    sectionBadge: "SECURITY / VERIFICATION",
-    headlineLead: "CONFIRM YOUR",
-    headlineAccent: "IDENTITY.",
-    instruction: "Use the code below to verify your SEEMZ account.",
-  };
-};
-
-// Minimal + Experimental + Luxury + Editorial HTML OTP Template Generator
-const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) => {
-  const recipientName = (name && typeof name === "string" && name.trim()) ? name.trim() : "Client";
-  const context = getEmailContext(purpose);
-  const currentYear = new Date().getFullYear();
-
-  // Normalize 6-digit OTP into array of discrete characters for individual outlined cells
-  const rawOtpString = String(otp || "").trim();
-  const digits = (rawOtpString.length === 6 ? rawOtpString : rawOtpString.padStart(6, "0").slice(0, 6)).split("");
-
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -290,7 +98,7 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
 <body style="margin: 0; padding: 0; background-color: #050505; color: #ffffff; -webkit-font-smoothing: antialiased;">
   <!-- Hidden Inbox Preheader -->
   <div style="display: none; font-size: 1px; color: #050505; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all;">
-    SEEMZ Atelier Verification: ${rawOtpString} — Valid for 10 minutes.
+    SEEMZ Atelier Verification: 774902 — Valid for 10 minutes.
   </div>
 
   <table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" style="background-color: #050505; width: 100%;">
@@ -313,10 +121,10 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
               <table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation">
                 <tr>
                   <td align="left" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 3.5px; color: #737373; text-transform: uppercase;">
-                    ${context.sectionIndex}
+                    SECURITY / 01
                   </td>
                   <td align="right" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 8.5px; font-weight: 500; letter-spacing: 2.5px; color: #404040; text-transform: uppercase;">
-                    ${context.sectionBadge}
+                    REGISTRATION / VERIFICATION
                   </td>
                 </tr>
               </table>
@@ -361,8 +169,8 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
                 <tr>
                   <td align="left">
                     <h1 class="hero-title" style="font-family: 'Cormorant Garamond', 'Didot', 'Bodoni MT', 'Cinzel', 'Georgia', serif; font-size: 32px; font-weight: 500; line-height: 1.15; letter-spacing: 1px; color: #ffffff; text-transform: uppercase; margin: 0; padding: 0;">
-                      ${context.headlineLead}<br />
-                      <span style="color: #888888;">${context.headlineAccent}</span>
+                      YOUR ACCOUNT IS<br />
+                      <span style="color: #888888;">ALMOST READY.</span>
                     </h1>
                   </td>
                 </tr>
@@ -372,8 +180,8 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
               <table border="0" cellpadding="0" cellspacing="0" width="100%" role="presentation" style="margin-top: 20px;">
                 <tr>
                   <td align="left" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.6; color: #d4d4d4;">
-                    <span style="color: #ffffff; font-weight: 500;">Hello ${recipientName},</span><br />
-                    <span style="color: #8a8a8a;">${context.instruction}</span>
+                    <span style="color: #ffffff; font-weight: 500;">Hello Julian Vance,</span><br />
+                    <span style="color: #8a8a8a;">Use the code below to verify your SEEMZ account.</span>
                   </td>
                 </tr>
               </table>
@@ -400,13 +208,43 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
                   <td align="center">
                     <table border="0" cellpadding="0" cellspacing="0" class="otp-table" role="presentation" style="margin: 0 auto; border-collapse: separate; border-spacing: 8px 0;">
                       <tr>
-                        ${digits.map(digit => `
+                        
                         <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
                           <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
-                            ${digit}
+                            7
                           </div>
                         </td>
-                        `).join("")}
+                        
+                        <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
+                          <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
+                            7
+                          </div>
+                        </td>
+                        
+                        <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
+                          <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
+                            4
+                          </div>
+                        </td>
+                        
+                        <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
+                          <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
+                            9
+                          </div>
+                        </td>
+                        
+                        <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
+                          <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
+                            0
+                          </div>
+                        </td>
+                        
+                        <td align="center" valign="middle" class="otp-cell" style="width: 48px; height: 60px; max-width: 48px; background-color: #0e0e0e; border: 1px solid #333333; text-align: center; vertical-align: middle; padding: 0; margin: 0; box-sizing: border-box;">
+                          <div class="otp-digit" style="font-family: 'Cormorant Garamond', 'Cinzel', 'Times New Roman', serif; font-size: 34px; font-weight: 600; color: #ffffff; line-height: 60px; text-align: center; margin: 0; padding: 0; -webkit-user-select: text; user-select: text;">
+                            2
+                          </div>
+                        </td>
+                        
                       </tr>
                     </table>
                   </td>
@@ -473,7 +311,7 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
                       SEEMZ ATELIER &nbsp;&middot;&nbsp; EST. 2026
                     </div>
                     <div style="font-size: 9.5px; letter-spacing: 1px; color: #303030;">
-                      &copy; ${currentYear} SEEMZ Atelier. All rights reserved.
+                      &copy; 2026 SEEMZ Atelier. All rights reserved.
                     </div>
                   </td>
                 </tr>
@@ -494,14 +332,4 @@ const generateOtpEmailHtml = ({ name, otp, purpose = "account verification" }) =
     </tr>
   </table>
 </body>
-</html>`;
-};
-
-module.exports = {
-  sendEmail,
-  verifyEmailConfig,
-  generateOtpEmailHtml,
-  maskEmail,
-  getEmailConfig,
-};
-
+</html>
