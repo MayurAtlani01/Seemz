@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { getAllProducts } from "../../services/productservices";
 import { useAuth } from "../../context/AuthContext";
+import FashionIntro from "../../components/FashionIntro/FashionIntro";
 import "./OutfitStudio.css";
 
 const SLOTS = [
@@ -252,147 +253,230 @@ function OutfitStudio() {
 
   return (
     <main className="outfit-studio-page">
-      {/* Studio Header Bar */}
-      <section className="studio-top-hero">
-        <div className="studio-hero-content">
-          <span className="studio-badge-kicker">SEEMZ OUTFIT STUDIO</span>
-          <h1 className="studio-main-heading">Outfit Builder</h1>
-          <p className="studio-intro-text">
-            Mix and match pieces from our collection to preview and create your complete look.
-          </p>
-        </div>
-      </section>
+      {/* ================= ATELIER CINEMATIC SEQUENCE ================= */}
+      <FashionIntro
+        title="SEEMZ STUDIO"
+        subtitle="DIGITAL ATELIER • EXHIBIT 01"
+        skipText="CUSTOMIZE IN STUDIO"
+        skipTargetId="studio-workspace-section"
+      />
 
-      {/* Main Dual-Flank Atelier Interface */}
-      <div className="studio-workspace">
-        {/* Left Flank: Slot Navigation Bar */}
-        <aside className="studio-slots-sidebar">
-          <div className="slots-sidebar-header">
-            <span className="sidebar-kicker">OUTFIT SLOTS</span>
-            <button 
-              type="button" 
-              className="studio-reset-btn" 
-              onClick={handleResetAtelier}
-              title="Clear all pieces"
-            >
-              <RotateCcw size={13} /> Reset
-            </button>
+      {/* ================= STUDIO INTERACTIVE WORKSPACE ================= */}
+      <div id="studio-workspace-section" className="studio-workspace-section">
+        {/* Studio Header Bar */}
+        <section className="studio-top-hero">
+          <div className="studio-hero-content">
+            <div className="studio-hero-kicker-row">
+              <span className="studio-badge-kicker">SEEMZ STUDIO // DIGITAL ATELIER</span>
+              <div className="studio-hero-telemetry">
+                <span className="telemetry-pill-dot" />
+                <span>{activeEnsembleList.length} OF 5 PIECES EQUIPPED</span>
+              </div>
+            </div>
+            <h1 className="studio-main-heading">Outfit Builder & Atelier</h1>
+            <p className="studio-intro-text">
+              Curate and customize your ensemble. Select garments across foundational layers to compose your signature silhouette.
+            </p>
           </div>
+        </section>
 
-          <div className="slots-list">
-            {SLOTS.map((slot) => {
-              const piece = selectedPieces[slot.id];
-              const isActive = activeSlot === slot.id;
-              const img = getProductImage(piece);
+        {/* Main Dual-Flank Atelier Interface */}
+        <div className="studio-workspace">
+          {/* Left Flank: Slot Navigation Bar */}
+          <aside className="studio-slots-sidebar">
+            <div className="slots-sidebar-header">
+              <div className="sidebar-title-block">
+                <span className="sidebar-kicker">ATELIER LAYERS</span>
+                <h3 className="sidebar-subheading">Outfit Slots</h3>
+              </div>
+              <button 
+                type="button" 
+                className="studio-reset-btn" 
+                onClick={handleResetAtelier}
+                title="Clear all pieces"
+              >
+                <RotateCcw size={12} /> Clear All
+              </button>
+            </div>
 
-              return (
-                <button
-                  key={slot.id}
-                  type="button"
-                  className={`slot-card-btn ${isActive ? "active" : ""} ${piece ? "filled" : "empty"}`}
-                  onClick={() => setActiveSlot(slot.id)}
-                >
-                  <div className="slot-thumb-box">
-                    {piece && img ? (
-                      <img src={img} alt={piece.name} />
-                    ) : (
-                      <div className="empty-slot-icon">
-                        <Plus size={16} />
+            <div className="slots-list">
+              {SLOTS.map((slot, index) => {
+                const piece = selectedPieces[slot.id];
+                const isActive = activeSlot === slot.id;
+                const img = getProductImage(piece);
+
+                return (
+                  <button
+                    key={slot.id}
+                    type="button"
+                    className={`slot-card-btn ${isActive ? "active" : ""} ${piece ? "filled" : "empty"}`}
+                    onClick={() => setActiveSlot(slot.id)}
+                  >
+                    <div className="slot-idx-num">0{index + 1}</div>
+                    <div className="slot-thumb-box">
+                      {piece && img ? (
+                        <img src={img} alt={piece.name} />
+                      ) : (
+                        <div className="empty-slot-icon">
+                          <Plus size={16} />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="slot-card-details">
+                      <span className="slot-name">{slot.label}</span>
+                      {piece ? (
+                        <>
+                          <h4 className="slot-piece-name">{piece.name}</h4>
+                          <span className="slot-piece-price">{formatPrice(piece.price)}</span>
+                        </>
+                      ) : (
+                        <span className="slot-empty-prompt">Select {slot.label}</span>
+                      )}
+                    </div>
+
+                    {piece && (
+                      <button
+                        type="button"
+                        className="slot-remove-btn"
+                        onClick={(e) => handleRemoveSlot(slot.id, e)}
+                        title={`Remove ${slot.label}`}
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          {/* Center Stage: Interactive Visual Mannequin & Composition Viewer */}
+          <section className="studio-center-stage">
+            <div className="stage-pedestal-wrapper">
+              {/* Overhead Luminous Studio Spotlight Beam */}
+              <div className="stage-spotlight-beam" />
+              <div className="pedestal-ambient-light" />
+              
+              {/* Architectural Mannequin Stand Armature (Behind Garments) */}
+              <div className="mannequin-armature-wireframe" />
+
+              <div className="mannequin-composition-box">
+                {/* Active Outfit Layer Cards or Empty Wireframe Stand */}
+                {activeEnsembleList.length === 0 ? (
+                  <div className="stage-empty-state">
+                    <div className="empty-wireframe-stand">
+                      <div className="wireframe-bust" />
+                      <div className="wireframe-spine" />
+                      <div className="wireframe-base" />
+                    </div>
+                    <h3>Armature Empty</h3>
+                    <p>Select garments from the left slots or right drawer to begin assembling your silhouette.</p>
+                  </div>
+                ) : (
+                  <div className="composition-layers-stack">
+                    {/* Layer Outerwear */}
+                    {selectedPieces.outerwear && (
+                      <div 
+                        className={`layer-item layer-outerwear ${activeSlot === "outerwear" ? "is-selected-layer" : ""}`}
+                        onClick={() => setActiveSlot("outerwear")}
+                        title="Click to customize Outerwear"
+                      >
+                        <div className="layer-img-container">
+                          <img src={getProductImage(selectedPieces.outerwear)} alt="Outerwear" />
+                        </div>
+                        <div className="layer-floating-badge">
+                          <span className="layer-tag-label">01 // OUTERWEAR</span>
+                          <span className="layer-tag-title">{selectedPieces.outerwear.name}</span>
+                          <span className="layer-tag-price">{formatPrice(selectedPieces.outerwear.price)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer Top */}
+                    {selectedPieces.top && (
+                      <div 
+                        className={`layer-item layer-top ${activeSlot === "top" ? "is-selected-layer" : ""}`}
+                        onClick={() => setActiveSlot("top")}
+                        title="Click to customize Topwear"
+                      >
+                        <div className="layer-img-container">
+                          <img src={getProductImage(selectedPieces.top)} alt="Topwear" />
+                        </div>
+                        <div className="layer-floating-badge">
+                          <span className="layer-tag-label">02 // TOPWEAR</span>
+                          <span className="layer-tag-title">{selectedPieces.top.name}</span>
+                          <span className="layer-tag-price">{formatPrice(selectedPieces.top.price)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer Bottom */}
+                    {selectedPieces.bottom && (
+                      <div 
+                        className={`layer-item layer-bottom ${activeSlot === "bottom" ? "is-selected-layer" : ""}`}
+                        onClick={() => setActiveSlot("bottom")}
+                        title="Click to customize Bottoms"
+                      >
+                        <div className="layer-img-container">
+                          <img src={getProductImage(selectedPieces.bottom)} alt="Bottoms" />
+                        </div>
+                        <div className="layer-floating-badge">
+                          <span className="layer-tag-label">03 // BOTTOMS</span>
+                          <span className="layer-tag-title">{selectedPieces.bottom.name}</span>
+                          <span className="layer-tag-price">{formatPrice(selectedPieces.bottom.price)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer Shoes */}
+                    {selectedPieces.shoes && (
+                      <div 
+                        className={`layer-item layer-shoes ${activeSlot === "shoes" ? "is-selected-layer" : ""}`}
+                        onClick={() => setActiveSlot("shoes")}
+                        title="Click to customize Footwear"
+                      >
+                        <div className="layer-img-container">
+                          <img src={getProductImage(selectedPieces.shoes)} alt="Footwear" />
+                        </div>
+                        <div className="layer-floating-badge">
+                          <span className="layer-tag-label">04 // FOOTWEAR</span>
+                          <span className="layer-tag-title">{selectedPieces.shoes.name}</span>
+                          <span className="layer-tag-price">{formatPrice(selectedPieces.shoes.price)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer Accessories */}
+                    {selectedPieces.accessories && (
+                      <div 
+                        className={`layer-item layer-accessories ${activeSlot === "accessories" ? "is-selected-layer" : ""}`}
+                        onClick={() => setActiveSlot("accessories")}
+                        title="Click to customize Accessories"
+                      >
+                        <div className="layer-img-container">
+                          <img src={getProductImage(selectedPieces.accessories)} alt="Accessories" />
+                        </div>
+                        <div className="layer-floating-badge">
+                          <span className="layer-tag-label">05 // ACCESSORY</span>
+                          <span className="layer-tag-title">{selectedPieces.accessories.name}</span>
+                          <span className="layer-tag-price">{formatPrice(selectedPieces.accessories.price)}</span>
+                        </div>
                       </div>
                     )}
                   </div>
+                )}
 
-                  <div className="slot-card-details">
-                    <span className="slot-name">{slot.label}</span>
-                    {piece ? (
-                      <>
-                        <h4 className="slot-piece-name">{piece.name}</h4>
-                        <span className="slot-piece-price">{formatPrice(piece.price)}</span>
-                      </>
-                    ) : (
-                      <span className="slot-empty-prompt">Select {slot.label}</span>
-                    )}
+                {/* Illuminated Runway Pedestal Floor Ring */}
+                <div className="pedestal-floor-ring">
+                  <div className="floor-ring-light" />
+                  <div className="pedestal-base-plate">
+                    <span>SEEMZ DIGITAL ATELIER &bull; RUNWAY MATRIX</span>
                   </div>
-
-                  {piece && (
-                    <button
-                      type="button"
-                      className="slot-remove-btn"
-                      onClick={(e) => handleRemoveSlot(slot.id, e)}
-                      title={`Remove ${slot.label}`}
-                    >
-                      <X size={13} />
-                    </button>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
-        {/* Center Stage: Interactive Visual Mannequin & Composition Viewer */}
-        <section className="studio-center-stage">
-          <div className="stage-pedestal-wrapper">
-            <div className="pedestal-ambient-light" />
-            
-            <div className="mannequin-composition-box">
-              {/* Stacked Garment Silhouette Display */}
-              {activeEnsembleList.length === 0 ? (
-                <div className="stage-empty-state">
-                  <div className="empty-wireframe-stand" />
-                  <h3>Build Your Outfit</h3>
-                  <p>Select items from the slots to preview your look.</p>
                 </div>
-              ) : (
-                <div className="composition-layers-stack">
-                  {/* Layer Outerwear */}
-                  {selectedPieces.outerwear && (
-                    <div className="layer-item layer-outerwear">
-                      <img src={getProductImage(selectedPieces.outerwear)} alt="Outerwear" />
-                      <span className="layer-tag">OUTERWEAR</span>
-                    </div>
-                  )}
-
-                  {/* Layer Top */}
-                  {selectedPieces.top && (
-                    <div className="layer-item layer-top">
-                      <img src={getProductImage(selectedPieces.top)} alt="Top" />
-                      <span className="layer-tag">TOPWEAR</span>
-                    </div>
-                  )}
-
-                  {/* Layer Bottom */}
-                  {selectedPieces.bottom && (
-                    <div className="layer-item layer-bottom">
-                      <img src={getProductImage(selectedPieces.bottom)} alt="Bottom" />
-                      <span className="layer-tag">BOTTOM</span>
-                    </div>
-                  )}
-
-                  {/* Layer Shoes */}
-                  {selectedPieces.shoes && (
-                    <div className="layer-item layer-shoes">
-                      <img src={getProductImage(selectedPieces.shoes)} alt="Footwear" />
-                      <span className="layer-tag">FOOTWEAR</span>
-                    </div>
-                  )}
-
-                  {/* Layer Accessories */}
-                  {selectedPieces.accessories && (
-                    <div className="layer-item layer-accessories">
-                      <img src={getProductImage(selectedPieces.accessories)} alt="Accessory" />
-                      <span className="layer-tag">ACCESSORY</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="pedestal-base-plate">
-                <span>SEEMZ STUDIO</span>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* Right Flank: Garment Drawer & Size Selector */}
         <aside className="studio-drawer-sidebar">
@@ -548,6 +632,7 @@ function OutfitStudio() {
           <span>{toastMessage}</span>
         </div>
       )}
+      </div>
     </main>
   );
 }
