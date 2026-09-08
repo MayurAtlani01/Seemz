@@ -70,28 +70,35 @@ const uploadAvatar = async (req, res) => {
       process.env.CLOUDINARY_API_KEY &&
       process.env.CLOUDINARY_API_SECRET
     ) {
-      avatarUrl = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "seemz_avatars",
-            resource_type: "image",
-            transformation: [
-              { width: 500, height: 500, crop: "fill", gravity: "face" },
-              { quality: "auto", fetch_format: "auto" },
-            ],
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result.secure_url);
-          }
-        );
-        uploadStream.end(req.file.buffer);
-      });
+      try {
+        avatarUrl = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder: "seemz_avatars",
+              resource_type: "image",
+              transformation: [
+                { width: 500, height: 500, crop: "fill", gravity: "face" },
+                { quality: "auto", fetch_format: "auto" },
+              ],
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          uploadStream.end(req.file.buffer);
+        });
+      } catch (cloudErr) {
+        console.warn("[Profile] Cloudinary upload exception, falling back to base64:", cloudErr.message);
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        avatarUrl = `data:${req.file.mimetype};base64,${b64}`;
+      }
     } else {
       // Resilient fallback: base64 Data URI
       const b64 = Buffer.from(req.file.buffer).toString("base64");
       avatarUrl = `data:${req.file.mimetype};base64,${b64}`;
     }
+
 
     req.user.profilePic = avatarUrl;
     await req.user.save();

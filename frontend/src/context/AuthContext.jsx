@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Fetch Current User
+  // Fetch Current User on Initial Load
   const fetchCurrentUser = useCallback(async () => {
     const existingToken = getAuthToken();
 
@@ -105,15 +105,35 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.warn("[Auth] Session validation:", err.response?.status === 401 ? "Session expired or invalid" : err.message);
-      setUser(null);
-      setAuthToken(null);
-      setWishlistIds([]);
-      setWishlistItems([]);
-      setCart({ items: [] });
+      if (err.response?.status === 401) {
+        setUser(null);
+        setAuthToken(null);
+        setWishlistIds([]);
+        setWishlistItems([]);
+        setCart({ items: [] });
+      }
     } finally {
       setLoading(false);
     }
   }, [fetchUserWishlist, fetchUserCart]);
+
+  // Silent background refresh (never sets loading:true or redirects)
+  const refreshUser = useCallback(async () => {
+    try {
+      const data = await getProfile();
+      if (data?.success && data?.user) {
+        setUser((prev) => (prev ? { ...prev, ...data.user } : data.user));
+      }
+    } catch (err) {
+      console.warn("[Auth] Silent user refresh non-fatal error:", err.message);
+    }
+  }, []);
+
+  // Direct in-memory user updater
+  const updateUser = useCallback((newUserData) => {
+    if (!newUserData) return;
+    setUser((prev) => (prev ? { ...prev, ...newUserData } : newUserData));
+  }, []);
 
   useEffect(() => {
     fetchCurrentUser();
@@ -126,7 +146,9 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     fetchUserWishlist();
     fetchUserCart();
+    refreshUser();
   };
+
 
   const logout = async () => {
     try {
@@ -138,6 +160,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setWishlistIds([]);
       setWishlistItems([]);
+
       setCart({ items: [] });
     }
   };
@@ -273,7 +296,8 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
-        refreshUser: fetchCurrentUser,
+        refreshUser,
+        updateUser,
         // Wishlist
         wishlistIds,
         wishlistItems,

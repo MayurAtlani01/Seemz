@@ -98,6 +98,9 @@ const verifyRegisterOTP = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        phone: user.phone || "",
+        profilePic: user.profilePic || "",
+        bodyProfile: user.bodyProfile,
       },
     });
   } catch (err) {
@@ -199,8 +202,12 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        phone: user.phone || "",
+        profilePic: user.profilePic || "",
+        bodyProfile: user.bodyProfile,
       },
     });
+
   } catch (error) {
     console.error("[AUTH] Login error:", error.message);
     return res.status(500).json({

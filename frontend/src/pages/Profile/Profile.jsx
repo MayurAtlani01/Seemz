@@ -33,6 +33,7 @@ function Profile() {
     logout,
     wishlistItems,
     refreshUser,
+    updateUser,
   } = useAuth();
 
   const [orders, setOrders] = useState([]);
@@ -99,7 +100,11 @@ function Profile() {
       if (res?.success) {
         setUpdateMsg("Profile updated successfully.");
         setIsEditing(false);
-        await refreshUser();
+        if (res?.user) {
+          updateUser(res.user);
+        } else {
+          updateUser({ name: editName.trim(), phone: editPhone.trim() });
+        }
         setTimeout(() => setUpdateMsg(""), 3500);
       }
     } catch (err) {
@@ -146,7 +151,11 @@ function Profile() {
       const res = await uploadAvatar(formData);
       if (res?.success) {
         setUpdateMsg("Profile photo updated successfully.");
-        await refreshUser();
+        if (res?.user) {
+          updateUser(res.user);
+        } else if (res?.profilePic) {
+          updateUser({ profilePic: res.profilePic });
+        }
         setTimeout(() => setUpdateMsg(""), 3500);
       } else {
         setAvatarError(res?.message || "Failed to update profile photo.");
@@ -167,7 +176,7 @@ function Profile() {
       const res = await removeAvatar();
       if (res?.success) {
         setUpdateMsg("Profile photo removed.");
-        await refreshUser();
+        updateUser({ profilePic: "" });
         setTimeout(() => setUpdateMsg(""), 3500);
       }
     } catch (err) {
@@ -177,6 +186,7 @@ function Profile() {
       setAvatarLoading(false);
     }
   };
+
 
   const handleLogout = async () => {
     await logout();
