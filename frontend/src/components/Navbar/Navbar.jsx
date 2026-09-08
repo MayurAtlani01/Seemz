@@ -145,12 +145,20 @@ const Navbar = () => {
             {isAuthenticated ? (
               <button
                 type="button"
-                className="nav-icon-btn user-btn active"
+                className={`nav-icon-btn user-btn active ${user?.profilePic ? "has-pfp" : ""}`}
                 onClick={() => setDropdownOpen((prev) => !prev)}
                 aria-label="User menu"
               >
-                <User size={20} strokeWidth={1.7} />
-                <span className="user-initial-dot" />
+                {user?.profilePic ? (
+                  <div className="navbar-avatar-wrap">
+                    <img src={user.profilePic} alt={user.name} className="navbar-avatar-img" />
+                  </div>
+                ) : (
+                  <>
+                    <User size={20} strokeWidth={1.7} />
+                    <span className="user-initial-dot" />
+                  </>
+                )}
               </button>
             ) : (
               <NavLink to="/login" className="nav-login-link" aria-label="Login">
@@ -163,8 +171,19 @@ const Navbar = () => {
             {isAuthenticated && dropdownOpen && (
               <div className="user-dropdown-menu">
                 <div className="user-dropdown-header">
-                  <span className="dropdown-name">{user.name}</span>
-                  <span className="dropdown-email">{user.email}</span>
+                  <div className="dropdown-user-row">
+                    {user?.profilePic ? (
+                      <img src={user.profilePic} alt={user.name} className="dropdown-avatar-thumb" />
+                    ) : (
+                      <div className="dropdown-avatar-initials">
+                        {user.name ? (user.name.split(" ").length > 1 ? user.name.split(" ")[0][0] + user.name.split(" ")[1][0] : user.name.slice(0, 2)).toUpperCase() : "SZ"}
+                      </div>
+                    )}
+                    <div className="dropdown-user-info">
+                      <span className="dropdown-name">{user.name}</span>
+                      <span className="dropdown-email">{user.email}</span>
+                    </div>
+                  </div>
                   {isAdmin && <span className="dropdown-admin-tag">ADMIN</span>}
                 </div>
 
@@ -236,7 +255,12 @@ const Navbar = () => {
           <div className="mobile-menu-brand">
             <span>SEEMZ</span>
             {isAuthenticated && (
-              <p className="mobile-welcome-user">Hello, {user?.name}</p>
+              <div className="mobile-user-greeting-row">
+                {user?.profilePic && (
+                  <img src={user.profilePic} alt={user.name} className="mobile-drawer-avatar" />
+                )}
+                <p className="mobile-welcome-user">Hello, {user?.name}</p>
+              </div>
             )}
           </div>
           <button
@@ -248,6 +272,7 @@ const Navbar = () => {
             <X size={22} strokeWidth={1.5} />
           </button>
         </div>
+
 
         <div className="mobile-search-wrapper">
           <button

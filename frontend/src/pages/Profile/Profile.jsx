@@ -1,5 +1,5 @@
 import "./Profile.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -13,13 +13,18 @@ import {
   UserCheck,
   Calendar,
   CreditCard,
+  Camera,
+  Trash2,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { updateProfile } from "../../services/profileservices";
+import { updateProfile, uploadAvatar, removeAvatar } from "../../services/profileservices";
 import { getMyOrders } from "../../services/orderservices";
 
 function Profile() {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const {
     user,
     isAuthenticated,
@@ -39,6 +44,10 @@ function Profile() {
   const [editPhone, setEditPhone] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
   const [updateMsg, setUpdateMsg] = useState("");
+
+  // Avatar upload state
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
 
   // Active view tab: "all" | "dossier" | "orders"
   const [activeTab, setActiveTab] = useState("all");
@@ -90,7 +99,7 @@ function Profile() {
       if (res?.success) {
         setUpdateMsg("Profile updated successfully.");
         setIsEditing(false);
-        refreshUser();
+        await refreshUser();
         setTimeout(() => setUpdateMsg(""), 3500);
       }
     } catch (err) {
@@ -98,6 +107,74 @@ function Profile() {
       setUpdateMsg(err.response?.data?.message || "Failed to update profile. Please try again.");
     } finally {
       setSaveLoading(false);
+    }
+  };
+
+  // Avatar Upload Handlers
+  const handleAvatarTrigger = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleAvatarFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validation
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Please select a valid image file (JPG, PNG, WEBP).");
+      setTimeout(() => setAvatarError(""), 4000);
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setAvatarError("Image file must be smaller than 8MB.");
+      setTimeout(() => setAvatarError(""), 4000);
+      return;
+    }
+
+    try {
+      setAvatarLoading(true);
+      setAvatarError("");
+      setUpdateMsg("");
+
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      const res = await uploadAvatar(formData);
+      if (res?.success) {
+        setUpdateMsg("Profile photo updated successfully.");
+        await refreshUser();
+        setTimeout(() => setUpdateMsg(""), 3500);
+      } else {
+        setAvatarError(res?.message || "Failed to update profile photo.");
+      }
+    } catch (err) {
+      console.error("Avatar upload error:", err);
+      setAvatarError(err.response?.data?.message || "Failed to upload photo. Please try again.");
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async (e) => {
+    e.stopPropagation();
+    try {
+      setAvatarLoading(true);
+      setAvatarError("");
+      const res = await removeAvatar();
+      if (res?.success) {
+        setUpdateMsg("Profile photo removed.");
+        await refreshUser();
+        setTimeout(() => setUpdateMsg(""), 3500);
+      }
+    } catch (err) {
+      console.error("Avatar remove error:", err);
+      setAvatarError("Failed to remove photo.");
+    } finally {
+      setAvatarLoading(false);
     }
   };
 
@@ -149,13 +226,69 @@ function Profile() {
             <p className="profile-hero-subtitle">
               Manage your personal details, review your orders, and view your wishlist.
             </p>
+
+            {avatarError && (
+              <div className="profile-avatar-error-strip">
+                <AlertCircle size={14} color="#f87171" />
+                <span>{avatarError}</span>
+              </div>
+            )}
           </div>
 
-          {/* Luxury Monogram Emblem & Quick Status */}
+          {/* Luxury Monogram / Avatar Seal */}
           <div className="profile-monogram-box">
-            <div className="profile-monogram-seal">
-              <span className="seal-letters">{getInitials(user.name)}</span>
+            <div className="profile-avatar-seal-container">
+              <div
+                className={`profile-monogram-seal ${user.profilePic ? "has-avatar" : ""} ${avatarLoading ? "is-uploading" : ""}`}
+                onClick={handleAvatarTrigger}
+                title="Click to change profile picture"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && handleAvatarTrigger()}
+              >
+                {user.profilePic ? (
+                  <img
+                    src={user.profilePic}
+                    alt={user.name}
+                    className="profile-avatar-img"
+                  />
+                ) : (
+                  <span className="seal-letters">{getInitials(user.name)}</span>
+                )}
+
+                {/* Camera Overlay Trigger */}
+                <div className="avatar-camera-overlay" aria-label="Change photo">
+                  {avatarLoading ? (
+                    <Loader2 size={16} className="avatar-spin-icon" />
+                  ) : (
+                    <Camera size={16} className="avatar-camera-icon" />
+                  )}
+                </div>
+              </div>
+
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleAvatarFileChange}
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                style={{ display: "none" }}
+              />
+
+              {/* Remove Photo Action */}
+              {user.profilePic && !avatarLoading && (
+                <button
+                  type="button"
+                  className="remove-avatar-pill-btn"
+                  onClick={handleRemoveAvatar}
+                  title="Remove profile picture"
+                >
+                  <Trash2 size={11} />
+                  <span>REMOVE PHOTO</span>
+                </button>
+              )}
             </div>
+
             <div className="profile-tier-badge">
               <span className="tier-dot" />
               <span>{isAdmin ? "ADMIN" : "VERIFIED ACCOUNT"}</span>
@@ -163,6 +296,7 @@ function Profile() {
           </div>
         </div>
       </section>
+
 
       {/* CLIENT STATS STRIP */}
       <section className="profile-ledger-strip">

@@ -69,6 +69,7 @@ app.get("/", function(req, res) {
 });
 
 app.use("/api/profile", profileRoute);
+app.use("/api/user", profileRoute);
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoute);

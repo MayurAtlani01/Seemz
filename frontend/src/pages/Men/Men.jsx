@@ -100,6 +100,7 @@ function Men() {
           title={product.name || product.title}
           category={product.subCategory || product.category || "Men"}
           price={formatPrice(product.price)}
+          product={product}
         />
       );
     });
@@ -156,8 +157,8 @@ function Men() {
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="section" id="men-collection">
-        <div className="section-heading">
+      <section className="men-section" id="men-collection">
+        <div className="men-section-heading">
           <div>
             <span>NEW SEASON</span>
             <h2>New Arrivals</h2>
@@ -166,18 +167,18 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="product-grid">
+        <div className="men-product-grid">
           {renderProductCards(products.slice(0, 8), "new")}
         </div>
       </section>
 
       {/* ================= EDITORIAL ================= */}
       <section className="men-editorial">
-        <div className="editorial-image">
+        <div className="men-editorial-image">
           <img src={editorialImg} alt="Editorial" />
         </div>
 
-        <div className="editorial-content">
+        <div className="men-editorial-content">
           <span>EDITORIAL</span>
 
           <h2>
@@ -197,8 +198,8 @@ function Men() {
       </section>
 
       {/* ================= TRENDING NOW ================= */}
-      <section className="section">
-        <div className="section-heading">
+      <section className="men-section">
+        <div className="men-section-heading">
           <div>
             <span>TRENDING</span>
             <h2>Trending Now</h2>
@@ -207,16 +208,16 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="product-grid">
+        <div className="men-product-grid">
           {renderProductCards([...products].reverse().slice(0, 8), "trend")}
         </div>
       </section>
 
       {/* ================= FEATURED ================= */}
-      <section className="featured-look">
+      <section className="men-featured-look">
         <img src={featuredImg} alt="Featured Collection" />
 
-        <div className="featured-overlay">
+        <div className="men-featured-overlay">
           <span>FEATURED COLLECTION</span>
 
           <h2>
@@ -235,8 +236,8 @@ function Men() {
       </section>
 
       {/* ================= BEST SELLERS ================= */}
-      <section className="section">
-        <div className="section-heading">
+      <section className="men-section">
+        <div className="men-section-heading">
           <div>
             <span>BEST SELLERS</span>
             <h2>Customer Favorites</h2>
@@ -245,7 +246,7 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="product-grid">
+        <div className="men-product-grid">
           {renderProductCards(products.slice(0, 8), "best")}
         </div>
       </section>

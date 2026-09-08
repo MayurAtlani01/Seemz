@@ -100,6 +100,7 @@ function Women() {
           title={product.name || product.title}
           category={product.subCategory || product.category || "Women"}
           price={formatPrice(product.price)}
+          product={product}
         />
       );
     });

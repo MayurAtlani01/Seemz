@@ -400,6 +400,7 @@ function Products() {
                   title={product.name || product.title}
                   category={product.subCategory || product.category || "SEEMZ"}
                   price={formatPrice(product.price)}
+                  product={product}
                 />
               );
             })}

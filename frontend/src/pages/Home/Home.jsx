@@ -115,6 +115,7 @@ function Home() {
           title={product.name || product.title}
           category={product.subCategory || product.category || "Collection"}
           price={formatPrice(product.price)}
+          product={product}
         />
       );
     });

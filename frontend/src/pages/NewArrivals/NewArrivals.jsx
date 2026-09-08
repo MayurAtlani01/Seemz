@@ -144,6 +144,7 @@ function NewArrivals() {
           title={product.name || product.title}
           category={product.subCategory || product.category || "New Arrival"}
           price={formatPrice(product.price)}
+          product={product}
         />
       );
     });

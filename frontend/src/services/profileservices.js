@@ -10,7 +10,24 @@ const updateProfile = async (profileData) => {
   return response.data;
 };
 
+const uploadAvatar = async (formData) => {
+  const response = await API.post("/profile/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+const removeAvatar = async () => {
+  const response = await API.delete("/profile/avatar");
+  return response.data;
+};
+
 export {
   getProfile,
   updateProfile,
+  uploadAvatar,
+  removeAvatar,
 };
+
