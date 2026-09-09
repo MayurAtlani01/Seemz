@@ -1,10 +1,11 @@
 import "./Home.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag, Sparkles, Layers, ArrowUpRight } from "lucide-react";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getAllProducts } from "../../services/productservices";
+import useCinematicScroll from "../../hooks/useCinematicScroll";
 
 import heroVideo from "../../assets/videos/Home2.mp4";
 import MenVideo from "../../assets/videos/Men.mp4";
@@ -12,6 +13,7 @@ import WomenVideo from "../../assets/videos/Women.mp4";
 import Acc from "../../assets/videos/Acc.mp4";
 import Trendy from "../../assets/images/Autumn collection.jpg";
 import imgFallback from "../../assets/images/product1.jpg";
+import studioPreviewImg from "../../assets/intro/complete.jpg";
 
 const categories = [
   {
@@ -37,6 +39,12 @@ function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Cinematic scroll hooks for key camera stages
+  const heroScroll = useCinematicScroll({ dampening: 0.15 });
+  const editorialScroll = useCinematicScroll({ dampening: 0.12 });
+  const brandStoryScroll = useCinematicScroll({ dampening: 0.12 });
+  const studioPortalScroll = useCinematicScroll({ dampening: 0.12 });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -105,17 +113,21 @@ function Home() {
       );
     }
 
-    return products.slice(0, 4).map((product) => {
+    return products.slice(0, 4).map((product, idx) => {
       const productId = product._id || product.id;
       return (
         <ProductCard
           key={`home-${productId}`}
           id={productId}
+          product={product}
           image={getProductImage(product)}
           title={product.name || product.title}
-          category={product.subCategory || product.category || "Collection"}
+          category={product.category || "Collection"}
+          subCategory={product.subCategory || ""}
           price={formatPrice(product.price)}
-          product={product}
+          sizes={product.sizes}
+          images={product.images}
+          stock={product.stock}
         />
       );
     });
@@ -124,8 +136,8 @@ function Home() {
   return (
     <main className="home">
 
-      {/* ================= HERO ================= */}
-      <section className="hero">
+      {/* ================= HERO WITH CRISP CINEMATIC PARALLAX ================= */}
+      <section ref={heroScroll.ref} className="hero">
         <video
           className="hero-video"
           src={heroVideo}
@@ -134,6 +146,9 @@ function Home() {
           loop
           playsInline
           preload="auto"
+          style={{
+            transform: `scale(${1 + heroScroll.scrollProgress * 0.05}) translate3d(0, ${heroScroll.scrollProgress * 20}px, 0)`,
+          }}
         />
 
         <div className="hero-content">
@@ -160,42 +175,45 @@ function Home() {
             />
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <div className="scroll-indicator">
+          <span>EXPLORE</span>
+        </div>
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="section">
+      <section className="section cinematic-reveal-wrap is-visible">
         <div className="section-heading">
           <div>
             <p>Latest Collection</p>
             <h2>New Arrivals</h2>
           </div>
 
-          <Link to="/products">
+          <Link to="/products" className="section-explore-link">
             View All
             <ArrowRight size={18} />
           </Link>
         </div>
 
-        <div className="product-grid">
+        <div className="product-grid cinematic-product-grid">
           {renderProductCards()}
         </div>
       </section>
 
-      {/* ================= EDITORIAL ================= */}
-
-      <section className="editorial">
-
-        <div className="editorial-left">
-
+      {/* ================= EDITORIAL WITH SPLIT-SCREEN PARALLAX ================= */}
+      <section ref={editorialScroll.ref} className="editorial cinematic-stage">
+        <div className="editorial-left cinematic-split-image-frame">
           <img
             src={Trendy}
             alt="Editorial Collection"
+            style={{
+              transform: `scale(1.06) translateY(${(editorialScroll.scrollProgress - 0.5) * -35}px)`,
+            }}
           />
-
         </div>
 
-        <div className="editorial-right">
-
+        <div className="editorial-right cinematic-layer">
           <p>Editorial Collection</p>
 
           <h2>
@@ -213,13 +231,11 @@ function Home() {
           <Link to="/products">
             Explore Collection
           </Link>
-
         </div>
-
       </section>
 
       {/* ================= AI BODY SCANNER SECTION ================= */}
-      <section className="atelier-scanner-home">
+      <section className="atelier-scanner-home cinematic-reveal-wrap is-visible">
         <div className="atelier-scanner-home-content">
           <p className="atelier-eyebrow">SMART FIT TECHNOLOGY</p>
           <h2>AI Body Scanner</h2>
@@ -239,16 +255,12 @@ function Home() {
       </section>
 
       {/* ================= CATEGORIES ================= */}
-
       <section className="section">
-
         <div className="section-heading">
-
           <div>
             <p>Browse</p>
             <h2>Categories</h2>
           </div>
-
         </div>
 
         <div className="category-grid">
@@ -274,36 +286,75 @@ function Home() {
             </Link>
           ))}
         </div>
-
       </section>
 
+      {/* ================= CINEMATIC STUDIO PORTAL BRIDGE ================= */}
+      <section ref={studioPortalScroll.ref} className="cinematic-studio-portal">
+        <div className="studio-portal-content">
+          <div className="studio-portal-badge">
+            <span className="portal-pulse-dot" />
+            <span>DIGITAL ATELIER • OUTFIT BUILDER</span>
+          </div>
 
+          <h2>
+            Curate Your
+            <br />
+            Signature Look
+          </h2>
 
-      {/* ================= BRAND STORY ================= */}
+          <p>
+            Step into the SEEMZ virtual fitting studio. Seamlessly layer jackets, knitwear, trousers, and boots onto an architectural tailor stand in real time.
+          </p>
 
-      <section className="brand-story">
+          <div className="studio-portal-cta-row">
+            <Link to="/studio" className="studio-portal-btn">
+              ENTER STUDIO <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
 
+        <div className="studio-portal-visual">
+          <Link to="/studio" className="portal-wireframe-card" aria-label="Enter Studio">
+            <img src={studioPreviewImg} alt="SEEMZ Outfit Studio Look Assembly" />
+            <div className="portal-floating-tag">
+              <span>EXPLORE 5-PIECE ENSEMBLE</span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* ================= BRAND STORY WITH FOCAL LENS SCRUB ================= */}
+      <section ref={brandStoryScroll.ref} className="brand-story">
         <p>SEEMZ</p>
 
-        <h2>
+        <h2 
+          className={`cinematic-focus-text ${
+            brandStoryScroll.scrollProgress > 0.15 && brandStoryScroll.scrollProgress < 0.85 
+              ? "in-focus" 
+              : "out-of-focus"
+          }`}
+        >
           Luxury isn't loud.
           <br />
           It's remembered.
         </h2>
 
-        <span>
+        <span
+          className={`cinematic-focus-text ${
+            brandStoryScroll.scrollProgress > 0.25 && brandStoryScroll.scrollProgress < 0.9 
+              ? "in-focus" 
+              : "out-of-focus"
+          }`}
+        >
           We believe great fashion doesn't chase trends.
           It creates identity.
           Every piece is crafted for confidence,
           simplicity and timeless elegance.
         </span>
-
       </section>
 
       {/* ================= NEWSLETTER ================= */}
-
       <section className="newsletter">
-
         <h2>
           Join The Community
         </h2>
@@ -312,23 +363,17 @@ function Home() {
           Subscribe for new arrivals, private drops, and style updates.
         </p>
 
-        <form>
-
+        <form onSubmit={(e) => e.preventDefault()}>
           <input
             type="email"
             placeholder="Enter your email"
           />
 
-          <button>
-
+          <button type="submit">
             Subscribe
-
             <ShoppingBag size={18} />
-
           </button>
-
         </form>
-
       </section>
 
     </main>

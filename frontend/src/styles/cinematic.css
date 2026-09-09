@@ -1,0 +1,419 @@
+/* =====================================================
+   SEEMZ CINEMATIC SCROLL & CAMERA MOTION SYSTEM
+   Inspired by luxury editorial/fashion experiences (e.g. D'MARCOS)
+   Hardware-accelerated transforms & high-performance perspective
+   ===================================================== */
+
+:root {
+  --cinema-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --cinema-ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --cinema-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ================= 3D PERSPECTIVE STAGE ================= */
+body.seemz-cinematic-enabled .cinematic-stage {
+  perspective: 1200px;
+  perspective-origin: center 40%;
+  transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+}
+
+/* Hardware accelerated layer helper */
+body.seemz-cinematic-enabled .cinematic-layer {
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* ================= CAMERA DOLLY / ZOOM ================= */
+.cinematic-dolly-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1 + var(--scroll-progress, 0) * 0.12)) translate3d(0, calc(var(--scroll-progress, 0) * 4%), 0);
+  will-change: transform;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+}
+
+/* ================= EDITORIAL REVEAL ON SCROLL ================= */
+.cinematic-reveal-wrap {
+  opacity: 0;
+  transform: translateY(32px) scale(0.985);
+  transition: opacity 0.8s var(--cinema-ease), transform 0.9s var(--cinema-ease);
+  will-change: opacity, transform;
+}
+
+.cinematic-reveal-wrap.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Staggered children reveals */
+.cinematic-reveal-wrap.is-visible .cinematic-stagger-1 {
+  animation: cinemaFadeUp 0.8s var(--cinema-ease) 0.05s forwards;
+}
+
+.cinematic-reveal-wrap.is-visible .cinematic-stagger-2 {
+  animation: cinemaFadeUp 0.8s var(--cinema-ease) 0.12s forwards;
+}
+
+.cinematic-reveal-wrap.is-visible .cinematic-stagger-3 {
+  animation: cinemaFadeUp 0.8s var(--cinema-ease) 0.20s forwards;
+}
+
+.cinematic-reveal-wrap.is-visible .cinematic-stagger-4 {
+  animation: cinemaFadeUp 0.8s var(--cinema-ease) 0.28s forwards;
+}
+
+@keyframes cinemaFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= EDITORIAL SPLIT-SCREEN PARALLAX ================= */
+.cinematic-split-image-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.cinematic-split-image-frame img {
+  transform: scale(1.08) translateY(calc(var(--parallax-drift, 0) * -8%));
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1);
+  will-change: transform;
+}
+
+/* ================= BRAND STORY FOCUS SCRUB ================= */
+.cinematic-focus-text {
+  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+}
+
+.cinematic-focus-text.out-of-focus {
+  opacity: 0.35;
+  filter: blur(1.5px);
+  transform: scale(0.98);
+}
+
+.cinematic-focus-text.in-focus {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1);
+}
+
+/* ================= RUNWAY PRODUCT CARD REVEAL ================= */
+.cinematic-product-entrance {
+  opacity: 0;
+  transform: translateY(28px) scale(0.98);
+  transition: opacity 0.7s var(--cinema-ease), transform 0.75s var(--cinema-ease);
+  will-change: transform, opacity;
+}
+
+.cinematic-product-entrance.is-entered {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Stagger grid items */
+.cinematic-product-grid > *:nth-child(1) { transition-delay: 0.04s; }
+.cinematic-product-grid > *:nth-child(2) { transition-delay: 0.10s; }
+.cinematic-product-grid > *:nth-child(3) { transition-delay: 0.16s; }
+.cinematic-product-grid > *:nth-child(4) { transition-delay: 0.22s; }
+.cinematic-product-grid > *:nth-child(5) { transition-delay: 0.28s; }
+.cinematic-product-grid > *:nth-child(6) { transition-delay: 0.34s; }
+.cinematic-product-grid > *:nth-child(7) { transition-delay: 0.40s; }
+.cinematic-product-grid > *:nth-child(8) { transition-delay: 0.46s; }
+
+/* ================= UNIVERSAL EDITORIAL & BANNER 3D POP-OUT ================= */
+.cinematic-editorial-pop,
+.editorial-left,
+.cinematic-split-image-frame,
+.category-card,
+.men-editorial-image,
+.women-editorial-image,
+.new-editorial-image,
+.about-image,
+.men-featured-look,
+.women-featured-look,
+.new-featured-look,
+.atelier-scanner-home,
+.philosophy-card,
+.portal-wireframe-card {
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0a0a0a;
+  transition: transform 0.45s var(--cinema-ease),
+              box-shadow 0.45s var(--cinema-ease),
+              border-color 0.35s ease,
+              background-color 0.35s ease;
+  will-change: transform, box-shadow;
+}
+
+.editorial-left:hover,
+.cinematic-split-image-frame:hover,
+.category-card:hover,
+.men-editorial-image:hover,
+.women-editorial-image:hover,
+.new-editorial-image:hover,
+.about-image:hover,
+.portal-wireframe-card:hover {
+  transform: translateY(-10px) scale(1.025);
+  border-color: rgba(255, 255, 255, 0.35);
+  background: #121212;
+  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9),
+              0 0 0 1px rgba(255, 255, 255, 0.18),
+              0 10px 30px rgba(255, 255, 255, 0.05);
+  z-index: 10;
+}
+
+.men-featured-look:hover,
+.women-featured-look:hover,
+.new-featured-look:hover,
+.atelier-scanner-home:hover,
+.philosophy-card:hover {
+  transform: translateY(-8px) scale(1.015);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: #111111;
+  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9),
+              0 0 0 1px rgba(255, 255, 255, 0.18),
+              0 10px 30px rgba(255, 255, 255, 0.05);
+  z-index: 8;
+}
+
+/* ================= STUDIO PORTAL TEASER ================= */
+.cinematic-studio-portal {
+  position: relative;
+  width: 84%;
+  margin: 100px auto;
+  border-radius: 6px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #151821 0%, #08090c 80%, #030405 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  padding: 80px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  transition: border-color 0.4s ease, box-shadow 0.45s var(--cinema-ease), transform 0.45s var(--cinema-ease);
+  will-change: transform, box-shadow;
+}
+
+.cinematic-studio-portal:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.9),
+              0 0 0 1px rgba(255, 255, 255, 0.18),
+              0 12px 35px rgba(255, 255, 255, 0.05);
+  transform: translateY(-8px) scale(1.012);
+}
+
+.studio-portal-content {
+  max-width: 580px;
+}
+
+.studio-portal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.studio-portal-badge .portal-pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ffffff;
+  animation: portalPulse 2s infinite ease-in-out;
+}
+
+@keyframes portalPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.studio-portal-content h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 54px;
+  font-weight: 500;
+  line-height: 1.05;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.studio-portal-content p {
+  font-size: 15px;
+  color: #a0a0aa;
+  line-height: 1.8;
+  margin-bottom: 36px;
+  max-width: 500px;
+}
+
+.studio-portal-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.studio-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  padding: 15px 32px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.3s var(--cinema-ease);
+}
+
+.studio-portal-btn:hover {
+  background: transparent;
+  color: #ffffff;
+  transform: translateX(4px);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
+.studio-portal-visual {
+  position: relative;
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.portal-wireframe-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #08090d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.portal-wireframe-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) brightness(0.85);
+  transition: transform 0.8s var(--cinema-ease), filter 0.5s ease;
+}
+
+.cinematic-studio-portal:hover .portal-wireframe-card img {
+  transform: scale(1.05);
+  filter: contrast(1.15) brightness(0.95);
+}
+
+.portal-floating-tag {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 8px 16px;
+  background: rgba(8, 9, 13, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #f5f5f5;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ================= ACCESSIBILITY: REDUCED MOTION ================= */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-dolly-bg,
+  .cinematic-reveal-wrap,
+  .cinematic-product-entrance,
+  .cinematic-split-image-frame img,
+  .cinematic-focus-text {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}
+
+/* ================= RESPONSIVE: TABLET & MOBILE ================= */
+@media (max-width: 992px) {
+  .cinematic-studio-portal {
+    width: 90%;
+    flex-direction: column;
+    padding: 50px 30px;
+    gap: 40px;
+  }
+
+  .studio-portal-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .studio-portal-content h2 {
+    font-size: 40px;
+  }
+
+  .studio-portal-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .studio-portal-cta-row {
+    justify-content: center;
+  }
+
+  .studio-portal-visual {
+    width: 100%;
+    max-width: 440px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cinematic-studio-portal {
+    width: 92%;
+    margin: 60px auto;
+    padding: 40px 20px;
+  }
+
+  .studio-portal-content h2 {
+    font-size: 32px;
+  }
+
+  .studio-portal-content p {
+    font-size: 14px;
+  }
+
+  .studio-portal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

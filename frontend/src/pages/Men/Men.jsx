@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getAllProducts } from "../../services/productservices";
+import useCinematicScroll from "../../hooks/useCinematicScroll";
 
 import menHero from "../../assets/videos/Men.mp4";
 import editorialImg from "../../assets/images/editorialImg.jpg";
@@ -15,6 +16,10 @@ function Men() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const heroScroll = useCinematicScroll({ dampening: 0.15 });
+  const editorialScroll = useCinematicScroll({ dampening: 0.12 });
+  const featuredScroll = useCinematicScroll({ dampening: 0.12 });
 
   useEffect(() => {
     const fetchMenProducts = async () => {
@@ -96,11 +101,15 @@ function Men() {
         <ProductCard
           key={`${prefix}-${productId}`}
           id={productId}
+          product={product}
           image={getProductImage(product)}
           title={product.name || product.title}
-          category={product.subCategory || product.category || "Men"}
+          category={product.category || "Men"}
+          subCategory={product.subCategory || ""}
           price={formatPrice(product.price)}
-          product={product}
+          sizes={product.sizes}
+          images={product.images}
+          stock={product.stock}
         />
       );
     });
@@ -109,9 +118,9 @@ function Men() {
   return (
     <main className="men-page">
       {/* ================= HERO ================= */}
-      <section className="men-hero">
+      <section ref={heroScroll.ref} className="men-hero cinematic-stage">
         <video
-          className="men-hero-video"
+          className="men-hero-video cinematic-dolly-bg"
           src={menHero}
           autoPlay
           muted
@@ -121,7 +130,7 @@ function Men() {
 
         <div className="men-hero-overlay"></div>
 
-        <div className="men-hero-content">
+        <div className="men-hero-content cinematic-layer">
           <span className="men-hero-tag">MEN COLLECTION 2026</span>
 
           <h1>
@@ -157,7 +166,7 @@ function Men() {
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="men-section" id="men-collection">
+      <section className="men-section cinematic-reveal-wrap is-visible" id="men-collection">
         <div className="men-section-heading">
           <div>
             <span>NEW SEASON</span>
@@ -167,18 +176,24 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="men-product-grid">
+        <div className="men-product-grid cinematic-product-grid">
           {renderProductCards(products.slice(0, 8), "new")}
         </div>
       </section>
 
       {/* ================= EDITORIAL ================= */}
-      <section className="men-editorial">
-        <div className="men-editorial-image">
-          <img src={editorialImg} alt="Editorial" />
+      <section ref={editorialScroll.ref} className="men-editorial cinematic-stage">
+        <div className="men-editorial-image cinematic-split-image-frame">
+          <img 
+            src={editorialImg} 
+            alt="Editorial" 
+            style={{
+              transform: `scale(1.05) translateY(${(editorialScroll.scrollProgress - 0.5) * -30}px)`,
+            }}
+          />
         </div>
 
-        <div className="men-editorial-content">
+        <div className="men-editorial-content cinematic-layer">
           <span>EDITORIAL</span>
 
           <h2>
@@ -198,7 +213,7 @@ function Men() {
       </section>
 
       {/* ================= TRENDING NOW ================= */}
-      <section className="men-section">
+      <section className="men-section cinematic-reveal-wrap is-visible">
         <div className="men-section-heading">
           <div>
             <span>TRENDING</span>
@@ -208,16 +223,22 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="men-product-grid">
+        <div className="men-product-grid cinematic-product-grid">
           {renderProductCards([...products].reverse().slice(0, 8), "trend")}
         </div>
       </section>
 
       {/* ================= FEATURED ================= */}
-      <section className="men-featured-look">
-        <img src={featuredImg} alt="Featured Collection" />
+      <section ref={featuredScroll.ref} className="men-featured-look cinematic-stage">
+        <img 
+          src={featuredImg} 
+          alt="Featured Collection" 
+          style={{
+            transform: `scale(1.03) translateY(${(featuredScroll.scrollProgress - 0.5) * -25}px)`,
+          }}
+        />
 
-        <div className="men-featured-overlay">
+        <div className="men-featured-overlay cinematic-layer">
           <span>FEATURED COLLECTION</span>
 
           <h2>
@@ -236,7 +257,7 @@ function Men() {
       </section>
 
       {/* ================= BEST SELLERS ================= */}
-      <section className="men-section">
+      <section className="men-section cinematic-reveal-wrap is-visible">
         <div className="men-section-heading">
           <div>
             <span>BEST SELLERS</span>
@@ -246,7 +267,7 @@ function Men() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="men-product-grid">
+        <div className="men-product-grid cinematic-product-grid">
           {renderProductCards(products.slice(0, 8), "best")}
         </div>
       </section>

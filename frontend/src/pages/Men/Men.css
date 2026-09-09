@@ -17,13 +17,21 @@
     position: relative;
     width: 100%;
     height: 92vh;
+    min-height: 600px;
+    max-height: 1000px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .men-hero-video {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
 }
 
 .men-hero-overlay {
@@ -31,54 +39,68 @@
     inset: 0;
     background: linear-gradient(
         to right,
-        rgba(0, 0, 0, 0.65),
-        rgba(0, 0, 0, 0.25),
-        rgba(0, 0, 0, 0.15)
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.35) 50%,
+        rgba(0, 0, 0, 0.15) 100%
     );
+    pointer-events: none;
+    z-index: 2;
 }
 
 .men-hero-content {
-    position: absolute;
-    top: 50%;
-    left: 8%;
-    transform: translateY(-50%);
-    max-width: 620px;
+    position: relative;
     z-index: 5;
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     color: #ffffff;
 }
 
 .men-hero-tag {
-    display: inline-block;
-    margin-bottom: 20px;
-    padding: 10px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 2px;
     text-transform: uppercase;
-    letter-spacing: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    letter-spacing: 3.5px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 22px;
+    width: fit-content;
 }
 
 .men-hero-content h1 {
     font-family: "Cormorant Garamond", serif;
-    font-size: 6rem;
+    font-size: clamp(3.4rem, 6.8vw, 5.8rem);
     font-weight: 500;
-    line-height: 0.9;
+    line-height: 0.96;
     margin-bottom: 24px;
     letter-spacing: 0.5px;
+    color: #ffffff;
 }
 
 .men-hero-content p {
-    max-width: 480px;
-    color: #e4e4e4;
-    line-height: 1.9;
-    margin-bottom: 36px;
-    font-size: 1rem;
+    max-width: 500px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    line-height: 1.8;
+    margin-bottom: 34px;
 }
 
 .men-hero-buttons {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     flex-wrap: wrap;
 }
 
@@ -91,14 +113,15 @@
     text-decoration: none;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 13px 28px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 13px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: all 0.35s ease;
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     white-space: nowrap;
 }
@@ -108,7 +131,7 @@
     color: #000000;
     border-color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .men-hero-link .arrow {
@@ -173,6 +196,8 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 34px;
+    padding-top: 16px;
+    padding-bottom: 24px;
 }
 
 /* ==========================================================================

@@ -396,11 +396,15 @@ function Products() {
                 <ProductCard
                   key={`prod-item-${productId}`}
                   id={productId}
+                  product={product}
                   image={getProductImage(product)}
                   title={product.name || product.title}
-                  category={product.subCategory || product.category || "SEEMZ"}
+                  category={product.category || "Collection"}
+                  subCategory={product.subCategory || ""}
                   price={formatPrice(product.price)}
-                  product={product}
+                  sizes={product.sizes}
+                  images={product.images}
+                  stock={product.stock}
                 />
               );
             })}

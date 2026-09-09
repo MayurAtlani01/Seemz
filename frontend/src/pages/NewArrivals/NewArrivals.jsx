@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getAllProducts } from "../../services/productservices";
+import useCinematicScroll from "../../hooks/useCinematicScroll";
 
 import hero from "../../assets/images/new-arrivals/hero.jpg";
 import editorial from "../../assets/images/new-arrivals/editorial.jpg";
@@ -16,6 +17,9 @@ function NewArrivals() {
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
+
+  const heroScroll = useCinematicScroll({ dampening: 0.15 });
+  const editorialScroll = useCinematicScroll({ dampening: 0.12 });
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -140,11 +144,15 @@ function NewArrivals() {
         <ProductCard
           key={`${prefix}-${productId}`}
           id={productId}
+          product={product}
           image={getProductImage(product)}
           title={product.name || product.title}
-          category={product.subCategory || product.category || "New Arrival"}
+          category={product.category || "New Arrival"}
+          subCategory={product.subCategory || ""}
           price={formatPrice(product.price)}
-          product={product}
+          sizes={product.sizes}
+          images={product.images}
+          stock={product.stock}
         />
       );
     });
@@ -161,10 +169,17 @@ function NewArrivals() {
   return (
     <main className="new-page">
       {/* HERO */}
-      <section className="new-hero">
-        <img src={hero} alt="New Arrivals" />
+      <section ref={heroScroll.ref} className="new-hero cinematic-stage">
+        <img 
+          src={hero} 
+          alt="New Arrivals" 
+          className="cinematic-dolly-bg"
+          style={{
+            transform: `scale(${1 + heroScroll.scrollProgress * 0.08})`,
+          }}
+        />
         <div className="new-overlay"></div>
-        <div className="new-hero-content">
+        <div className="new-hero-content cinematic-layer">
           <span className="new-hero-tag">NEW ARRIVALS 2026</span>
           <h1>
             The Latest
@@ -194,7 +209,7 @@ function NewArrivals() {
       </section>
 
       {/* HEADING */}
-      <section className="new-heading" id="new-arrivals-collection">
+      <section className="new-heading cinematic-reveal-wrap is-visible" id="new-arrivals-collection">
         <h2>New Arrivals</h2>
         <p>
           Curated pieces inspired by modern luxury and effortless elegance.
@@ -230,14 +245,20 @@ function NewArrivals() {
       </section>
 
       {/* PRODUCTS */}
-      <section className="new-grid">
+      <section className="new-grid cinematic-product-grid">
         {renderProductCards(firstGridProducts, "new-main")}
       </section>
 
       {/* EDITORIAL */}
-      <section className="new-editorial">
-        <img src={editorial} alt="Editorial" />
-        <div className="new-editorial-overlay">
+      <section ref={editorialScroll.ref} className="new-editorial cinematic-stage">
+        <img 
+          src={editorial} 
+          alt="Editorial" 
+          style={{
+            transform: `scale(1.04) translateY(${(editorialScroll.scrollProgress - 0.5) * -30}px)`,
+          }}
+        />
+        <div className="new-editorial-overlay cinematic-layer">
           <span>EDITORIAL</span>
           <h2>
             Designed
@@ -256,7 +277,7 @@ function NewArrivals() {
 
       {/* MORE PRODUCTS */}
       {(loading || filteredAndSortedProducts.length > 0) && (
-        <section className="new-grid">
+        <section className="new-grid cinematic-product-grid">
           {renderProductCards(secondGridProducts, "new-more")}
         </section>
       )}

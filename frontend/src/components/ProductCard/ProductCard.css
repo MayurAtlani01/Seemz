@@ -1,30 +1,54 @@
 /* ==========================================================================
    SEEMZ LUXURY EDITORIAL PRODUCT CARD
    Strictly Monochrome, High-Fashion Digital Catalogue Styling
+   Microsoft Store Fluent-Style Pop-Out 3D Hover Elevation
    ========================================================================== */
 
 .seemz-product-card,
 .product-card {
-  background: #0d0e14;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  background: #0B0B0B;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.35s ease,
-              box-shadow 0.35s ease,
-              background-color 0.35s ease;
-  will-change: transform;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              background-color 0.3s ease;
+  will-change: transform, box-shadow;
+  transform: translateY(0) scale(1);
+}
+
+/* Specular Top Ambient Lighting Sheen on Hover */
+.seemz-product-card::before,
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.16) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 4;
 }
 
 .seemz-product-card:hover,
 .product-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.22);
-  background: #11131a;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.03);
+  transform: translateY(-14px) scale(1.03);
+  border-color: rgba(255, 255, 255, 0.45);
+  background: #141414;
+  box-shadow: 0 30px 65px -12px rgba(0, 0, 0, 0.96),
+              0 0 0 1px rgba(255, 255, 255, 0.32),
+              0 14px 38px rgba(255, 255, 255, 0.08);
+  z-index: 20;
+}
+
+.seemz-product-card:hover::before,
+.product-card:hover::before {
+  opacity: 1;
 }
 
 /* ==========================================================================
@@ -35,7 +59,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  background: #13141c;
+  background: #0f0f0f;
   overflow: hidden;
 }
 
@@ -54,7 +78,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 18%;
   display: block;
   opacity: 0.95;
   transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
@@ -73,7 +97,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 18%;
   display: block;
   opacity: 0;
   transform: scale(1.01);
@@ -87,13 +111,13 @@
 /* Restrained, Luxurious Desktop Hover Scale */
 .seemz-product-card:hover .product-primary-img,
 .product-card:hover .product-primary-img {
-  transform: scale(1.035);
+  transform: scale(1.065);
 }
 
 .seemz-product-card:hover .product-secondary-img,
 .product-card:hover .product-secondary-img {
   opacity: 1;
-  transform: scale(1.035);
+  transform: scale(1.065);
 }
 
 /* Ambient Subtle Vignette Overlay */
@@ -102,10 +126,10 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.25) 0%,
-    rgba(0, 0, 0, 0) 25%,
-    rgba(0, 0, 0, 0) 75%,
-    rgba(0, 0, 0, 0.35) 100%
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.3) 100%
   );
   pointer-events: none;
   z-index: 3;
@@ -120,7 +144,7 @@
   top: 12px;
   left: 12px;
   z-index: 5;
-  background: rgba(14, 16, 22, 0.8);
+  background: rgba(18, 18, 18, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -154,7 +178,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(14, 16, 22, 0.65);
+  background: rgba(18, 18, 18, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   color: #ffffff;

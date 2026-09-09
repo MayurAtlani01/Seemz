@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
@@ -14,6 +14,14 @@ import './Mainlayout.css';
 function Mainlayout() {
   const [showBodyScanner, setShowBodyScanner] = useState(false);
   const { user, refreshUser } = useAuth();
+
+  // Global feature flag toggle on body for cinematic scroll layer
+  useEffect(() => {
+    document.body.classList.add('seemz-cinematic-enabled');
+    return () => {
+      document.body.classList.remove('seemz-cinematic-enabled');
+    };
+  }, []);
 
   const handleOpenScanner = () => {
     setShowBodyScanner(true);

@@ -1,8 +1,9 @@
 import "./Wishlist.css";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Trash2, ArrowRight, Check, AlertCircle } from "lucide-react";
+import { Heart, ShoppingBag, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import ProductCard from "../../components/ProductCard/ProductCard";
 import imgFallback from "../../assets/images/product1.jpg";
 
 function Wishlist() {
@@ -160,58 +161,15 @@ function Wishlist() {
               : product.image || imgFallback;
 
           return (
-            <div key={prodId} className="wishlist-card">
-              <div className="wishlist-image-wrap">
-                <Link to={`/products/${prodId}`}>
-                  <img src={img} alt={name} />
-                </Link>
-                <button
-                  type="button"
-                  className="wishlist-delete-btn"
-                  onClick={() => handleRemove(prodId)}
-                  title="Remove from wishlist"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-
-              <div className="wishlist-card-details">
-                <span className="wishlist-card-category">
-                  {category}
-                </span>
-
-                <Link to={`/products/${prodId}`} className="wishlist-card-title">
-                  {name}
-                </Link>
-
-                <span className="wishlist-card-price">
-                  {price}
-                </span>
-
-                <div className="wishlist-card-actions">
-                  <button
-                    type="button"
-                    className={`wishlist-add-bag-btn ${addedMap[prodId] ? "added" : ""}`}
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addingId === prodId}
-                  >
-                    {addedMap[prodId] ? (
-                      <>
-                        <Check size={14} /> Added
-                      </>
-                    ) : addingId === prodId ? (
-                      <>
-                        <ShoppingBag size={14} /> Adding...
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingBag size={14} /> Add to Bag
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProductCard
+              key={`wish-${prodId}`}
+              id={prodId}
+              image={img}
+              title={name}
+              category={category}
+              price={price}
+              product={product}
+            />
           );
         })}
       </div>

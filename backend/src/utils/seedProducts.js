@@ -7,7 +7,7 @@ const Product = require("../models/product.model");
 
 const REAL_PRODUCTS = [
   // ==========================================
-  // MEN'S COLLECTION (12 Luxury Pieces)
+  // MEN'S CLOTHING COLLECTION (12 Luxury Pieces)
   // ==========================================
   {
     name: "Structured Double-Breasted Wool Blazer",
@@ -22,7 +22,6 @@ const REAL_PRODUCTS = [
     images: [
       "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1593032465175-481ac7f401a0?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
@@ -38,11 +37,10 @@ const REAL_PRODUCTS = [
     images: [
       "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Heavyweight French Terry Boxy Hoodie",
+    name: "Heavyweight Boxy French Terry Hoodie",
     brand: "SEEMZ Black Label",
     category: "Men",
     subCategory: "Outerwear",
@@ -102,273 +100,272 @@ const REAL_PRODUCTS = [
     ],
   },
   {
-    name: "Raw Selvedge Denim Trucker Jacket",
+    name: "Relaxed Raw Selvedge Denim Jacket",
     brand: "SEEMZ Black Label",
     category: "Men",
-    subCategory: "Jackets",
+    subCategory: "Outerwear",
     price: 6999,
     sizes: ["S", "M", "L", "XL"],
     stock: 18,
     description:
-      "Crafted from 14oz Japanese red-line selvedge denim. Rigid unwashed finish that develops unique fades and patina over time. Antique brass branded hardware.",
+      "14oz unwashed Japanese red-line selvedge denim. Boxy, slightly cropped trucker silhouette with matte gunmetal branded shank hardware.",
     images: [
       "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Supima Cotton Heavyweight Crewneck",
+    name: "Heavyweight 280 GSM Interlock Boxy Tee",
     brand: "SEEMZ Studio",
     category: "Men",
     subCategory: "T-Shirts",
-    price: 1999,
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    stock: 45,
+    price: 2499,
+    sizes: ["S", "M", "L", "XL"],
+    stock: 40,
     description:
-      "260 GSM heavyweight Supima cotton t-shirt with a dense micro-rib collar and reinforced blind stitching. Pre-shrunk with a velvety silicone wash.",
+      "Dense, substantial 280 GSM combed organic cotton with a tight bound collar and dropped shoulders. Maintains its architectural boxy shape wash after wash.",
     images: [
       "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Camp Collar Textured Linen Shirt",
-    brand: "SEEMZ Studio",
-    category: "Men",
-    subCategory: "Shirts",
-    price: 3799,
-    sizes: ["S", "M", "L", "XL"],
-    stock: 22,
-    description:
-      "Airy pure French flax linen woven with subtle slub texture. Relaxed resort fit with an open Cuban collar, chest pocket, and straight split hem.",
-    images: [
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1563630423918-b58f07336ac9?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Wide-Leg Relaxed Cargo Trousers",
-    brand: "SEEMZ Black Label",
-    category: "Men",
-    subCategory: "Trousers",
-    price: 4799,
-    sizes: ["30", "32", "34", "36"],
-    stock: 15,
-    description:
-      "Constructed from durable cotton-twill with articulated knee darts, concealed flap cargo pockets, and adjustable drawstring ankle cuffs.",
-    images: [
-      "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1479064555552-3ef4979f8908?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Silk-Cashmere Fine Knit Polo",
+    name: "Double-Pleat Wide Leg Chino",
     brand: "SEEMZ Atelier",
     category: "Men",
+    subCategory: "Trousers",
+    price: 4999,
+    sizes: ["30", "32", "34", "36"],
+    stock: 22,
+    description:
+      "Crafted from premium heavy cotton twill with deep double front pleats and a relaxed wide-leg profile that breaks gracefully over tailoring or boots.",
+    images: [
+      "https://images.unsplash.com/photo-1479064555552-3ef4979f8908?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Fine-Gauge Mock Neck Silk-Cotton Knit",
+    brand: "SEEMZ Édition",
+    category: "Men",
     subCategory: "Knitwear",
-    price: 5299,
+    price: 4799,
     sizes: ["S", "M", "L", "XL"],
     stock: 19,
     description:
-      "70% mulberry silk and 30% cashmere blend knitted in an ultra-fine 18-gauge gauge. Buttonless Johnny collar with ribbed hem and cuffs.",
+      "Luxurious blend of 70% mulberry silk and 30% Egyptian cotton. Offers a gentle lustrous sheen, lightweight thermal regulation, and a modern clean mock neckline.",
     images: [
-      "https://images.unsplash.com/photo-1625910513413-562a0ee68a51?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Double-Breasted Pinstripe Suit Jacket",
+    name: "Architectural Trench Coat in Technical Twill",
     brand: "SEEMZ Atelier",
     category: "Men",
-    subCategory: "Blazers",
-    price: 9499,
-    sizes: ["S", "M", "L", "XL"],
+    subCategory: "Outerwear",
+    price: 11499,
+    sizes: ["M", "L", "XL"],
     stock: 12,
     description:
-      "Tailored in a subtle chalk pinstripe woven from Super 120s wool. Double-breasted six-button fastening, pick-stitch detailing, and twin side vents.",
+      "Water-resistant dense gabardine twill with a storm flap, throat latch, raglan sleeves, and a deep belt. Combines heritage craftsmanship with modern avant-garde proportions.",
     images: [
-      "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Relaxed Cuban Collar Linen-Cotton Shirt",
+    brand: "SEEMZ Studio",
+    category: "Men",
+    subCategory: "Shirts",
+    price: 3499,
+    sizes: ["S", "M", "L", "XL"],
+    stock: 25,
+    description:
+      "Breathable French flax linen blended with soft combed cotton. Features an open camp collar, straight hem, and subtle tonal mother-of-pearl buttons.",
+    images: [
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=1000",
     ],
   },
 
   // ==========================================
-  // WOMEN'S COLLECTION (12 Luxury Pieces)
+  // WOMEN'S CLOTHING COLLECTION (12 Luxury Pieces)
   // ==========================================
   {
-    name: "Silk Satin Bias-Cut Slip Maxi Gown",
-    brand: "SEEMZ Atelier",
-    category: "Women",
-    subCategory: "Dresses",
-    price: 8999,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 18,
-    description:
-      "Sculptural floor-length gown cut on the bias from heavyweight 22-momme mulberry silk satin. Features a delicate cowl neckline, adjustable micro-straps, and low scoop back.",
-    images: [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Tailored Hourglass Virgin Wool Blazer",
+    name: "Sculptural Double-Breasted Wool Blazer",
     brand: "SEEMZ Atelier",
     category: "Women",
     subCategory: "Blazers",
-    price: 7999,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 22,
-    description:
-      "Sharp architectural blazer with a sculpted cinched waist and defined shoulders. Woven in fine worsted wool with silk lapel facing and horn buttons.",
-    images: [
-      "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Ribbed Knit Turtleneck Midi Dress",
-    brand: "SEEMZ Studio",
-    category: "Women",
-    subCategory: "Dresses",
-    price: 5999,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 25,
-    description:
-      "Form-fitting ribbed midi dress knit from an ultra-soft cashmere-viscose blend. Features a high fold-over turtleneck, long sleeves, and a discreet side leg slit.",
-    images: [
-      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Oversized Belted Trench Coat",
-    brand: "SEEMZ Édition",
-    category: "Women",
-    subCategory: "Outerwear",
-    price: 11499,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 14,
-    description:
-      "Modern take on classic trench tailoring in water-repellent heavy cotton gabardine. Features storm flap, tortoiseshell buckles, deep side welt pockets, and back vent.",
-    images: [
-      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1525450824786-227cbef70703?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Pleated Wide-Leg Palazzo Trousers",
-    brand: "SEEMZ Studio",
-    category: "Women",
-    subCategory: "Trousers & Skirts",
-    price: 4499,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 28,
-    description:
-      "High-waisted fluid trousers crafted from drapey sustainable Lyocell twill. Deep double front pleats create an elegant, flowing silhouette with side slash pockets.",
-    images: [
-      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1551803091-e20673f15770?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Draped Asymmetric Silk Chiffon Blouse",
-    brand: "SEEMZ Atelier",
-    category: "Women",
-    subCategory: "Tops & Blouses",
-    price: 3999,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 20,
-    description:
-      "Fluid silk chiffon blouse with asymmetrical scarf drape detailing around the neckline. Relaxed fit with clean French seams and mother-of-pearl buttoned cuffs.",
-    images: [
-      "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Pure Cashmere Cropped Cardigan",
-    brand: "SEEMZ Black Label",
-    category: "Women",
-    subCategory: "Knitwear",
-    price: 5799,
+    price: 8999,
     sizes: ["XS", "S", "M", "L"],
     stock: 15,
     description:
-      "Pure Mongolian 2-ply cashmere knit into a modern boxy cropped cardigan. Features deep V-neckline, ribbed trims, and real mother-of-pearl buttons.",
+      "Hourglass-tailored double-breasted blazer with accentuated waist and sharp padded shoulders. Crafted from fine virgin wool with silk lining and internal chest canvassing.",
     images: [
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Structured Linen Waistcoat & Short Co-ord",
-    brand: "SEEMZ Studio",
-    category: "Women",
-    subCategory: "Co-ord Sets",
-    price: 6499,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 16,
-    description:
-      "Tailored two-piece set in pure European flax linen. Sleeveless tailored waistcoat with matching high-rise pleat-front tailored shorts with slant pockets.",
-    images: [
-      "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Column Silhouette Bias Satin Midi Skirt",
-    brand: "SEEMZ Studio",
-    category: "Women",
-    subCategory: "Trousers & Skirts",
-    price: 3499,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 24,
-    description:
-      "High-waist midi slip skirt in lustrous heavy satin. Clean elasticated waistband with a streamlined bias drape that gently skims the hips down to an ankle-grazing hem.",
-    images: [
-      "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Sculpted Square-Neck Modal Bodysuit",
-    brand: "SEEMZ Black Label",
-    category: "Women",
-    subCategory: "Tops & Blouses",
-    price: 2499,
-    sizes: ["XS", "S", "M", "L"],
-    stock: 35,
-    description:
-      "Double-layered compressive modal bodysuit designed with an architectural square neckline, wide shoulder straps, and a seamless thong base for a completely smooth finish.",
-    images: [
-      "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=1000",
-    ],
-  },
-  {
-    name: "Draped Halterneck Evening Cocktail Dress",
-    brand: "SEEMZ Atelier",
+    name: "Fluid Silk Satin Column Maxi Dress",
+    brand: "SEEMZ Édition",
     category: "Women",
     subCategory: "Dresses",
+    price: 9499,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 12,
+    description:
+      "Bias-cut 100% heavyweight mulberry silk satin with a delicate drape, scoop neckline, and graceful floor-skimming hem. Epitome of evening minimalism.",
+    images: [
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "High-Waisted Wide-Leg Tailored Trousers",
+    brand: "SEEMZ Atelier",
+    category: "Women",
+    subCategory: "Trousers",
+    price: 5299,
+    sizes: ["26", "28", "30", "32"],
+    stock: 24,
+    description:
+      "Impeccably tailored trousers with a high-rise structured waistband, front inverted pleats, and a fluid pooling hem. Cut from lightweight crepe wool.",
+    images: [
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Ribbed Cashmere Turtleneck Sweater",
+    brand: "SEEMZ Studio",
+    category: "Women",
+    subCategory: "Knitwear",
     price: 7499,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 18,
+    description:
+      "100% Grade-A Mongolian cashmere knitted in a refined 7-gauge half-cardigan stitch. Exceptionally soft, with elongated ribbed cuffs and a relaxed foldover collar.",
+    images: [
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Oversized Minimalist Trench Coat",
+    brand: "SEEMZ Atelier",
+    category: "Women",
+    subCategory: "Coats",
+    price: 13999,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 9,
+    description:
+      "Generously cut double-breasted trench in compact water-repellent cotton gabardine. Features wide notched lapels, epaulettes, and a statement belt.",
+    images: [
+      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1548624313-039e222995d4?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Asymmetrical Pleated Crepe Midi Skirt",
+    brand: "SEEMZ Black Label",
+    category: "Women",
+    subCategory: "Skirts",
+    price: 4999,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 22,
+    description:
+      "Sharp accordion pleats on structured Japanese triacetate crepe. Designed with an asymmetrical diagonal hemline that creates dynamic motion as you walk.",
+    images: [
+      "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Draped Silk-Georgette Blouse",
+    brand: "SEEMZ Studio",
+    category: "Women",
+    subCategory: "Tops",
+    price: 4199,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 20,
+    description:
+      "Semi-sheer silk georgette with an elegant fluid necktie that can be styled into a bow or left draped loose. Balloon sleeves with extended buttoned cuffs.",
+    images: [
+      "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Tailored Wool Halter Vest",
+    brand: "SEEMZ Atelier",
+    category: "Women",
+    subCategory: "Tops",
+    price: 3899,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 17,
+    description:
+      "Modern sartorial waistcoat cut from lightweight tropical wool. Features an open back, pointed hem, welt pockets, and real horn buttons.",
+    images: [
+      "https://images.unsplash.com/photo-1551803091-e20673f15770?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Sculptural Wool Knit Cocoon Cardigan",
+    brand: "SEEMZ Studio",
+    category: "Women",
+    subCategory: "Knitwear",
+    price: 6799,
     sizes: ["XS", "S", "M", "L"],
     stock: 14,
     description:
-      "Elegant halterneck cocktail dress tailored from fluid crepe de chine. Features gathered neck ties, open back silhouette, and fluted asymmetrical hem.",
+      "Cocoon-silhouette cardigan spun from thick alpaca-wool blend. Features oversized tortoiseshell buttons, dropped shoulders, and clean integrated pockets.",
     images: [
-      "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=1000",
     ],
   },
   {
-    name: "Double-Faced Wool Wrap Coat",
+    name: "Clean-Cut Organic Poplin Shirtdress",
+    brand: "SEEMZ Studio",
+    category: "Women",
+    subCategory: "Dresses",
+    price: 5899,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 21,
+    description:
+      "Crisp organic cotton poplin midi shirtdress featuring a concealed placket, spread collar, and removable tie belt for versatile architectural styling.",
+    images: [
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Minimalist Boxy Crewneck Tee in Mercerized Cotton",
+    brand: "SEEMZ Studio",
+    category: "Women",
+    subCategory: "Tops",
+    price: 2399,
+    sizes: ["XS", "S", "M", "L"],
+    stock: 35,
+    description:
+      "Silky-smooth double-mercerized Pima cotton with a slight natural sheen. Clean neck binding and modern elbow-length relaxed sleeves.",
+    images: [
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000",
+    ],
+  },
+  {
+    name: "Hand-Finished Double-Faced Wool Wrap Coat",
     brand: "SEEMZ Édition",
     category: "Women",
-    subCategory: "Outerwear",
-    price: 13999,
+    subCategory: "Coats",
+    price: 15499,
     sizes: ["XS", "S", "M", "L"],
-    stock: 10,
+    stock: 8,
     description:
       "Hand-finished double-faced wool wrap coat with an exaggerated shawl collar, kimono-style sleeves, and a removable self-tie belt. Pure understated luxury for cooler seasons.",
     images: [
@@ -390,12 +387,12 @@ async function seed() {
 
     // Insert new authentic products
     const inserted = await Product.insertMany(REAL_PRODUCTS);
-    console.log(` Successfully seeded ${inserted.length} realistic products across Men & Women categories!`);
+    console.log(` Successfully seeded ${inserted.length} realistic clothing products across Men & Women categories!`);
 
     const menCount = inserted.filter((p) => p.category === "Men").length;
     const womenCount = inserted.filter((p) => p.category === "Women").length;
-    console.log(`- Men's pieces: ${menCount}`);
-    console.log(`- Women's pieces: ${womenCount}`);
+    console.log(`- Men's apparel: ${menCount}`);
+    console.log(`- Women's apparel: ${womenCount}`);
 
     process.exit(0);
   } catch (error) {

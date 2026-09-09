@@ -16,44 +16,51 @@
 
 .about-hero {
     width: 90%;
-    max-width: 1100px;
-
+    max-width: 960px;
     margin: 0 auto;
-
-    padding: 140px 20px 120px;
-
+    padding: 130px 24px 70px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     text-align: center;
 }
 
 .about-tag {
-    font-size: 12px;
-    letter-spacing: 4px;
-    color: rgba(255, 255, 255, .55);
-
-    margin-bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 2px;
+    letter-spacing: 3.5px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 24px;
+    width: fit-content;
 }
 
 .about-hero h1 {
     font-family: "Cormorant Garamond", serif;
-    font-size: 82px;
+    font-size: clamp(3.2rem, 6.2vw, 5.2rem);
     font-weight: 500;
     line-height: 1.05;
-
-    margin-bottom: 35px;
+    margin-bottom: 24px;
+    color: #ffffff;
+    letter-spacing: 0.5px;
 }
 
 .about-hero p {
-    max-width: 720px;
-
-    color: rgba(255, 255, 255, .72);
-
-    line-height: 1.9;
-    font-size: 17px;
+    max-width: 680px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.85;
+    font-size: clamp(0.95rem, 1.15vw, 1.05rem);
 }
 
 /* =========================
@@ -141,16 +148,41 @@
     gap: 45px;
 }
 
-.philosophy-card h3 {
-    font-size: 14px;
-    letter-spacing: 3px;
+.philosophy-card {
+    padding: 36px 30px;
+    background: #0A0A0A;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s ease,
+                background-color 0.35s ease;
+    will-change: transform, box-shadow;
+}
 
-    margin-bottom: 22px;
+.philosophy-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.35);
+    background: #121212;
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(255, 255, 255, 0.18),
+                0 10px 30px rgba(255, 255, 255, 0.05);
+    z-index: 5;
+}
+
+.philosophy-card h3 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin-bottom: 16px;
 }
 
 .philosophy-card p {
-    color: rgba(255, 255, 255, .65);
-    line-height: 1.9;
+    color: rgba(255, 255, 255, .7);
+    line-height: 1.8;
+    font-size: 14.5px;
+    margin: 0;
 }
 
 /* =========================

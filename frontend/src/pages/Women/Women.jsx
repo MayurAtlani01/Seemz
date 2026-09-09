@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { getAllProducts } from "../../services/productservices";
+import useCinematicScroll from "../../hooks/useCinematicScroll";
 
 import womenHero from "../../assets/videos/Women.mp4";
 import editorialImg from "../../assets/images/women/womenEditorial.jpg";
@@ -15,6 +16,10 @@ function Women() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const heroScroll = useCinematicScroll({ dampening: 0.15 });
+  const editorialScroll = useCinematicScroll({ dampening: 0.12 });
+  const featuredScroll = useCinematicScroll({ dampening: 0.12 });
 
   useEffect(() => {
     const fetchWomenProducts = async () => {
@@ -96,11 +101,15 @@ function Women() {
         <ProductCard
           key={`${prefix}-${productId}`}
           id={productId}
+          product={product}
           image={getProductImage(product)}
           title={product.name || product.title}
-          category={product.subCategory || product.category || "Women"}
+          category={product.category || "Women"}
+          subCategory={product.subCategory || ""}
           price={formatPrice(product.price)}
-          product={product}
+          sizes={product.sizes}
+          images={product.images}
+          stock={product.stock}
         />
       );
     });
@@ -109,9 +118,9 @@ function Women() {
   return (
     <main className="women-page">
       {/* ================= HERO ================= */}
-      <section className="women-hero">
+      <section ref={heroScroll.ref} className="women-hero cinematic-stage">
         <video
-          className="women-hero-video"
+          className="women-hero-video cinematic-dolly-bg"
           src={womenHero}
           autoPlay
           muted
@@ -121,7 +130,7 @@ function Women() {
 
         <div className="women-hero-overlay"></div>
 
-        <div className="women-hero-content">
+        <div className="women-hero-content cinematic-layer">
           <span className="women-hero-tag">WOMEN COLLECTION 2026</span>
 
           <h1>
@@ -157,7 +166,7 @@ function Women() {
       </section>
 
       {/* ================= NEW ARRIVALS ================= */}
-      <section className="women-section" id="women-collection">
+      <section className="women-section cinematic-reveal-wrap is-visible" id="women-collection">
         <div className="women-section-heading">
           <div>
             <span>NEW SEASON</span>
@@ -167,18 +176,24 @@ function Women() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="women-product-grid">
+        <div className="women-product-grid cinematic-product-grid">
           {renderProductCards(products.slice(0, 8), "new")}
         </div>
       </section>
 
       {/* ================= EDITORIAL ================= */}
-      <section className="women-editorial">
-        <div className="women-editorial-image">
-          <img src={editorialImg} alt="Editorial" />
+      <section ref={editorialScroll.ref} className="women-editorial cinematic-stage">
+        <div className="women-editorial-image cinematic-split-image-frame">
+          <img 
+            src={editorialImg} 
+            alt="Editorial" 
+            style={{
+              transform: `scale(1.05) translateY(${(editorialScroll.scrollProgress - 0.5) * -30}px)`,
+            }}
+          />
         </div>
 
-        <div className="women-editorial-content">
+        <div className="women-editorial-content cinematic-layer">
           <span>EDITORIAL</span>
 
           <h2>
@@ -198,7 +213,7 @@ function Women() {
       </section>
 
       {/* ================= TRENDING NOW ================= */}
-      <section className="women-section">
+      <section className="women-section cinematic-reveal-wrap is-visible">
         <div className="women-section-heading">
           <div>
             <span>TRENDING</span>
@@ -208,16 +223,22 @@ function Women() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="women-product-grid">
+        <div className="women-product-grid cinematic-product-grid">
           {renderProductCards([...products].reverse().slice(0, 8), "trend")}
         </div>
       </section>
 
       {/* ================= FEATURED ================= */}
-      <section className="women-featured">
-        <img src={featuredImg} alt="Featured Collection" />
+      <section ref={featuredScroll.ref} className="women-featured cinematic-stage">
+        <img 
+          src={featuredImg} 
+          alt="Featured Collection" 
+          style={{
+            transform: `scale(1.03) translateY(${(featuredScroll.scrollProgress - 0.5) * -25}px)`,
+          }}
+        />
 
-        <div className="women-featured-overlay">
+        <div className="women-featured-overlay cinematic-layer">
           <span>FEATURED COLLECTION</span>
 
           <h2>
@@ -238,7 +259,7 @@ function Women() {
       </section>
 
       {/* ================= EDITOR'S PICKS ================= */}
-      <section className="women-section">
+      <section className="women-section cinematic-reveal-wrap is-visible">
         <div className="women-section-heading">
           <div>
             <span>EDITOR'S PICKS</span>
@@ -248,7 +269,7 @@ function Women() {
           <Link to="/products">View All →</Link>
         </div>
 
-        <div className="women-product-grid">
+        <div className="women-product-grid cinematic-product-grid">
           {renderProductCards(products.slice(0, 8), "editor")}
         </div>
       </section>
