@@ -113,6 +113,8 @@ const Navbar = () => {
           <li><NavLink to="/women">WOMEN</NavLink></li>
           <li><NavLink to="/new">NEW ARRIVALS</NavLink></li>
           <li><NavLink to="/about">ABOUT</NavLink></li>
+          {/* Temporary DSGT Link */}
+          <li><NavLink to="/dsgt">DSGT</NavLink></li>
         </ul>
 
         <div className="nav-icons">
@@ -294,6 +296,8 @@ const Navbar = () => {
           <NavLink to="/new" onClick={closeMenu}>NEW ARRIVALS</NavLink>
           <NavLink to="/products" onClick={closeMenu}>COLLECTIONS</NavLink>
           <NavLink to="/about" onClick={closeMenu}>ABOUT</NavLink>
+          {/* Temporary DSGT Link */}
+          <NavLink to="/dsgt" onClick={closeMenu}>DSGT</NavLink>
 
           <div className="mobile-menu-divider" />
 

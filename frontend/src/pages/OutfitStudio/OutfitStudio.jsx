@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  ShoppingBag, 
-  Check, 
-  Sparkles, 
-  RotateCcw, 
-  Share2, 
-  ChevronRight, 
+import {
+  ShoppingBag,
+  Check,
+  Sparkles,
+  RotateCcw,
+  Share2,
+  ChevronRight,
   ChevronLeft,
-  Layers, 
-  Sliders, 
-  Plus, 
-  X, 
+  Layers,
+  Sliders,
+  Plus,
+  X,
   Info,
   ArrowUpRight
 } from "lucide-react";
@@ -35,7 +35,7 @@ function OutfitStudio() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSlot, setActiveSlot] = useState("top");
-  
+
   // Selected piece for each slot
   const [selectedPieces, setSelectedPieces] = useState({
     top: null,
@@ -68,7 +68,7 @@ function OutfitStudio() {
         if (data?.success && Array.isArray(data?.products)) {
           if (isMounted) {
             setProducts(data.products);
-            
+
             // Auto-initialize default luxury ensemble from catalog
             const all = data.products;
             const tops = all.filter(p => isTop(p));
@@ -125,7 +125,7 @@ function OutfitStudio() {
   // Filter items available for current active slot
   const slotItems = useMemo(() => {
     if (!products.length) return [];
-    
+
     let filtered = [];
     if (activeSlot === "top") filtered = products.filter(isTop);
     else if (activeSlot === "bottom") filtered = products.filter(isBottom);
@@ -289,9 +289,9 @@ function OutfitStudio() {
                 <span className="sidebar-kicker">ATELIER LAYERS</span>
                 <h3 className="sidebar-subheading">Outfit Slots</h3>
               </div>
-              <button 
-                type="button" 
-                className="studio-reset-btn" 
+              <button
+                type="button"
+                className="studio-reset-btn"
                 onClick={handleResetAtelier}
                 title="Clear all pieces"
               >
@@ -357,7 +357,7 @@ function OutfitStudio() {
               {/* Overhead Luminous Studio Spotlight Beam */}
               <div className="stage-spotlight-beam" />
               <div className="pedestal-ambient-light" />
-              
+
               {/* Architectural Mannequin Stand Armature (Behind Garments) */}
               <div className="mannequin-armature-wireframe" />
 
@@ -377,7 +377,7 @@ function OutfitStudio() {
                   <div className="composition-layers-stack">
                     {/* Layer Outerwear */}
                     {selectedPieces.outerwear && (
-                      <div 
+                      <div
                         className={`layer-item layer-outerwear ${activeSlot === "outerwear" ? "is-selected-layer" : ""}`}
                         onClick={() => setActiveSlot("outerwear")}
                         title="Click to customize Outerwear"
@@ -395,7 +395,7 @@ function OutfitStudio() {
 
                     {/* Layer Top */}
                     {selectedPieces.top && (
-                      <div 
+                      <div
                         className={`layer-item layer-top ${activeSlot === "top" ? "is-selected-layer" : ""}`}
                         onClick={() => setActiveSlot("top")}
                         title="Click to customize Topwear"
@@ -413,7 +413,7 @@ function OutfitStudio() {
 
                     {/* Layer Bottom */}
                     {selectedPieces.bottom && (
-                      <div 
+                      <div
                         className={`layer-item layer-bottom ${activeSlot === "bottom" ? "is-selected-layer" : ""}`}
                         onClick={() => setActiveSlot("bottom")}
                         title="Click to customize Bottoms"
@@ -431,7 +431,7 @@ function OutfitStudio() {
 
                     {/* Layer Shoes */}
                     {selectedPieces.shoes && (
-                      <div 
+                      <div
                         className={`layer-item layer-shoes ${activeSlot === "shoes" ? "is-selected-layer" : ""}`}
                         onClick={() => setActiveSlot("shoes")}
                         title="Click to customize Footwear"
@@ -449,7 +449,7 @@ function OutfitStudio() {
 
                     {/* Layer Accessories */}
                     {selectedPieces.accessories && (
-                      <div 
+                      <div
                         className={`layer-item layer-accessories ${activeSlot === "accessories" ? "is-selected-layer" : ""}`}
                         onClick={() => setActiveSlot("accessories")}
                         title="Click to customize Accessories"
@@ -478,160 +478,160 @@ function OutfitStudio() {
             </div>
           </section>
 
-        {/* Right Flank: Garment Drawer & Size Selector */}
-        <aside className="studio-drawer-sidebar">
-          <div className="drawer-sidebar-header">
-            <div className="drawer-title-group">
-              <span className="drawer-kicker">ACTIVE SLOT</span>
-              <h3 className="drawer-slot-title">
-                {SLOTS.find(s => s.id === activeSlot)?.label || "TOPWEAR"}
-              </h3>
+          {/* Right Flank: Garment Drawer & Size Selector */}
+          <aside className="studio-drawer-sidebar">
+            <div className="drawer-sidebar-header">
+              <div className="drawer-title-group">
+                <span className="drawer-kicker">ACTIVE SLOT</span>
+                <h3 className="drawer-slot-title">
+                  {SLOTS.find(s => s.id === activeSlot)?.label || "TOPWEAR"}
+                </h3>
+              </div>
+              <span className="drawer-item-count">{slotItems.length} ITEMS AVAILABLE</span>
             </div>
-            <span className="drawer-item-count">{slotItems.length} ITEMS AVAILABLE</span>
-          </div>
 
-          {/* Currently Selected Piece in Active Slot Banner */}
-          {selectedPieces[activeSlot] && (
-            <div className="current-slot-preview-card">
-              <div className="csp-img-box">
-                <img src={getProductImage(selectedPieces[activeSlot])} alt="Selected" />
-              </div>
-              <div className="csp-info">
-                <span className="csp-active-badge">SELECTED</span>
-                <h4 className="csp-name">{selectedPieces[activeSlot].name}</h4>
-                <span className="csp-price">{formatPrice(selectedPieces[activeSlot].price)}</span>
-                
-                {/* Size Selector for Equipped Piece */}
-                {Array.isArray(selectedPieces[activeSlot]?.sizes) && selectedPieces[activeSlot].sizes.length > 0 && (
-                  <div className="csp-sizes-row">
-                    <span className="csp-size-label">SIZE:</span>
-                    <div className="csp-size-pills">
-                      {selectedPieces[activeSlot].sizes.map(sz => (
-                        <button
-                          key={sz}
-                          type="button"
-                          className={`csp-size-btn ${selectedSizes[activeSlot] === sz ? "active" : ""}`}
-                          onClick={() => handleSelectSize(sz)}
-                        >
-                          {sz}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+            {/* Currently Selected Piece in Active Slot Banner */}
+            {selectedPieces[activeSlot] && (
+              <div className="current-slot-preview-card">
+                <div className="csp-img-box">
+                  <img src={getProductImage(selectedPieces[activeSlot])} alt="Selected" />
+                </div>
+                <div className="csp-info">
+                  <span className="csp-active-badge">SELECTED</span>
+                  <h4 className="csp-name">{selectedPieces[activeSlot].name}</h4>
+                  <span className="csp-price">{formatPrice(selectedPieces[activeSlot].price)}</span>
 
-          {/* Swappable Garment Carousel / Grid */}
-          <div className="drawer-garments-scroll">
-            {loading ? (
-              <div className="studio-loading-state">
-                <div className="studio-loader-bar" />
-                <span>Loading items...</span>
-              </div>
-            ) : (
-              <div className="drawer-garments-grid">
-                {slotItems.map((item) => {
-                  const isEquipped = selectedPieces[activeSlot]?._id === item._id;
-                  const itemImg = getProductImage(item);
-
-                  return (
-                    <div
-                      key={item._id}
-                      className={`drawer-garment-card ${isEquipped ? "is-equipped" : ""}`}
-                      onClick={() => handleSelectPiece(item)}
-                    >
-                      <div className="dgc-image-box">
-                        <img src={itemImg} alt={item.name} />
-                        {isEquipped && (
-                          <div className="dgc-equipped-overlay">
-                            <Check size={16} strokeWidth={3} />
-                            <span>SELECTED</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="dgc-details">
-                        <span className="dgc-brand">{item.brand || "SEEMZ"}</span>
-                        <h4 className="dgc-title">{item.name}</h4>
-                        <div className="dgc-footer">
-                          <span className="dgc-price">{formatPrice(item.price)}</span>
+                  {/* Size Selector for Equipped Piece */}
+                  {Array.isArray(selectedPieces[activeSlot]?.sizes) && selectedPieces[activeSlot].sizes.length > 0 && (
+                    <div className="csp-sizes-row">
+                      <span className="csp-size-label">SIZE:</span>
+                      <div className="csp-size-pills">
+                        {selectedPieces[activeSlot].sizes.map(sz => (
                           <button
+                            key={sz}
                             type="button"
-                            className="dgc-equip-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSelectPiece(item);
-                            }}
+                            className={`csp-size-btn ${selectedSizes[activeSlot] === sz ? "active" : ""}`}
+                            onClick={() => handleSelectSize(sz)}
                           >
-                            {isEquipped ? "SELECTED" : "SELECT"}
+                            {sz}
                           </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Swappable Garment Carousel / Grid */}
+            <div className="drawer-garments-scroll">
+              {loading ? (
+                <div className="studio-loading-state">
+                  <div className="studio-loader-bar" />
+                  <span>Loading items...</span>
+                </div>
+              ) : (
+                <div className="drawer-garments-grid">
+                  {slotItems.map((item) => {
+                    const isEquipped = selectedPieces[activeSlot]?._id === item._id;
+                    const itemImg = getProductImage(item);
+
+                    return (
+                      <div
+                        key={item._id}
+                        className={`drawer-garment-card ${isEquipped ? "is-equipped" : ""}`}
+                        onClick={() => handleSelectPiece(item)}
+                      >
+                        <div className="dgc-image-box">
+                          <img src={itemImg} alt={item.name} />
+                          {isEquipped && (
+                            <div className="dgc-equipped-overlay">
+                              <Check size={16} strokeWidth={3} />
+                              <span>SELECTED</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="dgc-details">
+                          <span className="dgc-brand">{item.brand || "SEEMZ"}</span>
+                          <h4 className="dgc-title">{item.name}</h4>
+                          <div className="dgc-footer">
+                            <span className="dgc-price">{formatPrice(item.price)}</span>
+                            <button
+                              type="button"
+                              className="dgc-equip-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectPiece(item);
+                              }}
+                            >
+                              {isEquipped ? "SELECTED" : "SELECT"}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
+
+        {/* Live Aggregate Ledger & Global Action Footer */}
+        <footer className="studio-action-dock">
+          <div className="dock-container">
+            <div className="dock-ensemble-summary">
+              <span className="dock-kicker">OUTFIT SUMMARY</span>
+              <div className="dock-pieces-pills">
+                {SLOTS.map((s) => {
+                  const p = selectedPieces[s.id];
+                  return (
+                    <span
+                      key={s.id}
+                      className={`dock-slot-pill ${p ? "has-item" : "is-missing"}`}
+                      onClick={() => setActiveSlot(s.id)}
+                    >
+                      {s.label}: <strong>{p ? p.name.slice(0, 16) + "..." : "EMPTY"}</strong>
+                    </span>
                   );
                 })}
               </div>
-            )}
-          </div>
-        </aside>
-      </div>
-
-      {/* Live Aggregate Ledger & Global Action Footer */}
-      <footer className="studio-action-dock">
-        <div className="dock-container">
-          <div className="dock-ensemble-summary">
-            <span className="dock-kicker">OUTFIT SUMMARY</span>
-            <div className="dock-pieces-pills">
-              {SLOTS.map((s) => {
-                const p = selectedPieces[s.id];
-                return (
-                  <span
-                    key={s.id}
-                    className={`dock-slot-pill ${p ? "has-item" : "is-missing"}`}
-                    onClick={() => setActiveSlot(s.id)}
-                  >
-                    {s.label}: <strong>{p ? p.name.slice(0, 16) + "..." : "EMPTY"}</strong>
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="dock-financials-cta">
-            <div className="dock-price-stack">
-              <span className="dock-pieces-count">{activeEnsembleList.length} {activeEnsembleList.length === 1 ? "ITEM SELECTED" : "ITEMS SELECTED"}</span>
-              <span className="dock-grand-total">₹{totalInvestment.toLocaleString("en-IN")}</span>
             </div>
 
-            <button
-              type="button"
-              className={`dock-add-bag-btn ${addedSuccess ? "success" : ""}`}
-              onClick={handleAddCompleteLook}
-              disabled={addingToBag || activeEnsembleList.length === 0}
-            >
-              {addedSuccess ? (
-                <>
-                  <Check size={18} /> LOOK ADDED TO BAG
-                </>
-              ) : (
-                <>
-                  <ShoppingBag size={18} />
-                  {addingToBag ? "ADDING TO BAG..." : "ADD LOOK TO BAG"}
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </footer>
+            <div className="dock-financials-cta">
+              <div className="dock-price-stack">
+                <span className="dock-pieces-count">{activeEnsembleList.length} {activeEnsembleList.length === 1 ? "ITEM SELECTED" : "ITEMS SELECTED"}</span>
+                <span className="dock-grand-total">₹{totalInvestment.toLocaleString("en-IN")}</span>
+              </div>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="studio-toast-banner">
-          <span>{toastMessage}</span>
-        </div>
-      )}
+              <button
+                type="button"
+                className={`dock-add-bag-btn ${addedSuccess ? "success" : ""}`}
+                onClick={handleAddCompleteLook}
+                disabled={addingToBag || activeEnsembleList.length === 0}
+              >
+                {addedSuccess ? (
+                  <>
+                    <Check size={18} /> LOOK ADDED TO BAG
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag size={18} />
+                    {addingToBag ? "ADDING TO BAG..." : "ADD LOOK TO BAG"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </footer>
+
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="studio-toast-banner">
+            <span>{toastMessage}</span>
+          </div>
+        )}
       </div>
     </main>
   );

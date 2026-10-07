@@ -40,8 +40,8 @@ const ProductCard = ({
   const allImages = Array.isArray(images) && images.length > 0
     ? images
     : Array.isArray(product?.images) && product.images.length > 0
-    ? product.images
-    : [image || product?.image].filter(Boolean);
+      ? product.images
+      : [image || product?.image].filter(Boolean);
 
   const primaryImage = allImages[0] || image || product?.image || imgFallback;
   const secondaryImage = allImages.length > 1 ? allImages[1] : null;
@@ -50,8 +50,8 @@ const ProductCard = ({
   const prodSizes = Array.isArray(sizes)
     ? sizes
     : Array.isArray(product?.sizes)
-    ? product.sizes
-    : [];
+      ? product.sizes
+      : [];
 
   const prodStock = stock !== undefined ? stock : product?.stock;
 

@@ -1,47 +1,47 @@
-.primary-btn{
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    width:fit-content;
-    max-width:100%;
-    white-space:nowrap;
+.primary-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    white-space: nowrap;
 
-    padding:14px 32px;
+    padding: 14px 32px;
 
-    border:1px solid #ffffff;
-    background:#ffffff;
-    color:#000000;
+    border: 1px solid #ffffff;
+    background: #ffffff;
+    color: #000000;
 
-    text-decoration:none;
-    letter-spacing:2.5px;
-    text-transform:uppercase;
-    font-size:12px;
-    font-weight:500;
+    text-decoration: none;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
 
-    transition:.35s ease;
-    cursor:pointer;
+    transition: .35s ease;
+    cursor: pointer;
 }
 
-.primary-btn:hover{
-    background:transparent;
-    color:#ffffff;
-    border-color:#ffffff;
+.primary-btn:hover {
+    background: transparent;
+    color: #ffffff;
+    border-color: #ffffff;
 }
 
-.primary-btn.filled{
-    background:#ffffff;
-    color:#000000;
+.primary-btn.filled {
+    background: #ffffff;
+    color: #000000;
 }
 
-.primary-btn.filled:hover{
-    background:transparent;
-    color:#ffffff;
+.primary-btn.filled:hover {
+    background: transparent;
+    color: #ffffff;
 }
 
-@media(max-width:768px){
-    .primary-btn{
-        padding:12px 24px;
-        font-size:11px;
-        letter-spacing:2px;
+@media(max-width:768px) {
+    .primary-btn {
+        padding: 12px 24px;
+        font-size: 11px;
+        letter-spacing: 2px;
     }
 }
