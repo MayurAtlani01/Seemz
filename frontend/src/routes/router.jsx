@@ -22,7 +22,6 @@ import OutfitStudio from "../pages/OutfitStudio/OutfitStudio";
 import AdminProducts from "../pages/Admin/AdminProducts";
 import AdminOrders from "../pages/Admin/AdminOrders";
 import AdminRoute from "../components/AdminRoute/AdminRoute";
-import DSGT from "../pages/DSGT/DSGT";
 
 const router = createBrowserRouter([
   {
@@ -124,14 +123,6 @@ const router = createBrowserRouter([
             <AdminOrders />
           </AdminRoute>
         ),
-      },
-      {
-        path: "dsgt",
-        element: <DSGT />,
-      },
-      {
-        path: "DSGT",
-        element: <DSGT />,
       },
     ],
   },
